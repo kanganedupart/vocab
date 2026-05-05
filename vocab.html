@@ -1,0 +1,3561 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>📚 우리집 영단어 도전!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+:root {
+  --bg-cream: #FFF8E8;
+  --bg-card: #FFFFFF;
+  --ink: #2C2240;
+  --ink-soft: #6B5F8B;
+  --ink-mute: #A095BB;
+  --line: #E8DCC4;
+  --line-soft: #F2EBD9;
+
+  --coral: #FF6B47;
+  --coral-soft: #FFE4DC;
+  --teal: #2BB6A6;
+  --teal-soft: #D4F1ED;
+  --gold: #F5B82E;
+  --gold-soft: #FFF1D0;
+  --pink: #FF6B9D;
+  --pink-soft: #FFE0EC;
+  --blue: #4A7AE8;
+  --blue-soft: #DBE6FA;
+  --purple: #8E66E0;
+  --purple-soft: #E8DBFA;
+  --green: #4FBE52;
+  --green-soft: #DDF2DE;
+
+  --tier-fire: #E63946;
+  --tier-fire-soft: #FFD8DC;
+  --tier-dia: #1D7CD9;
+  --tier-dia-soft: #D4E8FA;
+  --tier-gold: #F5A623;
+  --tier-gold-soft: #FFEAC2;
+
+  --shadow-soft: 0 2px 0 rgba(44,34,64,0.08), 0 8px 24px rgba(44,34,64,0.04);
+  --shadow-pop: 0 4px 0 rgba(44,34,64,0.15);
+  --shadow-press: 0 2px 0 rgba(44,34,64,0.15);
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+
+  --font-display: 'Jua', sans-serif;
+  --font-body: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-eng: 'Fredoka', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--bg-cream);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+body {
+  background:
+    radial-gradient(circle at 10% 10%, var(--gold-soft) 0%, transparent 35%),
+    radial-gradient(circle at 90% 90%, var(--coral-soft) 0%, transparent 35%),
+    radial-gradient(circle at 90% 10%, var(--teal-soft) 0%, transparent 30%),
+    var(--bg-cream);
+  background-attachment: fixed;
+}
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 16px 24px;
+  position: relative;
+}
+.eng { font-family: var(--font-eng); font-weight: 500; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.2; }
+h1 { font-size: 28px; }
+h2 { font-size: 22px; }
+h3 { font-size: 18px; }
+
+/* Card */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-soft);
+  border: 2px solid var(--line);
+  margin-bottom: 12px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: var(--shadow-pop);
+  transition: transform 0.1s, box-shadow 0.1s;
+  user-select: none;
+}
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: var(--shadow-press);
+}
+.btn-primary { background: var(--coral); color: white; }
+.btn-blue { background: var(--blue); color: white; }
+.btn-pink { background: var(--pink); color: white; }
+.btn-teal { background: var(--teal); color: white; }
+.btn-gold { background: var(--gold); color: var(--ink); }
+.btn-green { background: var(--green); color: white; }
+.btn-ghost {
+  background: transparent;
+  border: 1.5px solid var(--line);
+  box-shadow: none;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+.btn-ghost:active { transform: none; box-shadow: none; }
+.btn-block { width: 100%; }
+.btn-lg { padding: 18px 24px; font-size: 18px; }
+.btn-sm { padding: 8px 14px; font-size: 14px; }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mb-12 { margin-bottom: 12px; }
+
+/* Header */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 4px 4px;
+}
+.back-btn {
+  background: var(--bg-card);
+  border: 1.5px solid var(--line);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--ink);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+.app-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  flex: 1;
+  text-align: center;
+}
+
+/* Profile select */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 24px;
+}
+.profile-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 24px 16px;
+  border: 2px solid var(--line);
+  text-align: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-pop);
+  transition: transform 0.15s;
+}
+.profile-card:active { transform: translateY(2px); }
+.profile-card.juhyuk { background: linear-gradient(180deg, var(--blue-soft), white 60%); }
+.profile-card.jooha { background: linear-gradient(180deg, var(--pink-soft), white 60%); }
+.profile-emoji {
+  font-size: 60px;
+  margin-bottom: 8px;
+}
+.profile-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+.profile-meta {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(180deg, white, var(--bg-cream));
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--line);
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-soft);
+}
+.hero-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.hero-emoji {
+  width: 70px;
+  height: 70px;
+  background: var(--bg-cream);
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  flex-shrink: 0;
+}
+.hero-info { flex: 1; }
+.hero-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+}
+.hero-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+.stat {
+  background: var(--bg-cream);
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+.stat-label { color: var(--ink-mute); font-size: 10px; }
+.stat-value { font-family: var(--font-display); font-size: 16px; margin-top: 2px; }
+
+/* Level banner */
+.level-banner {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: white;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid var(--ink);
+}
+.level-info-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.level-icon { font-size: 22px; }
+.level-text { font-family: var(--font-display); font-size: 14px; }
+.level-num {
+  background: var(--gold);
+  color: var(--ink);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  border: 2px solid var(--ink);
+}
+
+/* Progress */
+.progress-section { margin-top: 12px; }
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.progress-bar {
+  height: 12px;
+  background: var(--line-soft);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--coral), var(--gold));
+  border-radius: 999px;
+  transition: width 0.5s;
+}
+
+/* Today block */
+.today-block {
+  background: linear-gradient(135deg, #FF6B47, #F5B82E);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  margin-bottom: 14px;
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow-pop);
+  color: white;
+}
+.today-block-tag {
+  font-size: 11px;
+  opacity: 0.9;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.today-block-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+.today-block-subtitle {
+  font-size: 13px;
+  opacity: 0.95;
+  margin-bottom: 14px;
+}
+.today-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.today-action-btn {
+  background: white;
+  color: var(--ink);
+  padding: 16px 10px;
+  border-radius: 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  border: 2px solid white;
+  transition: transform 0.1s;
+}
+.today-action-btn:active { transform: scale(0.96); }
+.today-action-btn.urgent {
+  background: var(--tier-fire);
+  color: white;
+  border-color: var(--tier-fire);
+}
+.today-action-btn.disabled {
+  background: rgba(255,255,255,0.4);
+  color: rgba(0,0,0,0.5);
+  cursor: default;
+  border-color: transparent;
+}
+.today-action-btn.disabled:active { transform: none; }
+.today-action-icon { font-size: 30px; }
+.today-action-label { font-family: var(--font-display); font-size: 14px; line-height: 1.2; }
+
+/* Saturday banner */
+.sat-banner {
+  background: var(--gold);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  box-shadow: var(--shadow-pop);
+}
+.sat-banner-icon { font-size: 32px; }
+.sat-banner-text { flex: 1; }
+.sat-banner-title { font-family: var(--font-display); font-size: 16px; }
+.sat-banner-sub { font-size: 12px; color: var(--ink); opacity: 0.85; margin-top: 2px; }
+
+/* Menu grid */
+.menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.menu-card {
+  background: var(--bg-card);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.15s;
+}
+.menu-card:active { transform: translateY(1px); }
+.menu-icon { font-size: 28px; }
+.menu-text { font-family: var(--font-display); font-size: 14px; line-height: 1.2; }
+.menu-sub { font-size: 11px; color: var(--ink-mute); margin-top: 2px; }
+
+/* Word list */
+.word-list-header {
+  background: linear-gradient(135deg, var(--coral), var(--gold));
+  color: white;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--ink);
+  margin-bottom: 12px;
+  text-align: center;
+  box-shadow: var(--shadow-pop);
+}
+.word-day-num {
+  font-family: var(--font-display);
+  font-size: 22px;
+}
+.word-day-sub {
+  font-size: 12px;
+  opacity: 0.95;
+  margin-top: 4px;
+}
+.word-list {
+  background: white;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.word-item {
+  display: grid;
+  grid-template-columns: 28px 1fr 1.4fr 36px;
+  gap: 8px;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--line-soft);
+  align-items: center;
+}
+.word-item:last-child { border-bottom: none; }
+.word-num {
+  font-size: 11px;
+  color: var(--ink-mute);
+  font-weight: 600;
+}
+.word-eng {
+  font-family: var(--font-eng);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.word-kor {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.speak-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--blue-soft);
+  border: 1.5px solid var(--blue);
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: transform 0.1s;
+}
+.speak-btn:active { transform: scale(0.9); }
+.speak-btn.playing {
+  background: var(--blue);
+  color: white;
+  animation: pulse 0.6s;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+/* Test screen */
+.test-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.test-progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+.test-progress-dot {
+  flex: 1;
+  height: 6px;
+  background: var(--line-soft);
+  border-radius: 999px;
+}
+.test-progress-dot.answered { background: var(--coral); }
+.test-progress-dot.current { background: var(--gold); }
+
+.test-question {
+  background: white;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-md);
+  padding: 24px 16px;
+  margin-bottom: 14px;
+  text-align: center;
+  box-shadow: var(--shadow-pop);
+}
+.test-q-type {
+  display: inline-block;
+  background: var(--coral-soft);
+  color: var(--coral);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+.test-q-prompt {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+}
+.test-q-word {
+  font-family: var(--font-eng);
+  font-size: 38px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.test-q-word .speak-btn {
+  width: 38px;
+  height: 38px;
+  font-size: 16px;
+}
+.test-q-meaning {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--ink);
+  margin: 8px 0;
+}
+.test-q-sentence {
+  font-family: var(--font-eng);
+  font-size: 18px;
+  color: var(--ink);
+  line-height: 1.6;
+  padding: 0 4px;
+}
+.test-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.test-option {
+  background: white;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.1s;
+  box-shadow: var(--shadow-soft);
+}
+.test-option:active { transform: translateY(1px); }
+.test-option.selected {
+  border-color: var(--coral);
+  background: var(--coral-soft);
+}
+.test-option.review-correct {
+  border-color: var(--green);
+  background: var(--green-soft);
+}
+.test-option.review-wrong {
+  border-color: var(--tier-fire);
+  background: var(--tier-fire-soft);
+}
+.test-option-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-cream);
+  border: 1.5px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.test-option.selected .test-option-num {
+  background: var(--coral);
+  color: white;
+  border-color: var(--coral);
+}
+.test-option-text {
+  flex: 1;
+  font-size: 15px;
+}
+.test-option-text.korean { font-family: var(--font-body); }
+.test-option-text.english { font-family: var(--font-eng); font-weight: 500; }
+
+/* Test review (제출 전 검토) */
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.review-cell {
+  aspect-ratio: 1;
+  background: white;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.review-cell:active { transform: scale(0.95); }
+.review-cell.answered {
+  background: var(--coral);
+  color: white;
+  border-color: var(--coral);
+}
+.review-cell.unanswered {
+  background: var(--tier-fire-soft);
+  color: var(--tier-fire);
+  border-color: var(--tier-fire);
+}
+
+/* Result */
+.result-hero {
+  background: white;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-lg);
+  padding: 24px 16px;
+  text-align: center;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-pop);
+}
+.result-emoji { font-size: 60px; }
+.result-score {
+  font-family: var(--font-display);
+  font-size: 48px;
+  margin: 4px 0;
+}
+.result-status {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  margin: 8px 0 4px;
+}
+.result-status.pass { background: var(--green-soft); color: var(--green); }
+.result-status.fail { background: var(--tier-fire-soft); color: var(--tier-fire); }
+.result-msg { font-size: 13px; color: var(--ink-soft); }
+.result-rewards {
+  background: var(--gold-soft);
+  border: 2px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.result-rewards-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+.reward-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 4px 0;
+}
+
+/* History */
+.week-block {
+  background: white;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.week-header {
+  background: var(--bg-cream);
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line-soft);
+}
+.week-header-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+}
+.week-header-info {
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.day-row {
+  display: grid;
+  grid-template-columns: 56px 1fr 1.3fr;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line-soft);
+  align-items: center;
+}
+.day-row:last-child { border-bottom: none; }
+.day-row.today { background: linear-gradient(90deg, var(--coral-soft) 0%, transparent 80%); }
+.day-row-label {
+  font-family: var(--font-display);
+  font-size: 14px;
+}
+.day-row.today .day-row-label { color: var(--coral); }
+.day-cell {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  background: var(--bg-cream);
+  border: 1px solid var(--line);
+  justify-content: center;
+}
+.day-cell.score {
+  background: white;
+  font-weight: 600;
+  justify-content: space-between;
+}
+.day-cell.action {
+  background: var(--coral);
+  color: white;
+  border-color: var(--coral);
+  font-weight: 600;
+}
+.day-cell.urgent {
+  background: var(--tier-fire);
+  color: white;
+  border-color: var(--tier-fire);
+}
+.day-cell.muted {
+  background: transparent;
+  border: 1px dashed var(--line);
+  color: var(--ink-mute);
+  cursor: default;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  z-index: 9999;
+  animation: toastIn 0.3s;
+  box-shadow: var(--shadow-pop);
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translate(-50%, 20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Modal */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  max-width: 360px;
+  width: 100%;
+  border: 2px solid var(--ink);
+  text-align: center;
+  box-shadow: var(--shadow-pop);
+}
+.modal-icon { font-size: 50px; margin-bottom: 8px; }
+.modal-title { font-family: var(--font-display); font-size: 20px; margin-bottom: 6px; }
+.modal-text { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; line-height: 1.5; }
+
+/* Confetti */
+.confetti-container {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 9997;
+  overflow: hidden;
+}
+.confetti-piece {
+  position: absolute;
+  width: 8px; height: 8px;
+  animation: confettiFall 2s ease-out forwards;
+}
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--ink-soft);
+}
+.empty-icon { font-size: 48px; margin-bottom: 8px; }
+
+/* Tier badges */
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.tier-fire { background: var(--tier-fire-soft); color: var(--tier-fire); }
+.tier-dia { background: var(--tier-dia-soft); color: var(--tier-dia); }
+.tier-gold { background: var(--tier-gold-soft); color: var(--tier-gold); }
+
+/* Print */
+@media print {
+  body { background: white; }
+  #app { display: none; }
+  #print-area { display: block !important; }
+}
+#print-area { display: none; }
+.print-page { padding: 20px; font-family: 'Pretendard', sans-serif; }
+.print-cover {
+  text-align: center;
+  padding: 14px;
+  border-bottom: 2px solid #2C2240;
+  margin-bottom: 14px;
+}
+.print-day-block { margin-bottom: 18px; page-break-inside: avoid; }
+.print-day-title {
+  background: #FFF1D0;
+  padding: 8px 12px;
+  font-weight: 700;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+.print-word-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.print-word-table td {
+  border-bottom: 1px solid #ddd;
+  padding: 6px 8px;
+}
+.print-word-table .num { width: 28px; color: #999; }
+.print-word-table .eng { font-weight: 500; width: 30%; }
+.print-word-table .check { width: 24px; text-align: center; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="print-area"></div>
+<script>
+// ==================== 단어 데이터 ====================
+// 주혁: 중1 EBS 수준 / 주하: 초6 수준
+// 각 25일치 (5주분), 하루 20단어, 총 1000단어
+// =====================================================
+
+const WORDS = {
+  juhyuk: {
+    1: { theme: "감정과 성격", words: [
+      { word: "believe", meaning: "믿다", sentence: "I ___ you can do it." },
+      { word: "careful", meaning: "조심스러운", sentence: "Be ___ on the road." },
+      { word: "friendly", meaning: "친근한", sentence: "He is very ___ to everyone." },
+      { word: "kind", meaning: "친절한", sentence: "She is ___ to her friends." },
+      { word: "nervous", meaning: "긴장한", sentence: "I feel ___ before the test." },
+      { word: "polite", meaning: "예의 바른", sentence: "She is always ___." },
+      { word: "proud", meaning: "자랑스러운", sentence: "I am ___ of my sister." },
+      { word: "surprised", meaning: "놀란", sentence: "He was ___ by the gift." },
+      { word: "excited", meaning: "신난", sentence: "I am ___ for the trip." },
+      { word: "confident", meaning: "자신감 있는", sentence: "She looks ___ today." },
+      { word: "comfortable", meaning: "편안한", sentence: "This chair is ___." },
+      { word: "familiar", meaning: "익숙한", sentence: "Her face looks ___." },
+      { word: "behavior", meaning: "행동", sentence: "His ___ was excellent." },
+      { word: "character", meaning: "성격", sentence: "She has a strong ___." },
+      { word: "emotion", meaning: "감정", sentence: "Music expresses ___." },
+      { word: "recognize", meaning: "알아보다", sentence: "I didn't ___ you at first." },
+      { word: "encourage", meaning: "격려하다", sentence: "Parents ___ their kids." },
+      { word: "opportunity", meaning: "기회", sentence: "Don't miss this ___." },
+      { word: "experience", meaning: "경험", sentence: "Travel gives us ___." },
+      { word: "attitude", meaning: "태도", sentence: "Her ___ is positive." }
+    ]},
+    2: { theme: "학교와 공부", words: [
+      { word: "answer", meaning: "대답", sentence: "What is the ___?" },
+      { word: "ask", meaning: "묻다", sentence: "Please ___ the teacher." },
+      { word: "exam", meaning: "시험", sentence: "I have an ___ tomorrow." },
+      { word: "homework", meaning: "숙제", sentence: "Did you finish your ___?" },
+      { word: "library", meaning: "도서관", sentence: "I study at the ___." },
+      { word: "study", meaning: "공부하다", sentence: "I ___ English every day." },
+      { word: "teach", meaning: "가르치다", sentence: "She will ___ math." },
+      { word: "learn", meaning: "배우다", sentence: "We ___ new things daily." },
+      { word: "language", meaning: "언어", sentence: "English is a global ___." },
+      { word: "lesson", meaning: "수업", sentence: "Today's ___ is fun." },
+      { word: "subject", meaning: "과목", sentence: "My favorite ___ is art." },
+      { word: "knowledge", meaning: "지식", sentence: "Books give us ___." },
+      { word: "improve", meaning: "향상시키다", sentence: "I want to ___ my grades." },
+      { word: "explain", meaning: "설명하다", sentence: "Can you ___ this?" },
+      { word: "understand", meaning: "이해하다", sentence: "I ___ the lesson now." },
+      { word: "remember", meaning: "기억하다", sentence: "Please ___ to bring it." },
+      { word: "memorize", meaning: "암기하다", sentence: "Try to ___ these words." },
+      { word: "practice", meaning: "연습하다", sentence: "I ___ piano every day." },
+      { word: "achieve", meaning: "성취하다", sentence: "She wants to ___ her goal." },
+      { word: "education", meaning: "교육", sentence: "___ is very important." }
+    ]},
+    3: { theme: "가족과 사람", words: [
+      { word: "family", meaning: "가족", sentence: "I love my ___." },
+      { word: "parent", meaning: "부모", sentence: "Each ___ teaches us." },
+      { word: "child", meaning: "아이", sentence: "Every ___ is special." },
+      { word: "cousin", meaning: "사촌", sentence: "My ___ visits us often." },
+      { word: "uncle", meaning: "삼촌", sentence: "My ___ is a doctor." },
+      { word: "aunt", meaning: "이모", sentence: "My ___ lives in Busan." },
+      { word: "neighbor", meaning: "이웃", sentence: "Our ___ is very kind." },
+      { word: "friend", meaning: "친구", sentence: "She is my best ___." },
+      { word: "people", meaning: "사람들", sentence: "Many ___ live in Seoul." },
+      { word: "respect", meaning: "존경하다", sentence: "I ___ my teachers." },
+      { word: "trust", meaning: "신뢰하다", sentence: "I ___ my friends." },
+      { word: "share", meaning: "공유하다", sentence: "Let's ___ the cake." },
+      { word: "argue", meaning: "다투다", sentence: "Please don't ___." },
+      { word: "marry", meaning: "결혼하다", sentence: "They will ___ next year." },
+      { word: "introduce", meaning: "소개하다", sentence: "Let me ___ my friend." },
+      { word: "stranger", meaning: "낯선 사람", sentence: "Don't talk to a ___." },
+      { word: "elderly", meaning: "어르신의", sentence: "Help the ___ people." },
+      { word: "generation", meaning: "세대", sentence: "Each ___ is different." },
+      { word: "relationship", meaning: "관계", sentence: "Their ___ is strong." },
+      { word: "support", meaning: "지지하다", sentence: "I ___ your decision." }
+    ]},
+    4: { theme: "자연과 환경", words: [
+      { word: "tree", meaning: "나무", sentence: "Birds live in the ___." },
+      { word: "river", meaning: "강", sentence: "The ___ is wide." },
+      { word: "mountain", meaning: "산", sentence: "Let's climb the ___." },
+      { word: "ocean", meaning: "바다", sentence: "The ___ is deep." },
+      { word: "forest", meaning: "숲", sentence: "We hiked in the ___." },
+      { word: "weather", meaning: "날씨", sentence: "How is the ___ today?" },
+      { word: "season", meaning: "계절", sentence: "Spring is my favorite ___." },
+      { word: "nature", meaning: "자연", sentence: "I love walking in ___." },
+      { word: "earth", meaning: "지구", sentence: "We must protect the ___." },
+      { word: "animal", meaning: "동물", sentence: "Tigers are wild ___." },
+      { word: "plant", meaning: "식물", sentence: "Water the ___ daily." },
+      { word: "environment", meaning: "환경", sentence: "We must save the ___." },
+      { word: "pollution", meaning: "오염", sentence: "Air ___ is a problem." },
+      { word: "recycle", meaning: "재활용하다", sentence: "Please ___ paper." },
+      { word: "protect", meaning: "보호하다", sentence: "We ___ the forest." },
+      { word: "climate", meaning: "기후", sentence: "Korea has a mild ___." },
+      { word: "planet", meaning: "행성", sentence: "Mars is a red ___." },
+      { word: "garbage", meaning: "쓰레기", sentence: "Don't throw ___ here." },
+      { word: "save", meaning: "절약하다", sentence: "We must ___ water." },
+      { word: "energy", meaning: "에너지", sentence: "Solar ___ is clean." }
+    ]},
+    5: { theme: "여행과 장소", words: [
+      { word: "travel", meaning: "여행하다", sentence: "I want to ___ the world." },
+      { word: "trip", meaning: "여행", sentence: "Our ___ was wonderful." },
+      { word: "visit", meaning: "방문하다", sentence: "We will ___ grandma." },
+      { word: "country", meaning: "나라", sentence: "Korea is my ___." },
+      { word: "city", meaning: "도시", sentence: "Seoul is a big ___." },
+      { word: "village", meaning: "마을", sentence: "She lives in a small ___." },
+      { word: "airport", meaning: "공항", sentence: "We arrived at the ___." },
+      { word: "station", meaning: "역", sentence: "The ___ is very busy." },
+      { word: "hotel", meaning: "호텔", sentence: "Our ___ is near the beach." },
+      { word: "restaurant", meaning: "식당", sentence: "We ate at a ___." },
+      { word: "tourist", meaning: "관광객", sentence: "Many ___ visit Jeju." },
+      { word: "foreign", meaning: "외국의", sentence: "I learn a ___ language." },
+      { word: "passport", meaning: "여권", sentence: "Don't forget your ___." },
+      { word: "luggage", meaning: "짐", sentence: "Pack your ___ tonight." },
+      { word: "souvenir", meaning: "기념품", sentence: "I bought a ___ for mom." },
+      { word: "journey", meaning: "여정", sentence: "Life is a long ___." },
+      { word: "adventure", meaning: "모험", sentence: "Our trip was an ___." },
+      { word: "transport", meaning: "교통수단", sentence: "Buses are public ___." },
+      { word: "traffic", meaning: "교통", sentence: "The ___ was heavy." },
+      { word: "destination", meaning: "목적지", sentence: "What's your ___?" }
+    ]},
+    6: { theme: "음식과 요리", words: [
+      { word: "breakfast", meaning: "아침식사", sentence: "I eat ___ at 7 am." },
+      { word: "lunch", meaning: "점심", sentence: "Let's have ___ together." },
+      { word: "dinner", meaning: "저녁식사", sentence: "Mom makes ___." },
+      { word: "delicious", meaning: "맛있는", sentence: "This pizza is ___." },
+      { word: "vegetable", meaning: "채소", sentence: "Eat your ___ daily." },
+      { word: "fruit", meaning: "과일", sentence: "Apples are my favorite ___." },
+      { word: "meat", meaning: "고기", sentence: "I love beef ___." },
+      { word: "dessert", meaning: "후식", sentence: "Cake is for ___." },
+      { word: "snack", meaning: "간식", sentence: "Chips are a ___." },
+      { word: "thirsty", meaning: "목마른", sentence: "I am very ___." },
+      { word: "hungry", meaning: "배고픈", sentence: "I am ___ now." },
+      { word: "spicy", meaning: "매운", sentence: "Kimchi is ___." },
+      { word: "sweet", meaning: "달콤한", sentence: "Honey is ___." },
+      { word: "salty", meaning: "짠", sentence: "The soup is too ___." },
+      { word: "recipe", meaning: "조리법", sentence: "Mom shared her ___." },
+      { word: "cook", meaning: "요리하다", sentence: "Mom can ___ very well." },
+      { word: "taste", meaning: "맛", sentence: "What ___ do you like?" },
+      { word: "flavor", meaning: "맛, 향", sentence: "Strawberry is the best ___." },
+      { word: "appetite", meaning: "식욕", sentence: "I have a big ___." },
+      { word: "ingredient", meaning: "재료", sentence: "Sugar is a main ___." }
+    ]},
+    7: { theme: "직업과 일", words: [
+      { word: "job", meaning: "직업", sentence: "She has a good ___." },
+      { word: "work", meaning: "일하다", sentence: "Dad will ___ late today." },
+      { word: "doctor", meaning: "의사", sentence: "The ___ helped me." },
+      { word: "teacher", meaning: "선생님", sentence: "Our ___ is kind." },
+      { word: "nurse", meaning: "간호사", sentence: "The ___ is gentle." },
+      { word: "farmer", meaning: "농부", sentence: "The ___ grows rice." },
+      { word: "writer", meaning: "작가", sentence: "He is a famous ___." },
+      { word: "artist", meaning: "예술가", sentence: "She is a great ___." },
+      { word: "scientist", meaning: "과학자", sentence: "A ___ studies nature." },
+      { word: "engineer", meaning: "기술자", sentence: "He is a software ___." },
+      { word: "office", meaning: "사무실", sentence: "Dad goes to the ___." },
+      { word: "company", meaning: "회사", sentence: "Mom's ___ is big." },
+      { word: "career", meaning: "경력", sentence: "Plan your ___ early." },
+      { word: "salary", meaning: "급여", sentence: "His ___ is good." },
+      { word: "manager", meaning: "관리자", sentence: "She is the ___." },
+      { word: "boss", meaning: "상사", sentence: "My dad's ___ is nice." },
+      { word: "skill", meaning: "기술", sentence: "Cooking is a useful ___." },
+      { word: "succeed", meaning: "성공하다", sentence: "I want to ___ in life." },
+      { word: "fail", meaning: "실패하다", sentence: "Don't be afraid to ___." },
+      { word: "professional", meaning: "전문가의", sentence: "She is a ___ player." }
+    ]},
+    8: { theme: "건강과 신체", words: [
+      { word: "health", meaning: "건강", sentence: "Your ___ is most important." },
+      { word: "healthy", meaning: "건강한", sentence: "Eat ___ food daily." },
+      { word: "sick", meaning: "아픈", sentence: "I feel ___ today." },
+      { word: "hospital", meaning: "병원", sentence: "She works at a ___." },
+      { word: "medicine", meaning: "약", sentence: "Take this ___." },
+      { word: "exercise", meaning: "운동", sentence: "Daily ___ helps you." },
+      { word: "diet", meaning: "식단", sentence: "A balanced ___ is key." },
+      { word: "sleep", meaning: "잠을 자다", sentence: "I ___ for 8 hours." },
+      { word: "rest", meaning: "쉬다", sentence: "Take a ___ now." },
+      { word: "tired", meaning: "피곤한", sentence: "I feel ___ today." },
+      { word: "headache", meaning: "두통", sentence: "I have a ___." },
+      { word: "stomach", meaning: "배", sentence: "My ___ hurts." },
+      { word: "muscle", meaning: "근육", sentence: "Athletes have strong ___." },
+      { word: "blood", meaning: "피", sentence: "My ___ type is O." },
+      { word: "breath", meaning: "숨", sentence: "Take a deep ___." },
+      { word: "patient", meaning: "환자", sentence: "Be kind to the ___." },
+      { word: "recover", meaning: "회복하다", sentence: "She will ___ soon." },
+      { word: "disease", meaning: "병", sentence: "He has a serious ___." },
+      { word: "injury", meaning: "부상", sentence: "His ___ is healing." },
+      { word: "fever", meaning: "열", sentence: "She has a high ___." }
+    ]},
+    9: { theme: "취미와 여가", words: [
+      { word: "hobby", meaning: "취미", sentence: "My ___ is reading." },
+      { word: "free", meaning: "자유로운", sentence: "I have ___ time today." },
+      { word: "weekend", meaning: "주말", sentence: "I love the ___." },
+      { word: "vacation", meaning: "휴가", sentence: "Our ___ was great." },
+      { word: "holiday", meaning: "휴일", sentence: "Today is a ___." },
+      { word: "movie", meaning: "영화", sentence: "Let's watch a ___." },
+      { word: "music", meaning: "음악", sentence: "I love K-pop ___." },
+      { word: "game", meaning: "게임", sentence: "Let's play a ___." },
+      { word: "sport", meaning: "운동경기", sentence: "Soccer is my ___." },
+      { word: "team", meaning: "팀", sentence: "Our ___ won today." },
+      { word: "concert", meaning: "공연", sentence: "I went to a ___." },
+      { word: "festival", meaning: "축제", sentence: "The ___ is fun." },
+      { word: "party", meaning: "파티", sentence: "It's a birthday ___." },
+      { word: "dance", meaning: "춤추다", sentence: "Let's ___ together." },
+      { word: "sing", meaning: "노래하다", sentence: "She can ___ well." },
+      { word: "draw", meaning: "그리다", sentence: "She loves to ___." },
+      { word: "collect", meaning: "모으다", sentence: "I ___ stamps." },
+      { word: "enjoy", meaning: "즐기다", sentence: "I ___ playing piano." },
+      { word: "relax", meaning: "쉬다", sentence: "I ___ on Sundays." },
+      { word: "favorite", meaning: "가장 좋아하는", sentence: "It's my ___ song." }
+    ]},
+    10: { theme: "기술과 미래", words: [
+      { word: "computer", meaning: "컴퓨터", sentence: "I use my ___ daily." },
+      { word: "internet", meaning: "인터넷", sentence: "I search on the ___." },
+      { word: "phone", meaning: "전화기", sentence: "My ___ is new." },
+      { word: "message", meaning: "메시지", sentence: "I got your ___." },
+      { word: "online", meaning: "온라인의", sentence: "I shop ___ often." },
+      { word: "screen", meaning: "화면", sentence: "Don't touch the ___." },
+      { word: "machine", meaning: "기계", sentence: "This ___ is broken." },
+      { word: "robot", meaning: "로봇", sentence: "The ___ can clean." },
+      { word: "future", meaning: "미래", sentence: "I dream about my ___." },
+      { word: "modern", meaning: "현대의", sentence: "This is a ___ design." },
+      { word: "invent", meaning: "발명하다", sentence: "She wants to ___ something." },
+      { word: "discover", meaning: "발견하다", sentence: "Did you ___ anything?" },
+      { word: "create", meaning: "창조하다", sentence: "Artists ___ beauty." },
+      { word: "design", meaning: "디자인하다", sentence: "He will ___ a logo." },
+      { word: "develop", meaning: "개발하다", sentence: "We ___ new ideas." },
+      { word: "useful", meaning: "유용한", sentence: "This app is ___." },
+      { word: "convenient", meaning: "편리한", sentence: "Subways are ___." },
+      { word: "technology", meaning: "기술", sentence: "Modern ___ is amazing." },
+      { word: "device", meaning: "기기", sentence: "My ___ needs charging." },
+      { word: "battery", meaning: "배터리", sentence: "My ___ is dead." }
+    ]},
+    11: { theme: "운동과 스포츠", words: [
+      { word: "soccer", meaning: "축구", sentence: "I play ___ on weekends." },
+      { word: "baseball", meaning: "야구", sentence: "He hit the ___." },
+      { word: "basketball", meaning: "농구", sentence: "She plays ___ well." },
+      { word: "tennis", meaning: "테니스", sentence: "Let's play ___." },
+      { word: "swim", meaning: "수영하다", sentence: "I ___ every Sunday." },
+      { word: "run", meaning: "달리다", sentence: "Let's ___ together." },
+      { word: "jump", meaning: "뛰다", sentence: "Cats can ___ high." },
+      { word: "throw", meaning: "던지다", sentence: "Please ___ the ball." },
+      { word: "catch", meaning: "잡다", sentence: "Try to ___ it." },
+      { word: "kick", meaning: "차다", sentence: "He can ___ hard." },
+      { word: "win", meaning: "이기다", sentence: "We will ___ today." },
+      { word: "lose", meaning: "지다", sentence: "Don't ___ hope." },
+      { word: "match", meaning: "경기", sentence: "The ___ starts at 6." },
+      { word: "champion", meaning: "챔피언", sentence: "She is the ___." },
+      { word: "coach", meaning: "감독", sentence: "Our ___ is great." },
+      { word: "player", meaning: "선수", sentence: "He is a top ___." },
+      { word: "stadium", meaning: "경기장", sentence: "The ___ is huge." },
+      { word: "score", meaning: "점수", sentence: "What's the ___?" },
+      { word: "victory", meaning: "승리", sentence: "Sweet ___ at last!" },
+      { word: "compete", meaning: "경쟁하다", sentence: "They ___ for gold." }
+    ]},
+    12: { theme: "동물과 식물", words: [
+      { word: "dog", meaning: "개", sentence: "My ___ is friendly." },
+      { word: "cat", meaning: "고양이", sentence: "The ___ is sleeping." },
+      { word: "bird", meaning: "새", sentence: "A ___ is singing." },
+      { word: "fish", meaning: "물고기", sentence: "I caught a ___." },
+      { word: "rabbit", meaning: "토끼", sentence: "The ___ is white." },
+      { word: "tiger", meaning: "호랑이", sentence: "A ___ is wild." },
+      { word: "elephant", meaning: "코끼리", sentence: "An ___ is huge." },
+      { word: "lion", meaning: "사자", sentence: "The ___ roars." },
+      { word: "monkey", meaning: "원숭이", sentence: "A ___ climbs trees." },
+      { word: "horse", meaning: "말", sentence: "I rode a ___." },
+      { word: "flower", meaning: "꽃", sentence: "The ___ smells nice." },
+      { word: "leaf", meaning: "잎", sentence: "A ___ fell down." },
+      { word: "grass", meaning: "풀", sentence: "Cows eat ___." },
+      { word: "seed", meaning: "씨앗", sentence: "Plant the ___ now." },
+      { word: "root", meaning: "뿌리", sentence: "Trees have deep ___." },
+      { word: "branch", meaning: "가지", sentence: "Birds sit on the ___." },
+      { word: "wild", meaning: "야생의", sentence: "The ___ animals run free." },
+      { word: "pet", meaning: "반려동물", sentence: "My ___ is a hamster." },
+      { word: "feed", meaning: "먹이를 주다", sentence: "Don't ___ wild animals." },
+      { word: "grow", meaning: "기르다, 자라다", sentence: "Plants ___ in spring." }
+    ]},
+    13: { theme: "옷과 패션", words: [
+      { word: "shirt", meaning: "셔츠", sentence: "His ___ is blue." },
+      { word: "pants", meaning: "바지", sentence: "These ___ fit well." },
+      { word: "dress", meaning: "원피스", sentence: "Her ___ is pretty." },
+      { word: "skirt", meaning: "치마", sentence: "She wore a long ___." },
+      { word: "jacket", meaning: "재킷", sentence: "Wear your ___ outside." },
+      { word: "coat", meaning: "코트", sentence: "My ___ is warm." },
+      { word: "shoes", meaning: "신발", sentence: "These ___ are new." },
+      { word: "socks", meaning: "양말", sentence: "Put on warm ___." },
+      { word: "hat", meaning: "모자", sentence: "I love this ___." },
+      { word: "glasses", meaning: "안경", sentence: "He wears ___." },
+      { word: "wear", meaning: "입다", sentence: "I will ___ this shirt." },
+      { word: "fit", meaning: "맞다", sentence: "These shoes ___ me." },
+      { word: "size", meaning: "크기", sentence: "What ___ are you?" },
+      { word: "style", meaning: "스타일", sentence: "Her ___ is unique." },
+      { word: "fashion", meaning: "패션", sentence: "She loves ___." },
+      { word: "clean", meaning: "깨끗한", sentence: "My shirt is ___." },
+      { word: "dirty", meaning: "더러운", sentence: "These pants are ___." },
+      { word: "fancy", meaning: "고급스러운", sentence: "It's a ___ dress." },
+      { word: "casual", meaning: "캐주얼한", sentence: "I prefer ___ clothes." },
+      { word: "uniform", meaning: "교복, 제복", sentence: "School ___ is required." }
+    ]}
+  },
+
+  jooha: {
+    1: { theme: "일상 동작", words: [
+      { word: "wake", meaning: "일어나다", sentence: "I ___ up at 7." },
+      { word: "wash", meaning: "씻다", sentence: "Please ___ your hands." },
+      { word: "eat", meaning: "먹다", sentence: "I ___ breakfast every day." },
+      { word: "drink", meaning: "마시다", sentence: "I ___ milk daily." },
+      { word: "brush", meaning: "닦다", sentence: "___ your teeth." },
+      { word: "walk", meaning: "걷다", sentence: "Let's ___ to school." },
+      { word: "run", meaning: "달리다", sentence: "I ___ in the park." },
+      { word: "sit", meaning: "앉다", sentence: "Please ___ down." },
+      { word: "stand", meaning: "서다", sentence: "Don't ___ here." },
+      { word: "sleep", meaning: "자다", sentence: "I ___ at 10 pm." },
+      { word: "read", meaning: "읽다", sentence: "I ___ books daily." },
+      { word: "write", meaning: "쓰다", sentence: "Please ___ your name." },
+      { word: "listen", meaning: "듣다", sentence: "Please ___ to me." },
+      { word: "watch", meaning: "보다", sentence: "Let's ___ TV." },
+      { word: "play", meaning: "놀다", sentence: "Let's ___ outside." },
+      { word: "study", meaning: "공부하다", sentence: "I ___ math today." },
+      { word: "help", meaning: "돕다", sentence: "Can you ___ me?" },
+      { word: "wait", meaning: "기다리다", sentence: "Please ___ here." },
+      { word: "open", meaning: "열다", sentence: "Please ___ the door." },
+      { word: "close", meaning: "닫다", sentence: "Please ___ the window." }
+    ]},
+    2: { theme: "학교 생활", words: [
+      { word: "school", meaning: "학교", sentence: "I go to ___ daily." },
+      { word: "teacher", meaning: "선생님", sentence: "My ___ is kind." },
+      { word: "student", meaning: "학생", sentence: "I am a ___." },
+      { word: "class", meaning: "수업", sentence: "Math ___ is fun." },
+      { word: "book", meaning: "책", sentence: "This ___ is great." },
+      { word: "pencil", meaning: "연필", sentence: "I need a ___." },
+      { word: "eraser", meaning: "지우개", sentence: "Use the ___." },
+      { word: "notebook", meaning: "공책", sentence: "Open your ___." },
+      { word: "desk", meaning: "책상", sentence: "Sit at your ___." },
+      { word: "chair", meaning: "의자", sentence: "This ___ is mine." },
+      { word: "lesson", meaning: "수업", sentence: "Today's ___ is easy." },
+      { word: "homework", meaning: "숙제", sentence: "I did my ___." },
+      { word: "test", meaning: "시험", sentence: "We have a ___." },
+      { word: "answer", meaning: "정답", sentence: "What's the ___?" },
+      { word: "question", meaning: "질문", sentence: "I have a ___." },
+      { word: "subject", meaning: "과목", sentence: "Art is my ___." },
+      { word: "math", meaning: "수학", sentence: "I love ___." },
+      { word: "science", meaning: "과학", sentence: "___ is interesting." },
+      { word: "history", meaning: "역사", sentence: "I study ___." },
+      { word: "music", meaning: "음악", sentence: "I enjoy ___ class." }
+    ]},
+    3: { theme: "가족", words: [
+      { word: "father", meaning: "아버지", sentence: "My ___ is tall." },
+      { word: "mother", meaning: "어머니", sentence: "My ___ is kind." },
+      { word: "brother", meaning: "형, 남동생", sentence: "I have one ___." },
+      { word: "sister", meaning: "누나, 여동생", sentence: "My ___ is cute." },
+      { word: "grandfather", meaning: "할아버지", sentence: "My ___ is old." },
+      { word: "grandmother", meaning: "할머니", sentence: "My ___ bakes well." },
+      { word: "uncle", meaning: "삼촌", sentence: "My ___ is funny." },
+      { word: "aunt", meaning: "이모", sentence: "My ___ visits us." },
+      { word: "cousin", meaning: "사촌", sentence: "My ___ is here." },
+      { word: "family", meaning: "가족", sentence: "I love my ___." },
+      { word: "baby", meaning: "아기", sentence: "The ___ is cute." },
+      { word: "kid", meaning: "아이", sentence: "Each ___ is special." },
+      { word: "boy", meaning: "남자아이", sentence: "That ___ is fast." },
+      { word: "girl", meaning: "여자아이", sentence: "That ___ is smart." },
+      { word: "man", meaning: "남자", sentence: "He is a kind ___." },
+      { word: "woman", meaning: "여자", sentence: "She is a brave ___." },
+      { word: "people", meaning: "사람들", sentence: "Many ___ are here." },
+      { word: "love", meaning: "사랑하다", sentence: "I ___ my parents." },
+      { word: "care", meaning: "돌보다", sentence: "Mom ___ for us." },
+      { word: "hug", meaning: "껴안다", sentence: "Give me a ___." }
+    ]},
+    4: { theme: "감정", words: [
+      { word: "happy", meaning: "행복한", sentence: "I am so ___." },
+      { word: "sad", meaning: "슬픈", sentence: "She looks ___." },
+      { word: "angry", meaning: "화난", sentence: "Don't be ___." },
+      { word: "tired", meaning: "피곤한", sentence: "I feel ___." },
+      { word: "excited", meaning: "신난", sentence: "I am ___ today." },
+      { word: "bored", meaning: "지루한", sentence: "I feel ___." },
+      { word: "scared", meaning: "무서워하는", sentence: "I am ___ of dogs." },
+      { word: "shy", meaning: "수줍은", sentence: "He is very ___." },
+      { word: "kind", meaning: "친절한", sentence: "She is ___ to all." },
+      { word: "nice", meaning: "좋은", sentence: "He is a ___ boy." },
+      { word: "smart", meaning: "똑똑한", sentence: "She is so ___." },
+      { word: "funny", meaning: "웃긴", sentence: "He is ___." },
+      { word: "lazy", meaning: "게으른", sentence: "Don't be ___." },
+      { word: "brave", meaning: "용감한", sentence: "She is very ___." },
+      { word: "proud", meaning: "자랑스러운", sentence: "I am ___ of you." },
+      { word: "love", meaning: "사랑", sentence: "I feel ___." },
+      { word: "smile", meaning: "웃다", sentence: "Please ___." },
+      { word: "cry", meaning: "울다", sentence: "Don't ___." },
+      { word: "laugh", meaning: "웃다", sentence: "We ___ together." },
+      { word: "feel", meaning: "느끼다", sentence: "How do you ___?" }
+    ]},
+    5: { theme: "음식", words: [
+      { word: "rice", meaning: "밥", sentence: "I eat ___ daily." },
+      { word: "bread", meaning: "빵", sentence: "I love ___." },
+      { word: "egg", meaning: "달걀", sentence: "I like ___." },
+      { word: "milk", meaning: "우유", sentence: "Drink your ___." },
+      { word: "water", meaning: "물", sentence: "I drink ___." },
+      { word: "juice", meaning: "주스", sentence: "I want ___." },
+      { word: "apple", meaning: "사과", sentence: "An ___ a day." },
+      { word: "banana", meaning: "바나나", sentence: "I eat a ___." },
+      { word: "orange", meaning: "오렌지", sentence: "An ___ is sweet." },
+      { word: "chicken", meaning: "닭고기", sentence: "I love ___." },
+      { word: "fish", meaning: "생선", sentence: "I eat ___ on Friday." },
+      { word: "soup", meaning: "수프", sentence: "Hot ___ is good." },
+      { word: "salad", meaning: "샐러드", sentence: "A ___ is healthy." },
+      { word: "cake", meaning: "케이크", sentence: "This ___ is sweet." },
+      { word: "cookie", meaning: "쿠키", sentence: "I want a ___." },
+      { word: "pizza", meaning: "피자", sentence: "Let's eat ___." },
+      { word: "hungry", meaning: "배고픈", sentence: "I am ___." },
+      { word: "thirsty", meaning: "목마른", sentence: "I am ___." },
+      { word: "tasty", meaning: "맛있는", sentence: "It's so ___." },
+      { word: "sweet", meaning: "달콤한", sentence: "Honey is ___." }
+    ]},
+    6: { theme: "동물", words: [
+      { word: "dog", meaning: "개", sentence: "My ___ is cute." },
+      { word: "cat", meaning: "고양이", sentence: "The ___ is small." },
+      { word: "bird", meaning: "새", sentence: "A ___ flies." },
+      { word: "fish", meaning: "물고기", sentence: "A ___ swims." },
+      { word: "rabbit", meaning: "토끼", sentence: "A ___ hops." },
+      { word: "horse", meaning: "말", sentence: "A ___ runs fast." },
+      { word: "cow", meaning: "소", sentence: "A ___ gives milk." },
+      { word: "pig", meaning: "돼지", sentence: "The ___ is pink." },
+      { word: "sheep", meaning: "양", sentence: "A ___ is fluffy." },
+      { word: "duck", meaning: "오리", sentence: "A ___ swims." },
+      { word: "tiger", meaning: "호랑이", sentence: "A ___ is wild." },
+      { word: "lion", meaning: "사자", sentence: "A ___ roars." },
+      { word: "elephant", meaning: "코끼리", sentence: "An ___ is big." },
+      { word: "monkey", meaning: "원숭이", sentence: "A ___ is funny." },
+      { word: "bear", meaning: "곰", sentence: "A ___ sleeps." },
+      { word: "snake", meaning: "뱀", sentence: "A ___ is long." },
+      { word: "frog", meaning: "개구리", sentence: "A ___ jumps." },
+      { word: "turtle", meaning: "거북이", sentence: "A ___ is slow." },
+      { word: "ant", meaning: "개미", sentence: "An ___ is tiny." },
+      { word: "butterfly", meaning: "나비", sentence: "A ___ is pretty." }
+    ]},
+    7: { theme: "색깔과 모양", words: [
+      { word: "red", meaning: "빨강", sentence: "An apple is ___." },
+      { word: "blue", meaning: "파랑", sentence: "The sky is ___." },
+      { word: "yellow", meaning: "노랑", sentence: "The sun is ___." },
+      { word: "green", meaning: "초록", sentence: "Grass is ___." },
+      { word: "black", meaning: "검정", sentence: "My cat is ___." },
+      { word: "white", meaning: "흰색", sentence: "Snow is ___." },
+      { word: "pink", meaning: "분홍", sentence: "I love ___." },
+      { word: "purple", meaning: "보라", sentence: "Grapes are ___." },
+      { word: "brown", meaning: "갈색", sentence: "Bears are ___." },
+      { word: "orange", meaning: "주황", sentence: "Carrots are ___." },
+      { word: "circle", meaning: "원", sentence: "Draw a ___." },
+      { word: "square", meaning: "정사각형", sentence: "It's a ___." },
+      { word: "triangle", meaning: "삼각형", sentence: "Cut a ___." },
+      { word: "star", meaning: "별", sentence: "I see a ___." },
+      { word: "heart", meaning: "하트", sentence: "Draw a ___." },
+      { word: "big", meaning: "큰", sentence: "It's a ___ dog." },
+      { word: "small", meaning: "작은", sentence: "It's a ___ cat." },
+      { word: "long", meaning: "긴", sentence: "It's a ___ road." },
+      { word: "short", meaning: "짧은", sentence: "It's a ___ stick." },
+      { word: "round", meaning: "둥근", sentence: "A ball is ___." }
+    ]},
+    8: { theme: "시간과 날씨", words: [
+      { word: "morning", meaning: "아침", sentence: "Good ___!" },
+      { word: "afternoon", meaning: "오후", sentence: "Good ___!" },
+      { word: "evening", meaning: "저녁", sentence: "Good ___!" },
+      { word: "night", meaning: "밤", sentence: "Good ___!" },
+      { word: "today", meaning: "오늘", sentence: "I am happy ___." },
+      { word: "yesterday", meaning: "어제", sentence: "I went home ___." },
+      { word: "tomorrow", meaning: "내일", sentence: "See you ___." },
+      { word: "day", meaning: "날", sentence: "Have a nice ___." },
+      { word: "week", meaning: "주", sentence: "I'll see you next ___." },
+      { word: "month", meaning: "달", sentence: "May is my ___." },
+      { word: "year", meaning: "년", sentence: "Happy New ___." },
+      { word: "hour", meaning: "시간", sentence: "It takes one ___." },
+      { word: "minute", meaning: "분", sentence: "Wait a ___." },
+      { word: "sunny", meaning: "맑은", sentence: "It is ___ today." },
+      { word: "rainy", meaning: "비 오는", sentence: "It's a ___ day." },
+      { word: "cloudy", meaning: "흐린", sentence: "It is ___." },
+      { word: "snowy", meaning: "눈 오는", sentence: "It's ___ outside." },
+      { word: "windy", meaning: "바람 부는", sentence: "It's a ___ day." },
+      { word: "hot", meaning: "더운", sentence: "Summer is ___." },
+      { word: "cold", meaning: "추운", sentence: "Winter is ___." }
+    ]},
+    9: { theme: "신체", words: [
+      { word: "head", meaning: "머리", sentence: "Touch your ___." },
+      { word: "face", meaning: "얼굴", sentence: "Wash your ___." },
+      { word: "eye", meaning: "눈", sentence: "I see with my ___." },
+      { word: "ear", meaning: "귀", sentence: "I hear with my ___." },
+      { word: "nose", meaning: "코", sentence: "Blow your ___." },
+      { word: "mouth", meaning: "입", sentence: "Open your ___." },
+      { word: "tooth", meaning: "이", sentence: "Brush your ___." },
+      { word: "hair", meaning: "머리카락", sentence: "Her ___ is long." },
+      { word: "neck", meaning: "목", sentence: "Stretch your ___." },
+      { word: "shoulder", meaning: "어깨", sentence: "Tap his ___." },
+      { word: "arm", meaning: "팔", sentence: "Stretch your ___." },
+      { word: "hand", meaning: "손", sentence: "Wash your ___." },
+      { word: "finger", meaning: "손가락", sentence: "Hold up one ___." },
+      { word: "leg", meaning: "다리", sentence: "I hurt my ___." },
+      { word: "foot", meaning: "발", sentence: "My ___ hurts." },
+      { word: "knee", meaning: "무릎", sentence: "Bend your ___." },
+      { word: "back", meaning: "등", sentence: "My ___ hurts." },
+      { word: "stomach", meaning: "배", sentence: "My ___ is full." },
+      { word: "heart", meaning: "심장", sentence: "My ___ beats fast." },
+      { word: "body", meaning: "몸", sentence: "Take care of your ___." }
+    ]},
+    10: { theme: "옷과 물건", words: [
+      { word: "shirt", meaning: "셔츠", sentence: "My ___ is blue." },
+      { word: "pants", meaning: "바지", sentence: "These ___ are new." },
+      { word: "dress", meaning: "원피스", sentence: "What a pretty ___." },
+      { word: "skirt", meaning: "치마", sentence: "Her ___ is pink." },
+      { word: "shoes", meaning: "신발", sentence: "These ___ are mine." },
+      { word: "socks", meaning: "양말", sentence: "Wear warm ___." },
+      { word: "hat", meaning: "모자", sentence: "I wear a ___." },
+      { word: "bag", meaning: "가방", sentence: "My ___ is heavy." },
+      { word: "watch", meaning: "시계", sentence: "Look at my ___." },
+      { word: "glasses", meaning: "안경", sentence: "I wear ___." },
+      { word: "cap", meaning: "모자", sentence: "He wears a ___." },
+      { word: "coat", meaning: "코트", sentence: "Put on your ___." },
+      { word: "scarf", meaning: "목도리", sentence: "Wear a warm ___." },
+      { word: "ring", meaning: "반지", sentence: "She has a ___." },
+      { word: "key", meaning: "열쇠", sentence: "Where is the ___?" },
+      { word: "wallet", meaning: "지갑", sentence: "My ___ is empty." },
+      { word: "phone", meaning: "전화기", sentence: "My ___ is new." },
+      { word: "umbrella", meaning: "우산", sentence: "Take an ___." },
+      { word: "toy", meaning: "장난감", sentence: "My ___ is broken." },
+      { word: "doll", meaning: "인형", sentence: "I love this ___." }
+    ]},
+    11: { theme: "장소", words: [
+      { word: "home", meaning: "집", sentence: "I'm going ___." },
+      { word: "house", meaning: "집", sentence: "My ___ is big." },
+      { word: "room", meaning: "방", sentence: "Clean your ___." },
+      { word: "kitchen", meaning: "부엌", sentence: "Mom is in the ___." },
+      { word: "bathroom", meaning: "화장실", sentence: "Where is the ___?" },
+      { word: "school", meaning: "학교", sentence: "I go to ___." },
+      { word: "park", meaning: "공원", sentence: "Let's go to the ___." },
+      { word: "store", meaning: "가게", sentence: "The ___ is open." },
+      { word: "shop", meaning: "상점", sentence: "Let's go ___." },
+      { word: "library", meaning: "도서관", sentence: "I read at the ___." },
+      { word: "hospital", meaning: "병원", sentence: "Mom works at a ___." },
+      { word: "bank", meaning: "은행", sentence: "The ___ is closed." },
+      { word: "post office", meaning: "우체국", sentence: "I go to the ___." },
+      { word: "zoo", meaning: "동물원", sentence: "Let's go to the ___." },
+      { word: "beach", meaning: "해변", sentence: "We play at the ___." },
+      { word: "city", meaning: "도시", sentence: "Seoul is a big ___." },
+      { word: "country", meaning: "나라", sentence: "Korea is my ___." },
+      { word: "street", meaning: "거리", sentence: "Cross the ___." },
+      { word: "road", meaning: "도로", sentence: "The ___ is long." },
+      { word: "bridge", meaning: "다리", sentence: "Cross the ___." }
+    ]},
+    12: { theme: "취미", words: [
+      { word: "hobby", meaning: "취미", sentence: "My ___ is reading." },
+      { word: "game", meaning: "게임", sentence: "Let's play a ___." },
+      { word: "movie", meaning: "영화", sentence: "Let's watch a ___." },
+      { word: "music", meaning: "음악", sentence: "I love ___." },
+      { word: "song", meaning: "노래", sentence: "Sing a ___." },
+      { word: "dance", meaning: "춤", sentence: "Let's ___." },
+      { word: "draw", meaning: "그리다", sentence: "I can ___." },
+      { word: "paint", meaning: "색칠하다", sentence: "Let's ___." },
+      { word: "read", meaning: "읽다", sentence: "I ___ books." },
+      { word: "write", meaning: "쓰다", sentence: "___ your name." },
+      { word: "sing", meaning: "노래하다", sentence: "She can ___." },
+      { word: "swim", meaning: "수영하다", sentence: "I ___ on Sundays." },
+      { word: "ride", meaning: "타다", sentence: "I ___ a bike." },
+      { word: "run", meaning: "달리다", sentence: "Let's ___." },
+      { word: "walk", meaning: "걷다", sentence: "Let's ___ home." },
+      { word: "jump", meaning: "뛰다", sentence: "I can ___ high." },
+      { word: "climb", meaning: "오르다", sentence: "Cats ___ trees." },
+      { word: "fish", meaning: "낚시하다", sentence: "Let's go ___." },
+      { word: "camp", meaning: "캠핑하다", sentence: "We ___ in summer." },
+      { word: "fun", meaning: "재미있는", sentence: "It was so ___." }
+    ]},
+    13: { theme: "자연", words: [
+      { word: "tree", meaning: "나무", sentence: "A bird sits on the ___." },
+      { word: "flower", meaning: "꽃", sentence: "The ___ is pretty." },
+      { word: "grass", meaning: "잔디", sentence: "Don't step on the ___." },
+      { word: "leaf", meaning: "잎", sentence: "A ___ fell." },
+      { word: "sun", meaning: "해", sentence: "The ___ is bright." },
+      { word: "moon", meaning: "달", sentence: "The ___ is full." },
+      { word: "star", meaning: "별", sentence: "Look at the ___." },
+      { word: "sky", meaning: "하늘", sentence: "The ___ is blue." },
+      { word: "cloud", meaning: "구름", sentence: "A ___ is white." },
+      { word: "wind", meaning: "바람", sentence: "The ___ is cold." },
+      { word: "rain", meaning: "비", sentence: "The ___ is heavy." },
+      { word: "snow", meaning: "눈", sentence: "The ___ is white." },
+      { word: "river", meaning: "강", sentence: "The ___ is wide." },
+      { word: "sea", meaning: "바다", sentence: "The ___ is deep." },
+      { word: "lake", meaning: "호수", sentence: "The ___ is calm." },
+      { word: "mountain", meaning: "산", sentence: "Climb the ___." },
+      { word: "rock", meaning: "바위", sentence: "Sit on the ___." },
+      { word: "stone", meaning: "돌", sentence: "Throw the ___." },
+      { word: "sand", meaning: "모래", sentence: "Play with ___." },
+      { word: "earth", meaning: "지구", sentence: "We live on ___." }
+    ]}
+  }
+};
+
+// 주혁 14~25일 / 주하 14~25일 (이어서)
+const WORDS_PART2 = {
+  juhyuk_14_25: {
+    14: { theme: "쇼핑과 돈", words: [
+      { word: "buy", meaning: "사다", sentence: "I will ___ a book." },
+      { word: "sell", meaning: "팔다", sentence: "They ___ flowers here." },
+      { word: "money", meaning: "돈", sentence: "I have some ___." },
+      { word: "price", meaning: "가격", sentence: "The ___ is high." },
+      { word: "expensive", meaning: "비싼", sentence: "This bag is ___." },
+      { word: "cheap", meaning: "싼", sentence: "The shirt is ___." },
+      { word: "shop", meaning: "쇼핑하다", sentence: "Let's ___ together." },
+      { word: "store", meaning: "가게", sentence: "The ___ is busy." },
+      { word: "market", meaning: "시장", sentence: "We went to the ___." },
+      { word: "mall", meaning: "쇼핑몰", sentence: "Meet me at the ___." },
+      { word: "discount", meaning: "할인", sentence: "Get a ___ here." },
+      { word: "free", meaning: "무료의", sentence: "This sample is ___." },
+      { word: "pay", meaning: "지불하다", sentence: "I will ___ in cash." },
+      { word: "cash", meaning: "현금", sentence: "I have no ___." },
+      { word: "card", meaning: "카드", sentence: "Use your ___." },
+      { word: "spend", meaning: "쓰다, 소비하다", sentence: "Don't ___ too much." },
+      { word: "save", meaning: "저축하다", sentence: "I ___ my money." },
+      { word: "afford", meaning: "여유가 되다", sentence: "I can ___ this." },
+      { word: "earn", meaning: "벌다", sentence: "She ___ a salary." },
+      { word: "wallet", meaning: "지갑", sentence: "My ___ is empty." }
+    ]},
+    15: { theme: "집과 가구", words: [
+      { word: "house", meaning: "집", sentence: "Our ___ is large." },
+      { word: "room", meaning: "방", sentence: "My ___ is small." },
+      { word: "kitchen", meaning: "부엌", sentence: "Mom cooks in the ___." },
+      { word: "bedroom", meaning: "침실", sentence: "Clean your ___." },
+      { word: "bathroom", meaning: "욕실", sentence: "The ___ is clean." },
+      { word: "living room", meaning: "거실", sentence: "We watch TV in the ___." },
+      { word: "garden", meaning: "정원", sentence: "Our ___ has flowers." },
+      { word: "window", meaning: "창문", sentence: "Open the ___." },
+      { word: "door", meaning: "문", sentence: "Close the ___." },
+      { word: "wall", meaning: "벽", sentence: "Hang it on the ___." },
+      { word: "floor", meaning: "바닥", sentence: "Sit on the ___." },
+      { word: "ceiling", meaning: "천장", sentence: "Look at the ___." },
+      { word: "table", meaning: "탁자", sentence: "Set the ___." },
+      { word: "chair", meaning: "의자", sentence: "Have a ___." },
+      { word: "bed", meaning: "침대", sentence: "Make your ___." },
+      { word: "sofa", meaning: "소파", sentence: "Sit on the ___." },
+      { word: "lamp", meaning: "전등", sentence: "Turn on the ___." },
+      { word: "mirror", meaning: "거울", sentence: "Look in the ___." },
+      { word: "clock", meaning: "시계", sentence: "The ___ shows 3." },
+      { word: "furniture", meaning: "가구", sentence: "New ___ is nice." }
+    ]},
+    16: { theme: "도시와 교통", words: [
+      { word: "street", meaning: "거리", sentence: "The ___ is busy." },
+      { word: "road", meaning: "도로", sentence: "Cross the ___ safely." },
+      { word: "bridge", meaning: "다리", sentence: "Walk over the ___." },
+      { word: "building", meaning: "건물", sentence: "That ___ is tall." },
+      { word: "tower", meaning: "탑", sentence: "Climb the ___." },
+      { word: "park", meaning: "공원", sentence: "Let's go to the ___." },
+      { word: "library", meaning: "도서관", sentence: "Be quiet in the ___." },
+      { word: "bus", meaning: "버스", sentence: "Take the ___." },
+      { word: "train", meaning: "기차", sentence: "The ___ is fast." },
+      { word: "subway", meaning: "지하철", sentence: "Use the ___." },
+      { word: "taxi", meaning: "택시", sentence: "Call a ___." },
+      { word: "bicycle", meaning: "자전거", sentence: "I ride my ___." },
+      { word: "car", meaning: "자동차", sentence: "Dad's ___ is white." },
+      { word: "drive", meaning: "운전하다", sentence: "Mom can ___." },
+      { word: "ride", meaning: "타다", sentence: "I ___ the bus daily." },
+      { word: "stop", meaning: "멈추다", sentence: "Please ___ here." },
+      { word: "cross", meaning: "건너다", sentence: "___ at the light." },
+      { word: "follow", meaning: "따라가다", sentence: "Please ___ me." },
+      { word: "arrive", meaning: "도착하다", sentence: "We ___ at noon." },
+      { word: "depart", meaning: "출발하다", sentence: "The bus will ___." }
+    ]},
+    17: { theme: "예술과 문화", words: [
+      { word: "art", meaning: "예술", sentence: "I love modern ___." },
+      { word: "music", meaning: "음악", sentence: "She plays ___ daily." },
+      { word: "song", meaning: "노래", sentence: "This ___ is great." },
+      { word: "dance", meaning: "춤", sentence: "She loves to ___." },
+      { word: "movie", meaning: "영화", sentence: "Let's watch a ___." },
+      { word: "drama", meaning: "드라마", sentence: "I love this ___." },
+      { word: "actor", meaning: "배우", sentence: "He is a famous ___." },
+      { word: "musician", meaning: "음악가", sentence: "She is a top ___." },
+      { word: "instrument", meaning: "악기", sentence: "Piano is my ___." },
+      { word: "concert", meaning: "공연", sentence: "The ___ was great." },
+      { word: "theater", meaning: "극장", sentence: "Meet at the ___." },
+      { word: "museum", meaning: "박물관", sentence: "The ___ is open." },
+      { word: "gallery", meaning: "미술관", sentence: "Visit the ___." },
+      { word: "painting", meaning: "그림", sentence: "This ___ is famous." },
+      { word: "photograph", meaning: "사진", sentence: "Take a ___ here." },
+      { word: "culture", meaning: "문화", sentence: "Korean ___ is rich." },
+      { word: "tradition", meaning: "전통", sentence: "It's our ___." },
+      { word: "perform", meaning: "공연하다", sentence: "She will ___ tonight." },
+      { word: "audience", meaning: "관객", sentence: "The ___ clapped." },
+      { word: "stage", meaning: "무대", sentence: "She is on the ___." }
+    ]},
+    18: { theme: "과학과 발견", words: [
+      { word: "science", meaning: "과학", sentence: "I love ___ class." },
+      { word: "scientist", meaning: "과학자", sentence: "She is a great ___." },
+      { word: "experiment", meaning: "실험", sentence: "Do the ___ carefully." },
+      { word: "research", meaning: "연구", sentence: "His ___ is important." },
+      { word: "discover", meaning: "발견하다", sentence: "They ___ a new star." },
+      { word: "invent", meaning: "발명하다", sentence: "Edison ___ the bulb." },
+      { word: "theory", meaning: "이론", sentence: "His ___ is correct." },
+      { word: "fact", meaning: "사실", sentence: "It's a clear ___." },
+      { word: "data", meaning: "자료", sentence: "Collect more ___." },
+      { word: "result", meaning: "결과", sentence: "Check the ___." },
+      { word: "study", meaning: "연구하다", sentence: "She will ___ stars." },
+      { word: "observe", meaning: "관찰하다", sentence: "___ the plant daily." },
+      { word: "measure", meaning: "측정하다", sentence: "Let's ___ the room." },
+      { word: "compare", meaning: "비교하다", sentence: "___ the two." },
+      { word: "explain", meaning: "설명하다", sentence: "Can you ___ this?" },
+      { word: "prove", meaning: "증명하다", sentence: "She will ___ it." },
+      { word: "matter", meaning: "물질", sentence: "All ___ has mass." },
+      { word: "energy", meaning: "에너지", sentence: "Solar ___ is clean." },
+      { word: "space", meaning: "우주", sentence: "I love ___ travel." },
+      { word: "universe", meaning: "우주", sentence: "The ___ is huge." }
+    ]},
+    19: { theme: "역사와 시간", words: [
+      { word: "history", meaning: "역사", sentence: "Korea has long ___." },
+      { word: "past", meaning: "과거", sentence: "Forget the ___." },
+      { word: "present", meaning: "현재", sentence: "Live in the ___." },
+      { word: "future", meaning: "미래", sentence: "Plan your ___." },
+      { word: "ancient", meaning: "고대의", sentence: "Visit ___ ruins." },
+      { word: "modern", meaning: "현대의", sentence: "I love ___ art." },
+      { word: "century", meaning: "세기", sentence: "The 21st ___." },
+      { word: "decade", meaning: "10년", sentence: "It's been a ___." },
+      { word: "moment", meaning: "순간", sentence: "Wait a ___." },
+      { word: "period", meaning: "기간", sentence: "A long ___ passed." },
+      { word: "begin", meaning: "시작하다", sentence: "Class will ___." },
+      { word: "end", meaning: "끝나다", sentence: "The show will ___." },
+      { word: "continue", meaning: "계속하다", sentence: "Please ___ reading." },
+      { word: "change", meaning: "바꾸다", sentence: "Things ___ over time." },
+      { word: "develop", meaning: "발전하다", sentence: "Cities ___ fast." },
+      { word: "war", meaning: "전쟁", sentence: "___ is terrible." },
+      { word: "peace", meaning: "평화", sentence: "We want ___." },
+      { word: "king", meaning: "왕", sentence: "He was a great ___." },
+      { word: "queen", meaning: "여왕", sentence: "She is the ___." },
+      { word: "hero", meaning: "영웅", sentence: "He is my ___." }
+    ]},
+    20: { theme: "도전과 성공", words: [
+      { word: "try", meaning: "노력하다", sentence: "Just ___ your best." },
+      { word: "goal", meaning: "목표", sentence: "Reach your ___." },
+      { word: "dream", meaning: "꿈", sentence: "Follow your ___." },
+      { word: "hope", meaning: "희망", sentence: "Don't lose ___." },
+      { word: "wish", meaning: "소망하다", sentence: "I ___ for peace." },
+      { word: "plan", meaning: "계획", sentence: "Make a good ___." },
+      { word: "challenge", meaning: "도전", sentence: "Accept the ___." },
+      { word: "effort", meaning: "노력", sentence: "Make an ___." },
+      { word: "success", meaning: "성공", sentence: "Hard work brings ___." },
+      { word: "fail", meaning: "실패하다", sentence: "Don't be afraid to ___." },
+      { word: "win", meaning: "이기다", sentence: "We will ___ today." },
+      { word: "lose", meaning: "지다", sentence: "We didn't ___." },
+      { word: "brave", meaning: "용감한", sentence: "She is ___." },
+      { word: "strong", meaning: "강한", sentence: "Be ___ today." },
+      { word: "weak", meaning: "약한", sentence: "I feel ___." },
+      { word: "achieve", meaning: "성취하다", sentence: "I ___ my goal." },
+      { word: "overcome", meaning: "극복하다", sentence: "I will ___ this." },
+      { word: "improve", meaning: "향상시키다", sentence: "Try to ___ daily." },
+      { word: "progress", meaning: "진전", sentence: "Show your ___." },
+      { word: "victory", meaning: "승리", sentence: "Sweet ___ at last!" }
+    ]},
+    21: { theme: "친구와 우정", words: [
+      { word: "friend", meaning: "친구", sentence: "She is my best ___." },
+      { word: "friendship", meaning: "우정", sentence: "Our ___ is strong." },
+      { word: "best", meaning: "최고의", sentence: "She is my ___ friend." },
+      { word: "close", meaning: "친한", sentence: "We are ___ friends." },
+      { word: "trust", meaning: "신뢰하다", sentence: "I ___ my friends." },
+      { word: "honest", meaning: "정직한", sentence: "Be ___ with me." },
+      { word: "lie", meaning: "거짓말하다", sentence: "Don't ___ to me." },
+      { word: "secret", meaning: "비밀", sentence: "Keep this ___." },
+      { word: "promise", meaning: "약속하다", sentence: "I ___ to come." },
+      { word: "share", meaning: "공유하다", sentence: "We ___ everything." },
+      { word: "help", meaning: "돕다", sentence: "Friends ___ each other." },
+      { word: "care", meaning: "걱정하다", sentence: "I ___ about you." },
+      { word: "miss", meaning: "그리워하다", sentence: "I ___ you so much." },
+      { word: "forgive", meaning: "용서하다", sentence: "Please ___ me." },
+      { word: "fight", meaning: "싸우다", sentence: "Don't ___ with me." },
+      { word: "apologize", meaning: "사과하다", sentence: "I ___ for that." },
+      { word: "advice", meaning: "조언", sentence: "I need your ___." },
+      { word: "support", meaning: "지지하다", sentence: "I ___ your idea." },
+      { word: "loyal", meaning: "충실한", sentence: "He is ___ to her." },
+      { word: "together", meaning: "함께", sentence: "We work ___." }
+    ]},
+    22: { theme: "마음과 생각", words: [
+      { word: "think", meaning: "생각하다", sentence: "Let me ___ about it." },
+      { word: "idea", meaning: "생각", sentence: "Good ___." },
+      { word: "mind", meaning: "마음", sentence: "Speak your ___." },
+      { word: "memory", meaning: "기억", sentence: "Sweet ___." },
+      { word: "forget", meaning: "잊다", sentence: "Don't ___ this." },
+      { word: "imagine", meaning: "상상하다", sentence: "___ a perfect day." },
+      { word: "dream", meaning: "꿈꾸다", sentence: "I ___ of being a hero." },
+      { word: "decide", meaning: "결정하다", sentence: "I will ___ today." },
+      { word: "choose", meaning: "선택하다", sentence: "Please ___ one." },
+      { word: "wonder", meaning: "궁금해하다", sentence: "I ___ why." },
+      { word: "doubt", meaning: "의심하다", sentence: "Don't ___ yourself." },
+      { word: "agree", meaning: "동의하다", sentence: "I ___ with you." },
+      { word: "disagree", meaning: "동의하지 않다", sentence: "I ___ politely." },
+      { word: "opinion", meaning: "의견", sentence: "Share your ___." },
+      { word: "thought", meaning: "생각", sentence: "Deep ___ matters." },
+      { word: "consider", meaning: "고려하다", sentence: "Please ___ this." },
+      { word: "realize", meaning: "깨닫다", sentence: "I now ___ it." },
+      { word: "understand", meaning: "이해하다", sentence: "I ___ now." },
+      { word: "wise", meaning: "지혜로운", sentence: "She is very ___." },
+      { word: "clever", meaning: "영리한", sentence: "He is ___." }
+    ]},
+    23: { theme: "환경과 지구", words: [
+      { word: "earth", meaning: "지구", sentence: "Save the ___." },
+      { word: "planet", meaning: "행성", sentence: "Our ___ is unique." },
+      { word: "nature", meaning: "자연", sentence: "I love ___." },
+      { word: "environment", meaning: "환경", sentence: "Protect the ___." },
+      { word: "pollution", meaning: "오염", sentence: "Stop air ___." },
+      { word: "recycle", meaning: "재활용하다", sentence: "Always ___ paper." },
+      { word: "reuse", meaning: "재사용하다", sentence: "Try to ___ bags." },
+      { word: "reduce", meaning: "줄이다", sentence: "___ plastic use." },
+      { word: "waste", meaning: "쓰레기", sentence: "Less ___ is better." },
+      { word: "trash", meaning: "쓰레기", sentence: "Throw the ___." },
+      { word: "clean", meaning: "깨끗한", sentence: "Keep it ___." },
+      { word: "dirty", meaning: "더러운", sentence: "The river is ___." },
+      { word: "fresh", meaning: "신선한", sentence: "I love ___ air." },
+      { word: "natural", meaning: "자연의", sentence: "Use ___ products." },
+      { word: "global", meaning: "지구의", sentence: "It's a ___ issue." },
+      { word: "warming", meaning: "온난화", sentence: "Stop global ___." },
+      { word: "forest", meaning: "숲", sentence: "Save the ___." },
+      { word: "wildlife", meaning: "야생동물", sentence: "Protect ___." },
+      { word: "endangered", meaning: "멸종 위기의", sentence: "Pandas are ___." },
+      { word: "extinct", meaning: "멸종한", sentence: "Dinosaurs are ___." }
+    ]},
+    24: { theme: "건강한 생활", words: [
+      { word: "exercise", meaning: "운동하다", sentence: "I ___ daily." },
+      { word: "healthy", meaning: "건강한", sentence: "Eat ___ food." },
+      { word: "habit", meaning: "습관", sentence: "Build good ___." },
+      { word: "regular", meaning: "규칙적인", sentence: "Have ___ meals." },
+      { word: "balance", meaning: "균형", sentence: "Find a ___." },
+      { word: "rest", meaning: "휴식", sentence: "Take a ___." },
+      { word: "stretch", meaning: "스트레칭하다", sentence: "Let's ___ now." },
+      { word: "fresh", meaning: "신선한", sentence: "Eat ___ fruit." },
+      { word: "vitamin", meaning: "비타민", sentence: "Take your ___." },
+      { word: "nutrition", meaning: "영양", sentence: "Good ___ matters." },
+      { word: "stress", meaning: "스트레스", sentence: "Avoid too much ___." },
+      { word: "relax", meaning: "쉬다", sentence: "Just ___ today." },
+      { word: "calm", meaning: "차분한", sentence: "Stay ___." },
+      { word: "energy", meaning: "활력", sentence: "I have lots of ___." },
+      { word: "active", meaning: "활동적인", sentence: "Stay ___." },
+      { word: "hygiene", meaning: "위생", sentence: "Good ___ is key." },
+      { word: "wash", meaning: "씻다", sentence: "___ your hands." },
+      { word: "shower", meaning: "샤워하다", sentence: "Take a ___." },
+      { word: "fitness", meaning: "건강", sentence: "My ___ is improving." },
+      { word: "wellness", meaning: "웰빙", sentence: "Focus on ___." }
+    ]},
+    25: { theme: "중요 동사 모음", words: [
+      { word: "make", meaning: "만들다", sentence: "I will ___ a cake." },
+      { word: "take", meaning: "가져가다", sentence: "Please ___ this." },
+      { word: "give", meaning: "주다", sentence: "Please ___ me a hand." },
+      { word: "get", meaning: "받다", sentence: "I will ___ a gift." },
+      { word: "have", meaning: "가지다", sentence: "I ___ a bike." },
+      { word: "find", meaning: "찾다", sentence: "I can't ___ it." },
+      { word: "lose", meaning: "잃다", sentence: "Don't ___ your key." },
+      { word: "keep", meaning: "유지하다", sentence: "___ trying!" },
+      { word: "leave", meaning: "떠나다", sentence: "I will ___ now." },
+      { word: "stay", meaning: "머물다", sentence: "Please ___ here." },
+      { word: "bring", meaning: "가져오다", sentence: "___ your book." },
+      { word: "send", meaning: "보내다", sentence: "I will ___ a letter." },
+      { word: "receive", meaning: "받다", sentence: "I ___ a gift." },
+      { word: "begin", meaning: "시작하다", sentence: "Class will ___." },
+      { word: "finish", meaning: "끝내다", sentence: "Please ___ it now." },
+      { word: "start", meaning: "시작하다", sentence: "Let's ___ now." },
+      { word: "end", meaning: "끝나다", sentence: "It will ___ soon." },
+      { word: "build", meaning: "짓다", sentence: "Let's ___ a house." },
+      { word: "break", meaning: "부수다", sentence: "Don't ___ it." },
+      { word: "fix", meaning: "고치다", sentence: "Can you ___ this?" }
+    ]}
+  },
+  jooha_14_25: {
+    14: { theme: "교통과 이동", words: [
+      { word: "car", meaning: "자동차", sentence: "My dad has a ___." },
+      { word: "bus", meaning: "버스", sentence: "Take the ___." },
+      { word: "train", meaning: "기차", sentence: "The ___ is fast." },
+      { word: "subway", meaning: "지하철", sentence: "Use the ___." },
+      { word: "taxi", meaning: "택시", sentence: "Call a ___." },
+      { word: "bike", meaning: "자전거", sentence: "I ride my ___." },
+      { word: "boat", meaning: "배", sentence: "The ___ is small." },
+      { word: "ship", meaning: "선박", sentence: "A big ___." },
+      { word: "plane", meaning: "비행기", sentence: "The ___ is high." },
+      { word: "truck", meaning: "트럭", sentence: "A big ___." },
+      { word: "go", meaning: "가다", sentence: "Let's ___." },
+      { word: "come", meaning: "오다", sentence: "Please ___ here." },
+      { word: "stop", meaning: "멈추다", sentence: "Please ___." },
+      { word: "ride", meaning: "타다", sentence: "I ___ the bus." },
+      { word: "drive", meaning: "운전하다", sentence: "Mom can ___." },
+      { word: "fast", meaning: "빠른", sentence: "He runs ___." },
+      { word: "slow", meaning: "느린", sentence: "It is ___." },
+      { word: "near", meaning: "가까운", sentence: "It's ___ here." },
+      { word: "far", meaning: "먼", sentence: "It's ___ away." },
+      { word: "way", meaning: "길", sentence: "I know the ___." }
+    ]},
+    15: { theme: "숫자와 시간", words: [
+      { word: "one", meaning: "하나", sentence: "I have ___ apple." },
+      { word: "two", meaning: "둘", sentence: "I have ___ books." },
+      { word: "three", meaning: "셋", sentence: "I have ___ pencils." },
+      { word: "four", meaning: "넷", sentence: "There are ___ cats." },
+      { word: "five", meaning: "다섯", sentence: "I have ___ fingers." },
+      { word: "ten", meaning: "열", sentence: "Count to ___." },
+      { word: "twenty", meaning: "스물", sentence: "I am ___." },
+      { word: "hundred", meaning: "백", sentence: "One ___ won." },
+      { word: "first", meaning: "첫째", sentence: "I am the ___." },
+      { word: "second", meaning: "둘째", sentence: "I came ___." },
+      { word: "last", meaning: "마지막", sentence: "It's the ___ one." },
+      { word: "next", meaning: "다음", sentence: "See you ___ time." },
+      { word: "now", meaning: "지금", sentence: "Come here ___." },
+      { word: "early", meaning: "일찍", sentence: "I wake up ___." },
+      { word: "late", meaning: "늦은", sentence: "Don't be ___." },
+      { word: "soon", meaning: "곧", sentence: "I will come ___." },
+      { word: "before", meaning: "전에", sentence: "Eat ___ school." },
+      { word: "after", meaning: "후에", sentence: "Go ___ class." },
+      { word: "again", meaning: "다시", sentence: "Try ___." },
+      { word: "always", meaning: "항상", sentence: "I ___ smile." }
+    ]},
+    16: { theme: "방향과 위치", words: [
+      { word: "up", meaning: "위로", sentence: "Look ___." },
+      { word: "down", meaning: "아래로", sentence: "Sit ___." },
+      { word: "left", meaning: "왼쪽", sentence: "Turn ___." },
+      { word: "right", meaning: "오른쪽", sentence: "Turn ___." },
+      { word: "front", meaning: "앞", sentence: "I am in ___." },
+      { word: "back", meaning: "뒤", sentence: "Stay in the ___." },
+      { word: "north", meaning: "북쪽", sentence: "Go ___." },
+      { word: "south", meaning: "남쪽", sentence: "It's in the ___." },
+      { word: "east", meaning: "동쪽", sentence: "The sun rises in the ___." },
+      { word: "west", meaning: "서쪽", sentence: "The sun sets in the ___." },
+      { word: "here", meaning: "여기", sentence: "Come ___." },
+      { word: "there", meaning: "거기", sentence: "Look ___." },
+      { word: "inside", meaning: "안에", sentence: "Stay ___." },
+      { word: "outside", meaning: "밖에", sentence: "Play ___." },
+      { word: "above", meaning: "위에", sentence: "Look ___." },
+      { word: "below", meaning: "아래에", sentence: "Sign ___." },
+      { word: "near", meaning: "가까이", sentence: "Stay ___ me." },
+      { word: "far", meaning: "멀리", sentence: "Don't go ___." },
+      { word: "between", meaning: "사이에", sentence: "Sit ___ us." },
+      { word: "next to", meaning: "옆에", sentence: "Sit ___ me." }
+    ]},
+    17: { theme: "직업", words: [
+      { word: "doctor", meaning: "의사", sentence: "The ___ is kind." },
+      { word: "nurse", meaning: "간호사", sentence: "The ___ helps." },
+      { word: "teacher", meaning: "선생님", sentence: "My ___ is fun." },
+      { word: "police", meaning: "경찰", sentence: "Call the ___." },
+      { word: "firefighter", meaning: "소방관", sentence: "A brave ___." },
+      { word: "farmer", meaning: "농부", sentence: "The ___ works hard." },
+      { word: "cook", meaning: "요리사", sentence: "He is a ___." },
+      { word: "driver", meaning: "운전사", sentence: "The bus ___." },
+      { word: "singer", meaning: "가수", sentence: "She is a ___." },
+      { word: "dancer", meaning: "댄서", sentence: "She is a great ___." },
+      { word: "actor", meaning: "배우", sentence: "He is a famous ___." },
+      { word: "writer", meaning: "작가", sentence: "He is a ___." },
+      { word: "artist", meaning: "예술가", sentence: "She is an ___." },
+      { word: "scientist", meaning: "과학자", sentence: "A ___ studies." },
+      { word: "pilot", meaning: "조종사", sentence: "The ___ flies planes." },
+      { word: "vet", meaning: "수의사", sentence: "Take the cat to a ___." },
+      { word: "baker", meaning: "제빵사", sentence: "The ___ makes bread." },
+      { word: "dentist", meaning: "치과의사", sentence: "Visit the ___." },
+      { word: "job", meaning: "직업", sentence: "What is your ___?" },
+      { word: "work", meaning: "일하다", sentence: "Dad will ___." }
+    ]},
+    18: { theme: "몸의 활동", words: [
+      { word: "see", meaning: "보다", sentence: "I ___ a bird." },
+      { word: "look", meaning: "보다", sentence: "Please ___ here." },
+      { word: "hear", meaning: "듣다", sentence: "I ___ music." },
+      { word: "smell", meaning: "냄새 맡다", sentence: "I ___ flowers." },
+      { word: "touch", meaning: "만지다", sentence: "Don't ___ it." },
+      { word: "speak", meaning: "말하다", sentence: "Please ___ slowly." },
+      { word: "talk", meaning: "이야기하다", sentence: "Let's ___." },
+      { word: "say", meaning: "말하다", sentence: "What did you ___?" },
+      { word: "tell", meaning: "말하다", sentence: "___ me a story." },
+      { word: "shout", meaning: "소리치다", sentence: "Don't ___." },
+      { word: "whisper", meaning: "속삭이다", sentence: "She will ___." },
+      { word: "smile", meaning: "미소짓다", sentence: "Please ___." },
+      { word: "laugh", meaning: "웃다", sentence: "We ___ together." },
+      { word: "cry", meaning: "울다", sentence: "Don't ___." },
+      { word: "kiss", meaning: "키스하다", sentence: "Mom gave a ___." },
+      { word: "hug", meaning: "껴안다", sentence: "Give me a ___." },
+      { word: "wave", meaning: "손을 흔들다", sentence: "Please ___ goodbye." },
+      { word: "point", meaning: "가리키다", sentence: "Don't ___." },
+      { word: "catch", meaning: "잡다", sentence: "___ the ball." },
+      { word: "throw", meaning: "던지다", sentence: "___ it to me." }
+    ]},
+    19: { theme: "도구와 물건", words: [
+      { word: "pen", meaning: "펜", sentence: "Use this ___." },
+      { word: "pencil", meaning: "연필", sentence: "Sharpen the ___." },
+      { word: "paper", meaning: "종이", sentence: "Write on ___." },
+      { word: "book", meaning: "책", sentence: "Open the ___." },
+      { word: "ruler", meaning: "자", sentence: "Use a ___." },
+      { word: "scissors", meaning: "가위", sentence: "Use the ___." },
+      { word: "tape", meaning: "테이프", sentence: "Pass the ___." },
+      { word: "glue", meaning: "풀", sentence: "Use ___." },
+      { word: "box", meaning: "상자", sentence: "Open the ___." },
+      { word: "bag", meaning: "가방", sentence: "Carry your ___." },
+      { word: "bottle", meaning: "병", sentence: "A water ___." },
+      { word: "cup", meaning: "컵", sentence: "Use this ___." },
+      { word: "plate", meaning: "접시", sentence: "A clean ___." },
+      { word: "spoon", meaning: "숟가락", sentence: "Use a ___." },
+      { word: "fork", meaning: "포크", sentence: "Pass the ___." },
+      { word: "knife", meaning: "칼", sentence: "Be careful with the ___." },
+      { word: "key", meaning: "열쇠", sentence: "Where is the ___?" },
+      { word: "lock", meaning: "자물쇠", sentence: "Open the ___." },
+      { word: "tool", meaning: "도구", sentence: "Use the right ___." },
+      { word: "thing", meaning: "물건", sentence: "What is this ___?" }
+    ]},
+    20: { theme: "스포츠와 게임", words: [
+      { word: "soccer", meaning: "축구", sentence: "I play ___." },
+      { word: "baseball", meaning: "야구", sentence: "He plays ___." },
+      { word: "basketball", meaning: "농구", sentence: "She plays ___." },
+      { word: "tennis", meaning: "테니스", sentence: "Let's play ___." },
+      { word: "badminton", meaning: "배드민턴", sentence: "I love ___." },
+      { word: "ball", meaning: "공", sentence: "Pass the ___." },
+      { word: "team", meaning: "팀", sentence: "Our ___ is great." },
+      { word: "game", meaning: "경기", sentence: "We won the ___." },
+      { word: "win", meaning: "이기다", sentence: "We will ___." },
+      { word: "lose", meaning: "지다", sentence: "Don't ___." },
+      { word: "score", meaning: "점수", sentence: "What's the ___?" },
+      { word: "kick", meaning: "차다", sentence: "___ the ball." },
+      { word: "hit", meaning: "치다", sentence: "___ the ball hard." },
+      { word: "pass", meaning: "패스하다", sentence: "Please ___." },
+      { word: "run", meaning: "달리다", sentence: "Let's ___." },
+      { word: "race", meaning: "경주", sentence: "Win the ___." },
+      { word: "fast", meaning: "빠른", sentence: "He is ___." },
+      { word: "strong", meaning: "강한", sentence: "Be ___." },
+      { word: "play", meaning: "놀다, 경기하다", sentence: "Let's ___." },
+      { word: "champion", meaning: "챔피언", sentence: "She is the ___." }
+    ]},
+    21: { theme: "특별한 날", words: [
+      { word: "birthday", meaning: "생일", sentence: "Happy ___!" },
+      { word: "party", meaning: "파티", sentence: "It's a fun ___." },
+      { word: "gift", meaning: "선물", sentence: "Open the ___." },
+      { word: "card", meaning: "카드", sentence: "Send a ___." },
+      { word: "candle", meaning: "양초", sentence: "Light the ___." },
+      { word: "cake", meaning: "케이크", sentence: "Eat the ___." },
+      { word: "balloon", meaning: "풍선", sentence: "Hold the ___." },
+      { word: "Christmas", meaning: "크리스마스", sentence: "Merry ___!" },
+      { word: "holiday", meaning: "휴일", sentence: "Today is a ___." },
+      { word: "celebrate", meaning: "축하하다", sentence: "Let's ___!" },
+      { word: "happy", meaning: "행복한", sentence: "I am ___." },
+      { word: "thank", meaning: "감사하다", sentence: "___ you." },
+      { word: "welcome", meaning: "환영하다", sentence: "You're ___." },
+      { word: "sorry", meaning: "미안한", sentence: "I'm ___." },
+      { word: "please", meaning: "부디", sentence: "___ help me." },
+      { word: "wish", meaning: "소원", sentence: "Make a ___." },
+      { word: "surprise", meaning: "놀람", sentence: "What a ___!" },
+      { word: "lucky", meaning: "운이 좋은", sentence: "I am ___." },
+      { word: "dream", meaning: "꿈", sentence: "I had a ___." },
+      { word: "fun", meaning: "재미있는", sentence: "It was ___." }
+    ]},
+    22: { theme: "행동과 동작", words: [
+      { word: "go", meaning: "가다", sentence: "Let's ___." },
+      { word: "come", meaning: "오다", sentence: "Please ___." },
+      { word: "stay", meaning: "머물다", sentence: "Please ___." },
+      { word: "leave", meaning: "떠나다", sentence: "I will ___." },
+      { word: "give", meaning: "주다", sentence: "Please ___ me." },
+      { word: "take", meaning: "가져가다", sentence: "Please ___ this." },
+      { word: "make", meaning: "만들다", sentence: "Let's ___ a card." },
+      { word: "do", meaning: "하다", sentence: "Just ___ it." },
+      { word: "use", meaning: "사용하다", sentence: "Don't ___ it." },
+      { word: "find", meaning: "찾다", sentence: "I can ___ it." },
+      { word: "buy", meaning: "사다", sentence: "I will ___." },
+      { word: "sell", meaning: "팔다", sentence: "They ___." },
+      { word: "want", meaning: "원하다", sentence: "I ___ a toy." },
+      { word: "need", meaning: "필요하다", sentence: "I ___ help." },
+      { word: "like", meaning: "좋아하다", sentence: "I ___ pizza." },
+      { word: "hate", meaning: "싫어하다", sentence: "I ___ it." },
+      { word: "know", meaning: "알다", sentence: "I ___ you." },
+      { word: "learn", meaning: "배우다", sentence: "I ___ English." },
+      { word: "try", meaning: "시도하다", sentence: "Just ___." },
+      { word: "start", meaning: "시작하다", sentence: "Let's ___." }
+    ]},
+    23: { theme: "기분과 상태", words: [
+      { word: "good", meaning: "좋은", sentence: "I feel ___." },
+      { word: "bad", meaning: "나쁜", sentence: "Today is ___." },
+      { word: "great", meaning: "훌륭한", sentence: "It's ___." },
+      { word: "fine", meaning: "괜찮은", sentence: "I am ___." },
+      { word: "okay", meaning: "괜찮은", sentence: "I am ___." },
+      { word: "wonderful", meaning: "멋진", sentence: "It's ___." },
+      { word: "nice", meaning: "좋은", sentence: "Have a ___ day." },
+      { word: "perfect", meaning: "완벽한", sentence: "It's ___." },
+      { word: "easy", meaning: "쉬운", sentence: "It's ___." },
+      { word: "hard", meaning: "어려운", sentence: "Math is ___." },
+      { word: "fun", meaning: "재미있는", sentence: "It's ___." },
+      { word: "boring", meaning: "지루한", sentence: "It's ___." },
+      { word: "interesting", meaning: "흥미로운", sentence: "It's ___." },
+      { word: "important", meaning: "중요한", sentence: "It's ___." },
+      { word: "different", meaning: "다른", sentence: "We are ___." },
+      { word: "same", meaning: "같은", sentence: "We are the ___." },
+      { word: "new", meaning: "새로운", sentence: "I have a ___ bag." },
+      { word: "old", meaning: "오래된", sentence: "This is an ___ book." },
+      { word: "young", meaning: "젊은", sentence: "He is ___." },
+      { word: "popular", meaning: "인기 있는", sentence: "She is ___." }
+    ]},
+    24: { theme: "꿈과 미래", words: [
+      { word: "dream", meaning: "꿈", sentence: "Follow your ___." },
+      { word: "future", meaning: "미래", sentence: "Plan your ___." },
+      { word: "hope", meaning: "희망", sentence: "I ___ for it." },
+      { word: "wish", meaning: "소원", sentence: "Make a ___." },
+      { word: "want", meaning: "원하다", sentence: "I ___ to fly." },
+      { word: "goal", meaning: "목표", sentence: "Reach your ___." },
+      { word: "plan", meaning: "계획", sentence: "Make a ___." },
+      { word: "try", meaning: "노력하다", sentence: "Just ___." },
+      { word: "study", meaning: "공부하다", sentence: "I will ___ hard." },
+      { word: "grow", meaning: "자라다", sentence: "I will ___ up." },
+      { word: "become", meaning: "되다", sentence: "I will ___ a doctor." },
+      { word: "learn", meaning: "배우다", sentence: "I will ___ a lot." },
+      { word: "smart", meaning: "똑똑한", sentence: "Be ___." },
+      { word: "kind", meaning: "친절한", sentence: "Be ___." },
+      { word: "strong", meaning: "강한", sentence: "Be ___." },
+      { word: "happy", meaning: "행복한", sentence: "Be ___." },
+      { word: "famous", meaning: "유명한", sentence: "She is ___." },
+      { word: "rich", meaning: "부유한", sentence: "He is ___." },
+      { word: "world", meaning: "세계", sentence: "Travel the ___." },
+      { word: "best", meaning: "최고의", sentence: "Be the ___." }
+    ]},
+    25: { theme: "중요 단어 모음", words: [
+      { word: "yes", meaning: "예", sentence: "___, I can." },
+      { word: "no", meaning: "아니오", sentence: "___, thanks." },
+      { word: "and", meaning: "그리고", sentence: "Mom ___ Dad." },
+      { word: "but", meaning: "그러나", sentence: "I want it, ___ no." },
+      { word: "or", meaning: "또는", sentence: "Tea ___ coffee?" },
+      { word: "with", meaning: "함께", sentence: "Come ___ me." },
+      { word: "for", meaning: "위해", sentence: "It's ___ you." },
+      { word: "very", meaning: "매우", sentence: "I am ___ tired." },
+      { word: "really", meaning: "정말", sentence: "It's ___ good." },
+      { word: "many", meaning: "많은", sentence: "I have ___ books." },
+      { word: "few", meaning: "적은", sentence: "Only a ___." },
+      { word: "some", meaning: "약간의", sentence: "Have ___ water." },
+      { word: "all", meaning: "모든", sentence: "We ___ love it." },
+      { word: "every", meaning: "매", sentence: "I read ___ day." },
+      { word: "this", meaning: "이것", sentence: "What is ___?" },
+      { word: "that", meaning: "저것", sentence: "What is ___?" },
+      { word: "who", meaning: "누구", sentence: "___ are you?" },
+      { word: "what", meaning: "무엇", sentence: "___ is this?" },
+      { word: "where", meaning: "어디", sentence: "___ are you?" },
+      { word: "why", meaning: "왜", sentence: "___ are you sad?" }
+    ]}
+  }
+};
+
+// ============================================================
+// 단어 데이터 통합 (1~25일)
+// ============================================================
+// (words_data.js의 WORDS와 words_part2.js의 WORDS_PART2를 합침)
+Object.assign(WORDS.juhyuk, WORDS_PART2.juhyuk_14_25);
+Object.assign(WORDS.jooha, WORDS_PART2.jooha_14_25);
+
+// ============================================================
+// 프로필 정의
+// ============================================================
+const PROFILES = {
+  juhyuk: { name: '주혁', emoji: '🦁', grade: '중1', color: 'blue' },
+  jooha:  { name: '주하', emoji: '🦄', grade: '초6', color: 'pink' },
+};
+
+// ============================================================
+// 시작일 설정 (수요일 = DAY 1)
+// 첫 주: 수(D1), 목(D2), 금(D3) — 3일치
+// 둘째 주부터: 월~금 5일치
+// ============================================================
+const START_DATE = '2026-05-06'; // 내일(수요일)부터 시작 — 부모님이 시작할 때 자동 계산
+
+function getTodayDay() {
+  const start = new Date(START_DATE + 'T00:00:00');
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diffMs = today - start;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays < 0) return 0; // 시작 전
+
+  // 첫 주 (D1~D3): 0,1,2일차 = DAY 1,2,3
+  if (diffDays <= 2) return diffDays + 1;
+
+  // 첫 주 토요일 = 3일차 / 일요일 = 4일차
+  // 둘째 주 월요일 = 5일차 → DAY 4
+  // 매주 월~금만 진행 (5일/주)
+  // 첫째 주(3일) + 그 후 주차들
+  const daysAfterFirstWeek = diffDays - 4; // 둘째 주 월요일(=4)부터 시작
+  if (daysAfterFirstWeek < 0) {
+    // 토/일이면 마지막 진행한 day 유지
+    return 3;
+  }
+  const fullWeeks = Math.floor(daysAfterFirstWeek / 7);
+  const dayInWeek = daysAfterFirstWeek % 7; // 0=월,1=화,2=수,3=목,4=금,5=토,6=일
+  if (dayInWeek <= 4) {
+    // 월~금 진행
+    return 3 + fullWeeks * 5 + dayInWeek + 1;
+  } else {
+    // 토,일 — 마지막 금요일 day
+    return 3 + fullWeeks * 5 + 5;
+  }
+}
+
+// 오늘이 토요일인지 (보너스 시험 가능일)
+function isSaturdayToday() {
+  return new Date().getDay() === 6;
+}
+
+// 이번주 번호 (currentDay 기준)
+// 첫 주: DAY 1~3 = 1주차, 둘째 주: DAY 4~8 = 2주차, ...
+function getWeekNum(day) {
+  if (day <= 3) return 1;
+  return 1 + Math.ceil((day - 3) / 5);
+}
+function getWeekRange(weekNum) {
+  if (weekNum === 1) return [1, 3];
+  const start = 3 + (weekNum - 2) * 5 + 1;
+  return [start, start + 4];
+}
+function isWeekLastDay(day) {
+  if (day === 3) return true; // 1주차 마지막
+  if (day < 3) return false;
+  return (day - 3) % 5 === 0; // 8, 13, 18, 23 = 마지막
+}
+
+// ============================================================
+// 상태 관리 (localStorage)
+// ============================================================
+function getDefaultState(profileId) {
+  return {
+    profileId,
+    progress: {},        // { 1: {firstScore, secondScore, wrongIndices, secondWrongIndices, date}, ... }
+    saturdayBonus: {},   // { 'week_1': {score, date, items}, ... }
+    coins: 0,
+    level: 1,
+    items: [],           // 획득한 아이템 ID 배열
+  };
+}
+
+function loadState(profileId) {
+  try {
+    const raw = localStorage.getItem(`vocab_v2_${profileId}`);
+    if (!raw) return getDefaultState(profileId);
+    return Object.assign(getDefaultState(profileId), JSON.parse(raw));
+  } catch (e) {
+    return getDefaultState(profileId);
+  }
+}
+
+function saveState(state) {
+  try {
+    localStorage.setItem(`vocab_v2_${state.profileId}`, JSON.stringify(state));
+  } catch (e) {
+    console.error('저장 실패', e);
+  }
+}
+
+// ============================================================
+// 등급 계산 (정확히 정의된 규칙)
+// ============================================================
+// 일일 등급
+//  🔥 챌린저: 1차 10/10 만점
+//  💎 다이아: 1차 9/10 이상
+//  ⭐ 골드:  1차 실패 후 2차 9/10 이상
+function getDayTier(p) {
+  if (!p || p.firstScore == null) return null;
+  if (p.firstScore === 10) return 'fire';
+  if (p.firstScore >= 9) return 'dia';
+  if (p.secondScore != null && p.secondScore >= 9) return 'gold';
+  return 'fail';
+}
+
+// 주간 등급
+//  🔥 챌린저 주차: 그 주 모두 1차 만점
+//  💎 다이아 주차: 그 주 모두 1차 9점 이상
+//  ⭐ 골드 주차: 1·2차 중 잘 본 점수 합산이 (그 주 일수 × 9) 이상
+function getWeekTier(state, weekNum) {
+  const [start, end] = getWeekRange(weekNum);
+  const totalDays = end - start + 1;
+  const days = [];
+  for (let d = start; d <= end; d++) {
+    const p = state.progress[d];
+    if (!p || p.firstScore == null) return null;
+    days.push(p);
+  }
+  const firstScores = days.map(d => d.firstScore);
+  // 챌린저: 모두 1차 만점
+  if (firstScores.every(s => s === 10)) return 'fire';
+  // 다이아: 모두 1차 9점 이상
+  if (firstScores.every(s => s >= 9)) return 'dia';
+  // 골드: 1·2차 중 잘 본 점수 합산
+  const bestSum = days.reduce((sum, d) =>
+    sum + Math.max(d.firstScore || 0, d.secondScore || 0), 0);
+  if (bestSum >= totalDays * 9) return 'gold';
+  return null;
+}
+
+const TIER_LABELS = {
+  fire: '🔥 챌린저',
+  dia:  '💎 다이아',
+  gold: '⭐ 골드',
+  fail: '❌ 재도전',
+};
+const TIER_EMOJI = { fire: '🔥', dia: '💎', gold: '⭐', fail: '❌' };
+
+// ============================================================
+// 레벨 시스템 (게임처럼 단계 올라가는 느낌)
+// 한 단어당 1점, 정답률 가산점, 100점마다 레벨업
+// ============================================================
+function calcLevel(state) {
+  // progress 기반 점수
+  let score = 0;
+  Object.values(state.progress).forEach(p => {
+    score += (p.firstScore || 0);
+    if (p.secondScore) score += Math.max(0, p.secondScore - (p.firstScore || 0));
+  });
+  // 토요일 보너스
+  Object.values(state.saturdayBonus).forEach(b => { score += (b.score || 0); });
+  // 100점마다 레벨업
+  return { level: Math.max(1, Math.floor(score / 100) + 1), score, nextAt: (Math.floor(score / 100) + 1) * 100 };
+}
+
+// ============================================================
+// 발음 듣기 (브라우저 내장 TTS)
+// ============================================================
+function speak(text, btnEl) {
+  if (!('speechSynthesis' in window)) {
+    showToast('이 브라우저는 발음 기능을 지원하지 않아요');
+    return;
+  }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = 0.85;
+  u.pitch = 1.0;
+  // 영어 보이스 우선 선택
+  const voices = speechSynthesis.getVoices();
+  const enVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Samantha') || v.name.includes('Google') || v.name.includes('Microsoft')));
+  if (enVoice) u.voice = enVoice;
+  if (btnEl) {
+    btnEl.classList.add('playing');
+    u.onend = () => btnEl.classList.remove('playing');
+    u.onerror = () => btnEl.classList.remove('playing');
+  }
+  speechSynthesis.speak(u);
+}
+window.speak = speak;
+
+// 보이스 목록 미리 로드 (브라우저마다 비동기)
+if ('speechSynthesis' in window) {
+  speechSynthesis.onvoiceschanged = () => {};
+  speechSynthesis.getVoices();
+}
+
+// ============================================================
+// 공통 유틸
+// ============================================================
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function sample(arr, n) { return shuffle(arr).slice(0, n); }
+
+function showToast(msg, ms = 2000) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), ms);
+}
+window.showToast = showToast;
+
+function showModal(html) {
+  const bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  bg.id = 'modal-bg';
+  bg.innerHTML = `<div class="modal" onclick="event.stopPropagation()">${html}</div>`;
+  bg.onclick = () => closeModal();
+  document.body.appendChild(bg);
+}
+function closeModal() {
+  const m = document.getElementById('modal-bg');
+  if (m) m.remove();
+}
+window.closeModal = closeModal;
+
+function spawnConfetti(count = 30) {
+  const c = document.createElement('div');
+  c.className = 'confetti-container';
+  document.body.appendChild(c);
+  const colors = ['#FF6B47','#F5B82E','#2BB6A6','#4A7AE8','#FF6B9D','#8E66E0'];
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.top = '-20px';
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    p.style.animationDelay = (Math.random() * 0.4) + 's';
+    p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    c.appendChild(p);
+  }
+  setTimeout(() => c.remove(), 2400);
+}
+
+// ============================================================
+// 시험 문제 생성
+// 순서: 뜻고르기 4 → 스펠고르기 4 → 빈칸채우기 2
+// ============================================================
+function meaningsOverlap(a, b) {
+  if (!a || !b) return false;
+  if (a === b) return true;
+  const norm = s => s.replace(/[\s()]/g, '');
+  const split = s => s.split(/[,/·]/).map(p => norm(p)).filter(Boolean);
+  const aP = split(a), bP = split(b);
+  for (const p of aP) for (const q of bP) {
+    if (p === q) return true;
+    const sh = p.length <= q.length ? p : q;
+    const lo = p.length <= q.length ? q : p;
+    if (sh.length >= 1 && lo.startsWith(sh)) return true;
+  }
+  return false;
+}
+
+function genSpellingDistractors(correct, count = 4) {
+  const out = new Set();
+  const w = correct.toLowerCase();
+  const transforms = [
+    () => w.replace(/a/, 'e'),
+    () => w.replace(/e/, 'a'),
+    () => w.replace(/i/, 'e'),
+    () => w.replace(/o/, 'u'),
+    () => w.length > 4 ? w.slice(0, 2) + w.slice(3) : null,
+    () => w.length > 4 ? w.slice(0, -2) + w.slice(-1) : null,
+    () => {
+      if (w.length < 4) return null;
+      const i = Math.floor(w.length / 2);
+      return w.slice(0, i) + w[i + 1] + w[i] + w.slice(i + 2);
+    },
+    () => w.includes('ie') ? w.replace('ie', 'ei') : null,
+    () => w.includes('ei') ? w.replace('ei', 'ie') : null,
+    () => w.endsWith('y') ? w.slice(0, -1) + 'ie' : null,
+    () => w.endsWith('e') ? w.slice(0, -1) : null,
+    () => w.includes('ou') ? w.replace('ou', 'oo') : null,
+    () => {
+      for (let i = 1; i < w.length - 1; i++) {
+        if ('bcdfgjklmnpqrstvwxyz'.includes(w[i])) {
+          return w.slice(0, i) + w[i] + w.slice(i);
+        }
+      }
+      return null;
+    },
+  ];
+  for (const t of transforms) {
+    const v = t();
+    if (v && v !== w && v.length > 1 && !out.has(v)) out.add(v);
+    if (out.size >= count) break;
+  }
+  while (out.size < count) {
+    const i = Math.floor(Math.random() * (w.length - 1)) + 1;
+    const sw = w.slice(0, i - 1) + w[i] + w[i - 1] + w.slice(i + 1);
+    if (sw !== w) out.add(sw); else out.add(w + 'e');
+    if (out.size > 20) break;
+  }
+  return [...out].slice(0, count);
+}
+
+function genQuestion(word, type, allWords) {
+  const pool = allWords.filter(x => x.word !== word.word);
+  const distinct = pool.filter(x => !meaningsOverlap(x.meaning, word.meaning));
+  const safe = distinct.length >= 4 ? distinct : pool;
+
+  if (type === 'meaning') {
+    const distractors = sample(safe, 4).map(x => x.meaning);
+    return {
+      type, word: word.word, meaning: word.meaning,
+      prompt: '뜻을 고르세요',
+      display: `<div class="test-q-word">${word.word}<button class="speak-btn" onclick="speak('${word.word}', this)">🔊</button></div>`,
+      options: shuffle([word.meaning, ...distractors]),
+      answer: word.meaning,
+      optionType: 'korean',
+      typeLabel: '뜻 고르기',
+    };
+  }
+  if (type === 'spelling') {
+    const distractors = genSpellingDistractors(word.word, 4);
+    return {
+      type, word: word.word, meaning: word.meaning,
+      prompt: '맞는 스펠을 고르세요',
+      display: `<div class="test-q-meaning">${word.meaning}</div>`,
+      options: shuffle([word.word, ...distractors]),
+      answer: word.word,
+      optionType: 'english',
+      typeLabel: '스펠 고르기',
+    };
+  }
+  if (type === 'fill') {
+    const distractors = sample(safe, 4).map(x => x.word);
+    const sentence = word.sentence.replace(/_+/g,
+      '<u style="display:inline-block;min-width:60px;border-bottom:2px solid var(--coral);">&nbsp;</u>');
+    return {
+      type, word: word.word, meaning: word.meaning,
+      prompt: '빈칸에 알맞은 단어를 고르세요',
+      display: `<div class="test-q-sentence">${sentence}</div>`,
+      options: shuffle([word.word, ...distractors]),
+      answer: word.word,
+      optionType: 'english',
+      typeLabel: '빈칸 채우기',
+    };
+  }
+}
+
+function generateTest(words, isSecondAttempt = false, wrongWordList = []) {
+  // 1차 시험: 20단어 중 10개 선택
+  // 2차 시험: 1차 틀린 것 + 추가 = 10개
+  let pickedWords;
+  if (isSecondAttempt && wrongWordList.length > 0) {
+    const wrongs = words.filter(w => wrongWordList.includes(w.word));
+    const others = words.filter(w => !wrongWordList.includes(w.word));
+    const need = 10 - wrongs.length;
+    const extras = sample(others, Math.max(0, need));
+    pickedWords = [...wrongs, ...extras].slice(0, 10);
+  } else {
+    pickedWords = sample(words, 10);
+  }
+
+  const types = ['meaning','meaning','meaning','meaning',
+                 'spelling','spelling','spelling','spelling',
+                 'fill','fill'];
+  return pickedWords.map((w, i) => genQuestion(w, types[i], words));
+}
+
+// 토요일 보너스 시험 — 그 주 모든 단어 중 10개 (한 단어당 1문제)
+function generateSaturdayTest(profileId, weekNum) {
+  const [start, end] = getWeekRange(weekNum);
+  const allWords = [];
+  for (let d = start; d <= end; d++) {
+    const dayData = WORDS[profileId][d];
+    if (dayData) allWords.push(...dayData.words);
+  }
+  return generateTest(allWords, false, []);
+}
+
+// ============================================================
+// 라우터 / 전역 상태
+// ============================================================
+let currentScreen = 'profile-select';
+let currentProfile = null;     // 현재 선택된 프로필 state
+let testState = null;          // 현재 진행중인 시험
+
+function navigate(screen, params = {}) {
+  currentScreen = screen;
+  if (screen === 'profile-select') {
+    currentProfile = null;
+    document.getElementById('app').innerHTML = renderProfileSelect();
+    window.scrollTo(0, 0);
+    return;
+  }
+  if (!currentProfile) currentProfile = loadState('juhyuk');
+
+  const renderers = {
+    'home': renderHome,
+    'study': renderStudy,
+    'test': renderTest,
+    'review': renderReview,       // 제출 전 검토 화면
+    'result': renderResult,
+    'history': renderHistory,
+    'progress': renderProgress,
+    'preview': renderPreview,     // 전체 단어 미리보기
+    'print': renderPrint,
+    'settings': renderSettings,
+    'saturday-words': renderSaturdayWords, // 토요일 그 주 단어장 펼쳐보기
+  };
+  const fn = renderers[screen];
+  document.getElementById('app').innerHTML = fn ? fn(params) : '<div>화면 없음</div>';
+  window.scrollTo(0, 0);
+}
+window.navigate = navigate;
+
+// ============================================================
+// 화면: 프로필 선택
+// ============================================================
+function renderProfileSelect() {
+  const jh = loadState('juhyuk');
+  const jha = loadState('jooha');
+  const jhDay = Object.keys(jh.progress).length;
+  const jhaDay = Object.keys(jha.progress).length;
+  return `
+    <div>
+      <div style="text-align:center;padding:30px 0 20px;">
+        <div style="font-size:50px;margin-bottom:6px;">📚</div>
+        <h1 style="font-family:var(--font-display);">우리집 영단어 도전!</h1>
+        <p style="color:var(--ink-soft);font-size:13px;margin-top:6px;">매일 20개씩 외우고 시험 보기</p>
+      </div>
+      <div class="profile-grid">
+        <div class="profile-card juhyuk" onclick="selectProfile('juhyuk')">
+          <div class="profile-emoji">🦁</div>
+          <div class="profile-name">주혁</div>
+          <div class="profile-meta">중1 · ${jhDay}일 완료</div>
+          <div class="profile-meta">Lv.${calcLevel(jh).level}</div>
+        </div>
+        <div class="profile-card jooha" onclick="selectProfile('jooha')">
+          <div class="profile-emoji">🦄</div>
+          <div class="profile-name">주하</div>
+          <div class="profile-meta">초6 · ${jhaDay}일 완료</div>
+          <div class="profile-meta">Lv.${calcLevel(jha).level}</div>
+        </div>
+      </div>
+      <p style="text-align:center;margin-top:30px;color:var(--ink-mute);font-size:12px;">탭해서 시작하기 👆</p>
+    </div>`;
+}
+function selectProfile(id) {
+  currentProfile = loadState(id);
+  navigate('home');
+}
+window.selectProfile = selectProfile;
+
+// ============================================================
+// 화면: 홈
+// ============================================================
+function renderHome() {
+  const s = currentProfile;
+  const profile = PROFILES[s.profileId];
+  const today = getTodayDay();
+  const todayProgress = s.progress[today];
+  const lvl = calcLevel(s);
+  const completed = Object.keys(s.progress).length;
+  const weekNum = getWeekNum(today);
+  const isSat = isSaturdayToday();
+  const satKey = `week_${weekNum - (isSat && today >= 3 ? 0 : 0)}`;
+
+  // 통계
+  let totalCorrect = 0, totalQuestions = 0;
+  Object.values(s.progress).forEach(p => {
+    totalCorrect += Math.max(p.firstScore || 0, p.secondScore || 0);
+    totalQuestions += 10;
+  });
+  const accuracy = totalQuestions ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+
+  // 시작 전
+  if (today === 0) {
+    return `
+      <div>
+        <div class="app-header">
+          <button class="back-btn" onclick="navigate('profile-select')">‹</button>
+          <div class="app-title">${profile.name}</div>
+          <div style="width:38px"></div>
+        </div>
+        <div class="card" style="text-align:center;padding:40px 20px;">
+          <div style="font-size:60px;">⏰</div>
+          <h2 style="margin:12px 0;">아직 시작 전이에요</h2>
+          <p style="color:var(--ink-soft);font-size:13px;">시작일: ${START_DATE} (수요일)</p>
+        </div>
+      </div>`;
+  }
+
+  // 오늘 카드
+  let todayCard = '';
+  const dayData = WORDS[s.profileId][today];
+  if (!dayData) {
+    todayCard = `
+      <div class="today-block" style="background:var(--green);">
+        <div class="today-block-tag">🎉 모두 완료</div>
+        <div class="today-block-title">${completed}일치 모두 끝!</div>
+        <div class="today-block-subtitle">정말 대단해요!</div>
+      </div>`;
+  } else {
+    const passed = todayProgress && (
+      (todayProgress.firstScore || 0) >= 9 ||
+      (todayProgress.secondScore != null && todayProgress.secondScore >= 9)
+    );
+    const needSecond = todayProgress &&
+      todayProgress.firstScore != null &&
+      todayProgress.firstScore < 9 &&
+      todayProgress.secondScore == null;
+
+    let testBtn, wordBtn, subtitle;
+    if (passed) {
+      const tier = getDayTier(todayProgress);
+      testBtn = `<div class="today-action-btn disabled"><div class="today-action-icon">${TIER_EMOJI[tier]}</div><div class="today-action-label">시험 완료</div></div>`;
+      wordBtn = `navigate('study',{day:${today}})`;
+      subtitle = `${dayData.theme} · ${TIER_LABELS[tier]} 달성!`;
+    } else if (needSecond) {
+      testBtn = `<div class="today-action-btn urgent" onclick="startTest(${today}, true)"><div class="today-action-icon">📝</div><div class="today-action-label">2차 시험 보기</div></div>`;
+      wordBtn = `navigate('study',{day:${today},highlightWrong:true})`;
+      subtitle = `⚠ 1차 ${todayProgress.firstScore}/10 · 자정까지 도전!`;
+    } else {
+      testBtn = `<div class="today-action-btn" onclick="startTest(${today}, false)"><div class="today-action-icon">📝</div><div class="today-action-label">시험 보기</div></div>`;
+      wordBtn = `navigate('study',{day:${today}})`;
+      subtitle = `${dayData.theme} · 단어 20개 + 시험 10문제`;
+    }
+
+    todayCard = `
+      <div class="today-block">
+        <div class="today-block-tag">📅 오늘 · DAY ${today} (${weekNum}주차)</div>
+        <div class="today-block-title">${needSecond ? '한번 더 도전!' : '오늘의 도전!'}</div>
+        <div class="today-block-subtitle">${subtitle}</div>
+        <div class="today-actions">
+          <div class="today-action-btn" onclick="${wordBtn}">
+            <div class="today-action-icon">📖</div>
+            <div class="today-action-label">${needSecond ? '틀린 단어 복습' : '단어 외우기'}</div>
+          </div>
+          ${testBtn}
+        </div>
+      </div>`;
+  }
+
+  // 토요일 보너스 배너
+  let satBanner = '';
+  if (isSat) {
+    // 이번주가 끝났는지 확인 (마지막 날 progress 있어야 함)
+    const lastDay = weekNum === 1 ? 3 : 3 + (weekNum - 1) * 5;
+    const lastDayProgress = s.progress[lastDay];
+    if (lastDayProgress) {
+      const satKey = `week_${weekNum}`;
+      const satDone = !!s.saturdayBonus[satKey];
+      if (!satDone) {
+        const wordCount = weekNum === 1 ? 60 : 100;
+        satBanner = `
+          <div class="sat-banner" onclick="startSaturdayTest(${weekNum})">
+            <div class="sat-banner-icon">🎁</div>
+            <div class="sat-banner-text">
+              <div class="sat-banner-title">토요일 보너스!</div>
+              <div class="sat-banner-sub">${wordCount}단어 중 10문제 · 9개+ 통과시 보너스 아이템</div>
+            </div>
+            <div style="font-size:24px;">›</div>
+          </div>
+          <div onclick="navigate('saturday-words',{week:${weekNum}})" style="background:var(--purple-soft);border:2px solid var(--purple);border-radius:var(--radius-md);padding:12px;margin-bottom:14px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+            <div style="font-size:24px;">📖</div>
+            <div style="flex:1;">
+              <div style="font-family:var(--font-display);font-size:14px;color:var(--purple);">이번주 단어 다시 보기</div>
+              <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">시험 전 복습용 (1주차 ~ ${weekNum}주차)</div>
+            </div>
+            <div style="font-size:20px;color:var(--purple);">›</div>
+          </div>`;
+      } else {
+        const got = s.saturdayBonus[satKey];
+        satBanner = `
+          <div class="sat-banner" style="background:var(--green);color:white;">
+            <div class="sat-banner-icon">✅</div>
+            <div class="sat-banner-text">
+              <div class="sat-banner-title">토요일 보너스 완료!</div>
+              <div class="sat-banner-sub">${got.score}/10 점 · 보너스 받음</div>
+            </div>
+          </div>`;
+      }
+    }
+  }
+
+  return `
+    <div>
+      <div class="app-header">
+        <button class="back-btn" onclick="navigate('profile-select')">‹</button>
+        <div class="app-title">${profile.name}</div>
+        <button class="back-btn" onclick="navigate('settings')" style="font-size:18px;">⚙️</button>
+      </div>
+      <div class="hero">
+        <div class="hero-row">
+          <div class="hero-emoji">${profile.emoji}</div>
+          <div class="hero-info">
+            <div class="hero-name">${profile.name}의 도전</div>
+            <div style="font-size:13px;color:var(--ink-soft);margin-top:2px;">${profile.grade} · ${completed}일 완료</div>
+            <div class="hero-stats">
+              <div class="stat"><div class="stat-label">정답률</div><div class="stat-value">${accuracy}%</div></div>
+              <div class="stat"><div class="stat-label">코인</div><div class="stat-value">${s.coins}</div></div>
+              <div class="stat"><div class="stat-label">아이템</div><div class="stat-value">${s.items.length}</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="level-banner">
+          <div class="level-info-left">
+            <div class="level-icon">⚡</div>
+            <div>
+              <div class="level-text">레벨 ${lvl.level}</div>
+              <div style="font-size:11px;opacity:0.85;">${lvl.score}점 / ${lvl.nextAt}점</div>
+            </div>
+          </div>
+          <div class="level-num">Lv.${lvl.level}</div>
+        </div>
+      </div>
+      ${satBanner}${todayCard}
+      <div class="menu-grid">
+        <div class="menu-card" onclick="navigate('progress')">
+          <div class="menu-icon">📊</div><div><div class="menu-text">내 진도</div><div class="menu-sub">레벨 ${lvl.level}</div></div>
+        </div>
+        <div class="menu-card" onclick="navigate('history')">
+          <div class="menu-icon">📅</div><div><div class="menu-text">이력</div><div class="menu-sub">${completed}일 완료</div></div>
+        </div>
+        <div class="menu-card" onclick="navigate('preview')">
+          <div class="menu-icon">📖</div><div><div class="menu-text">전체 단어</div><div class="menu-sub">25일치 미리보기</div></div>
+        </div>
+        <div class="menu-card" onclick="navigate('print')">
+          <div class="menu-icon">🖨️</div><div><div class="menu-text">인쇄하기</div><div class="menu-sub">PDF 저장 · 출력</div></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ============================================================
+// 화면: 단어 학습
+// ============================================================
+function renderStudy(params) {
+  const s = currentProfile;
+  const day = params.day;
+  const highlightWrong = params.highlightWrong;
+  const dayData = WORDS[s.profileId][day];
+
+  if (!dayData) {
+    return `<div>
+      <div class="app-header">
+        <button class="back-btn" onclick="navigate('home')">‹</button>
+        <div class="app-title">DAY ${day}</div>
+        <div style="width:38px"></div>
+      </div>
+      <div class="empty"><div class="empty-icon">📭</div><p>이 날의 단어가 없어요</p></div>
+    </div>`;
+  }
+
+  const todayDay = getTodayDay();
+  const todayProgress = s.progress[day];
+  const wrongWords = todayProgress && todayProgress.wrongWords ? new Set(todayProgress.wrongWords) : new Set();
+
+  const wordsHtml = dayData.words.map((w, i) => {
+    const isWrong = highlightWrong && wrongWords.has(w.word);
+    const bg = isWrong ? 'background:var(--tier-fire-soft);' : '';
+    const mark = isWrong ? '<span style="color:var(--tier-fire);font-size:10px;font-weight:600;margin-left:4px;">⚠</span>' : '';
+    return `
+      <div class="word-item" style="${bg}">
+        <span class="word-num">${i + 1}</span>
+        <span class="word-eng">${w.word}</span>
+        <span class="word-kor">${w.meaning}${mark}</span>
+        <button class="speak-btn" onclick="speak('${w.word}', this)">🔊</button>
+      </div>`;
+  }).join('');
+
+  const isToday = day === todayDay;
+  const passed = todayProgress && (
+    (todayProgress.firstScore || 0) >= 9 ||
+    (todayProgress.secondScore != null && todayProgress.secondScore >= 9)
+  );
+  const needSecond = todayProgress && todayProgress.firstScore != null && todayProgress.firstScore < 9 && todayProgress.secondScore == null;
+  const isPast = day < todayDay;
+  const isFuture = day > todayDay;
+
+  let actionHtml = '';
+  if (isToday && !passed) {
+    if (needSecond) {
+      actionHtml = `
+        <button class="btn btn-block btn-primary btn-lg" onclick="startTest(${day}, true)">📝 2차 시험 보기 →</button>
+        <button class="btn btn-block btn-ghost mt-8" onclick="navigate('home')">뒤로</button>`;
+    } else {
+      actionHtml = `
+        <button class="btn btn-block btn-primary btn-lg" onclick="startTest(${day}, false)">📝 이제 시험 보기 →</button>
+        <button class="btn btn-block btn-ghost mt-8" onclick="navigate('home')">뒤로</button>`;
+    }
+  } else if (isPast) {
+    actionHtml = `<button class="btn btn-block btn-ghost" onclick="navigate('home')">뒤로</button>`;
+  } else if (isFuture) {
+    actionHtml = `
+      <div style="background:var(--purple-soft);border:1.5px solid var(--purple);border-radius:var(--radius-md);padding:14px;text-align:center;margin-bottom:12px;">
+        <div style="font-size:13px;color:var(--purple);font-weight:600;">🔮 미리보기 모드</div>
+        <div style="font-size:12px;color:var(--ink-soft);margin-top:4px;">DAY ${day}이 되면 시험을 볼 수 있어요</div>
+      </div>
+      <button class="btn btn-block btn-ghost" onclick="navigate('home')">뒤로</button>`;
+  } else {
+    actionHtml = `<button class="btn btn-block btn-ghost" onclick="navigate('home')">홈으로</button>`;
+  }
+
+  return `
+    <div>
+      <div class="app-header">
+        <button class="back-btn" onclick="navigate('home')">‹</button>
+        <div class="app-title">DAY ${day} 단어</div>
+        <button class="back-btn" onclick="speakAll(${day})" style="font-size:14px;">🔊</button>
+      </div>
+      <div class="word-list-header">
+        <div class="word-day-num">DAY ${day} · ${dayData.theme}</div>
+        <div class="word-day-sub">${highlightWrong ? `⚠ 1차 틀린 단어 ${wrongWords.size}개 표시 · 다시 외워봐요!` : `단어 20개 · 🔊 발음 듣기 가능`}</div>
+      </div>
+      <div class="word-list">${wordsHtml}</div>
+      ${actionHtml}
+    </div>`;
+}
+
+// 전체 단어 한꺼번에 발음 (한 단어씩 0.6초 간격)
+function speakAll(day) {
+  const s = currentProfile;
+  const dayData = WORDS[s.profileId][day];
+  if (!dayData) return;
+  showToast('전체 단어 발음 시작', 1500);
+  let i = 0;
+  function next() {
+    if (i >= dayData.words.length) return;
+    const u = new SpeechSynthesisUtterance(dayData.words[i].word);
+    u.lang = 'en-US';
+    u.rate = 0.85;
+    u.onend = () => { i++; setTimeout(next, 200); };
+    speechSynthesis.speak(u);
+  }
+  speechSynthesis.cancel();
+  next();
+}
+window.speakAll = speakAll;
+
+// 토요일에 그 주 단어 한꺼번에 펼쳐보기
+function renderSaturdayWords(params) {
+  const s = currentProfile;
+  const week = params.week;
+  const [start, end] = getWeekRange(week);
+
+  let html = '';
+  for (let d = start; d <= end; d++) {
+    const dayData = WORDS[s.profileId][d];
+    if (!dayData) continue;
+    const wordsHtml = dayData.words.map((w, i) => `
+      <div class="word-item">
+        <span class="word-num">${i + 1}</span>
+        <span class="word-eng">${w.word}</span>
+        <span class="word-kor">${w.meaning}</span>
+        <button class="speak-btn" onclick="speak('${w.word}', this)">🔊</button>
+      </div>`).join('');
+    html += `
+      <div class="word-list-header" style="background:linear-gradient(135deg, var(--purple), var(--blue));">
+        <div class="word-day-num">DAY ${d} · ${dayData.theme}</div>
+      </div>
+      <div class="word-list">${wordsHtml}</div>`;
+  }
+
+  return `
+    <div>
+      <div class="app-header">
+        <button class="back-btn" onclick="navigate('home')">‹</button>
+        <div class="app-title">${week}주차 전체 단어</div>
+        <div style="width:38px"></div>
+      </div>
+      <div class="card mb-12" style="text-align:center;background:var(--purple-soft);border-color:var(--purple);">
+        <div style="font-size:13px;color:var(--purple);font-weight:600;">📚 토요일 보너스 시험 대비</div>
+        <div style="font-size:12px;color:var(--ink-soft);margin-top:4px;">아래 단어들 중에서 10문제가 출제돼요</div>
+      </div>
+      ${html}
+      <button class="btn btn-block btn-primary btn-lg mt-12" onclick="startSaturdayTest(${week})">📝 보너스 시험 시작 →</button>
+      <button class="btn btn-block btn-ghost mt-8" onclick="navigate('home')">뒤로</button>
+    </div>`;
+}
+
+// ============================================================
+// 시험 시작
+// ============================================================
+function startTest(day, isSecondAttempt) {
+  const s = currentProfile;
+  const dayData = WORDS[s.profileId][day];
+  if (!dayData) return;
+  
+  let wrongWordList = [];
+  if (isSecondAttempt) {
+    const p = s.progress[day];
+    if (p && p.wrongWords) wrongWordList = p.wrongWords;
+  }
+  
+  testState = {
+    type: 'daily',
+    day,
+    isSecondAttempt,
+    questions: generateTest(dayData.words, isSecondAttempt, wrongWordList),
+    answers: new Array(10).fill(null), // 사용자가 고른 답
+    currentIdx: 0,
+  };
+  navigate('test');
+}
+window.startTest = startTest;
+
+function startSaturdayTest(weekNum) {
+  const s = currentProfile;
+  testState = {
+    type: 'saturday',
+    weekNum,
+    questions: generateSaturdayTest(s.profileId, weekNum),
+    answers: new Array(10).fill(null),
+    currentIdx: 0,
+  };
+  navigate('test');
+}
+window.startSaturdayTest = startSaturdayTest;
+
+// ============================================================
+// 시험 화면 (한 문제씩, 자동 채점 X, 자동 넘어가기 X)
+// ============================================================
+function renderTest() {
+  if (!testState) { navigate('home'); return ''; }
+  const t = testState;
+  const q = t.questions[t.currentIdx];
+  const total = t.questions.length;
+  const answered = t.answers.filter(a => a !== null).length;
+  const isLast = t.currentIdx === total - 1;
+  const currentAnswer = t.answers[t.currentIdx];
+
+  const titleText = t.type === 'saturday'
+    ? `🎁 ${t.weekNum}주차 보너스`
+    : (t.isSecondAttempt ? `📝 DAY ${t.day} 2차 시험` : `📝 DAY ${t.day} 시험`);
+
+  // 진행 표시 점들
+  let progressDots = '';
+  for (let i = 0; i < total; i++) {
+    let cls = 'test-progress-dot';
+    if (i === t.currentIdx) cls += ' current';
+    else if (t.answers[i] !== null) cls += ' answered';
+    progressDots += `<div class="${cls}"></div>`;
+  }
+
+  // 옵션 버튼
+  const optionsHtml = q.options.map((opt, i) => {
+    const sel = currentAnswer === opt ? 'selected' : '';
+    const cls = q.optionType === 'english' ? 'english' : 'korean';
+    const safe = opt.replace(/'/g, "\\'");
+    return `
+      <div class="test-option ${sel}" onclick="selectAnswer('${safe}')">
+        <div class="test-option-num">${i + 1}</div>
+        <div class="test-option-text ${cls}">${opt}</div>
+      </div>`;
+  }).join('');
+
+  // 하단 버튼
+  let bottomBtns = '';
+  if (!isLast) {
+    const nextDisabled = currentAnswer === null;
+    bottomBtns = `
+      <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px;">
+        ${t.currentIdx > 0
+          ? `<button class="btn btn-ghost" onclick="prevQuestion()">‹ 이전</button>`
+          : `<div></div>`}
+        <button class="btn ${nextDisabled ? 'btn-ghost' : 'btn-primary'}" onclick="nextQuestion()" ${nextDisabled ? 'disabled' : ''}>
+          다음 ›
+        </button>
+      </div>`;
+  } else {
+    // 마지막 문제 — 검토 화면으로 가는 버튼
+    bottomBtns = `
+      <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px;">
+        <button class="btn btn-ghost" onclick="prevQuestion()">‹ 이전</button>
+        <button class="btn btn-blue" onclick="navigate('review')">검토하기 ›</button>
+      </div>`;
+  }
+
+  return `
+    <div>
+      <div class="app-header">
+        <button class="back-btn" onclick="confirmExitTest()">‹</button>
+        <div class="app-title">${titleText}</div>
+        <div style="width:38px"></div>
+      </div>
+      <div class="test-meta">
+        <div>${t.currentIdx + 1} / ${total} 문제</div>
+        <div>답한 문제: ${answered}/${total}</div>
+      </div>
+      <div class="test-progress">${progressDots}</div>
+      <div class="test-question">
+        <div class="test-q-type">${q.typeLabel}</div>
+        <div class="test-q-prompt">${q.prompt}</div>
+        ${q.display}
+      </div>
+      <div class="test-options">${optionsHtml}</div>
+      <div class="mt-12">${bottomBtns}</div>
+    </div>`;
+}
+
+function selectAnswer(opt) {
+  testState.answers[testState.currentIdx] = opt;
+  navigate('test'); // 다시 그려서 선택 표시
+}
+window.selectAnswer = selectAnswer;
+
+function nextQuestion() {
+  if (testState.answers[testState.currentIdx] === null) {
+    showToast('답을 선택해주세요');
+    return;
+  }
+  if (testState.currentIdx < testState.questions.length - 1) {
+    testState.currentIdx++;
+    navigate('test');
+  }
+}
+window.nextQuestion = nextQuestion;
+
+function prevQuestion() {
+  if (testState.currentIdx > 0) {
+    testState.currentIdx--;
+    navigate('test');
+  }
+}
+window.prevQuestion = prevQuestion;
+
+function jumpToQuestion(idx) {
+  testState.currentIdx = idx;
+  navigate('test');
+}
+window.jumpToQuestion = jumpToQuestion;
+
+function confirmExitTest() {
+  showModal(`
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">시험을 그만둘까요?</div>
+    <div class="modal-text">지금 나가면 답이 모두 사라져요.</div>
+    <button class="btn btn-block btn-primary" onclick="exitTest()">네, 나갈게요</button>
+    <button class="btn btn-block btn-ghost mt-8" onclick="closeModal()">계속 풀기</button>
+  `);
+}
+window.confirmExitTest = confirmExitTest;
+
+function exitTest() {
+  closeModal();
+  testState = null;
+  navigate('home');
+}
+window.exitTest = exitTest;
+
+// ============================================================
+// 검토 화면 — 답 모두 확인하고 수정 가능, 제출하면 그때 채점
+// ============================================================
+function renderReview() {
+  if (!testState) { navigate('home'); return ''; }
+  const t = testState;
+  const total = t.questions.length;
+  const unanswered = t.answers.filter(a => a === null).length;
+
+  // 그리드: 각 문제 번호 셀 (답한 것 / 안한 것 색깔 다름)
+  const cellsHtml = t.questions.map((q, i) => {
+    const ans = t.answers[i];
+    const cls = ans !== null ? 'answered' : 'unanswered';
+    return `<div class="review-cell ${cls}" onclick="jumpToQuestion(${i})">${i + 1}</div>`;
+  }).join('');
+
+  // 답안 미리보기 리스트
+  const listHtml = t.questions.map((q, i) => {
+    const ans = t.answers[i];
+    const ansText = ans !== null
+      ? `<span style="color:var(--ink);font-weight:600;">${ans}</span>`
+      : `<span style="color:var(--tier-fire);font-weight:700;">⚠ 미답</span>`;
+    return `
+      <div onclick="jumpToQuestion(${i})" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line-soft);cursor:pointer;">
+        <div style="width:28px;height:28px;border-radius:50%;background:${ans !== null ? 'var(--coral)' : 'var(--tier-fire-soft)'};color:${ans !== null ? 'white' : 'var(--tier-fire)'};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;">${i + 1}</div>
+        <div style="flex:1;font-size:13px;color:var(--ink-soft);">${q.typeLabel}</div>
+        <div style="font-size:13px;">${ansText}</div>
+        <div style="color:var(--ink-mute);">›</div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div>
+      <div class="app-header">
+        <button class="back-btn" onclick="jumpToQuestion(${total - 1})">‹</button>
+        <div class="app-title">검토하기</div>
+        <div style="width:38px"></div>
+      </div>
+      <div class="card mb-12" style="text-align:center;">
+        <h2 style="margin-bottom:6px;">제출하기 전 확인</h2>
+        <p style="color:var(--ink-soft);font-size:13px;">번호를 누르면 그 문제로 돌아가요</p>
+        ${unanswered > 0 ? `<div style="background:var(--tier-fire-soft);color:var(--tier-fire);padding:10px;border-radius:10px;margin-top:10px;font-size:13px;font-weight:600;">⚠ 안 한 문제가 ${unanswered}개 있어요!</div>` : ''}
+      </div>
+      <div class="card">
+        <div style="font-family:var(--font-display);font-size:14px;margin-bottom:10px;">📋 문제별 답</div>
+        <div class="review-grid">${cellsHtml}</div>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        ${listHtml}
+      </div>
+      <div class="mt-12">
+        ${unanswered > 0
+          ? `<button class="btn btn-block btn-ghost btn-lg" onclick="confirmSubmitWithUnanswered()">⚠ 그래도 제출하기</button>`
+          : `<button class="btn btn-block btn-green btn-lg" onclick="finishTest()">✓ 제출하기</button>`}
+        <button class="btn btn-block btn-ghost mt-8" onclick="jumpToQuestion(0)">처음부터 다시 보기</button>
+      </div>
+    </div>`;
+}
+
+function confirmSubmitWithUnanswered() {
+  const unanswered = testState.answers.filter(a => a === null).length;
+  showModal(`
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">정말 제출할까요?</div>
+    <div class="modal-text">아직 답하지 않은 문제가 <b>${unanswered}개</b> 있어요. 미답 문제는 0점 처리돼요.</div>
+    <button class="btn btn-block btn-primary" onclick="closeModal();finishTest();">네, 제출할게요</button>
+    <button class="btn btn-block btn-ghost mt-8" onclick="closeModal()">아직이요!</button>
+  `);
+}
+window.confirmSubmitWithUnanswered = confirmSubmitWithUnanswered;
+
+// ============================================================
+// 시험 종료 — 채점 + 저장
+// ============================================================
+function finishTest() {
+  const t = testState;
+  if (!t) { navigate('home'); return; }
+
+  // 채점
+  let correct = 0;
+  const wrongWords = [];
+  t.questions.forEach((q, i) => {
+    if (t.answers[i] === q.answer) {
+      correct++;
+    } else {
+      wrongWords.push(q.word);
+    }
+  });
+
+  const s = currentProfile;
+
+  if (t.type === 'daily') {
+    // 일일 시험 결과 저장
+    const day = t.day;
+    if (!s.progress[day]) s.progress[day] = {};
+    if (!t.isSecondAttempt) {
+      s.progress[day].firstScore = correct;
+      s.progress[day].wrongWords = wrongWords;
+      s.progress[day].date = new Date().toISOString();
+    } else {
+      s.progress[day].secondScore = correct;
+      s.progress[day].secondWrongWords = wrongWords;
+      s.progress[day].secondDate = new Date().toISOString();
+    }
+
+    // 등급별 보상 (코인)
+    const tier = getDayTier(s.progress[day]);
+    let coinReward = 0;
+    if (tier === 'fire') coinReward = 10;
+    else if (tier === 'dia') coinReward = 6;
+    else if (tier === 'gold') coinReward = 3;
+    s.coins += coinReward;
+
+    // 주간 등급 체크 (마지막 날일 때)
+    let weekTier = null;
+    let weekCoinReward = 0;
+    if (isWeekLastDay(day)) {
+      const weekNum = getWeekNum(day);
+      weekTier = getWeekTier(s, weekNum);
+      if (weekTier === 'fire') weekCoinReward = 30;
+      else if (weekTier === 'dia') weekCoinReward = 20;
+      else if (weekTier === 'gold') weekCoinReward = 10;
+      s.coins += weekCoinReward;
+    }
+
+    saveState(s);
+
+    if (correct >= 9) spawnConfetti(40);
+    navigate('result', { correct, wrongWords, tier, weekTier, coinReward, weekCoinReward });
+  } else {
+    // 토요일 보너스
+    const weekNum = t.weekNum;
+    const satKey = `week_${weekNum}`;
+    s.saturdayBonus[satKey] = {
+      score: correct,
+      date: new Date().toISOString(),
+      wrongWords,
+    };
+    let coinReward = 0;
+    if (correct === 10) coinReward = 15;
+    else if (correct >= 9) coinReward = 10;
+    else if (correct >= 7) coinReward = 5;
+    s.coins += coinReward;
+
+    saveState(s);
+    if (correct >= 9) spawnConfetti(50);
+    navigate('result', { correct, wrongWords, tier: null, weekTier: null, coinReward, isSaturday: true, weekNum });
+  }
+  testState = null;
+}
+window.finishTest = finishTest;
+
+// ============================================================
+// 결과 화면
+// ============================================================
+function renderResult(params) {
+  const { correct, wrongWords, tier, weekTier, coinReward, weekCoinReward, isSaturday, weekNum } = params;
+  const s = currentProfile;
+
+  let emoji = '😢', statusCls = 'fail', statusText = '아쉬워요';
+  if (correct === 10) { emoji = '🎉'; statusCls = 'pass'; statusText = '만점! 완벽해요!'; }
+  else if (correct >= 9) { emoji = '✨'; statusCls = 'pass'; statusText = '훌륭해요!'; }
+  else if (correct >= 7) { emoji = '😊'; statusCls = 'pass'; statusText = '잘했어요'; }
+  else if (correct >= 5) { emoji = '🤔'; statusCls = 'fail'; statusText = '조금 더!'; }
+
+  let tierBadge = '';
+  if (tier && tier !== 'fail') {
+    tierBadge = `<div style="margin:12px 0;"><span class="tier-badge tier-${tier}">${TIER_LABELS[tier]}</span></div>`;
+  }
+
+  let rewardsHtml = '';
+  const rewardRows = [];
+  if (coinReward > 0) rewardRows.push(`<div class="reward-row"><span>${isSaturday ? '🎁 토요일 보너스' : '오늘의 도전'}</span><span><b>+${coinReward}</b> 🪙</span></div>`);
+  if (weekTier) {
+    rewardRows.push(`<div class="reward-row"><span>${TIER_LABELS[weekTier]} 주간 달성!</span><span><b>+${weekCoinReward}</b> 🪙</span></div>`);
+  }
+  if (rewardRows.length > 0) {
+    rewardsHtml = `
+      <div class="result-rewards">
+        <div class="result-rewards-title">🏆 받은 보상</div>
+        ${rewardRows.join('')}
+        <div class="reward-row" style="border-top:1px dashed var(--gold);padding-top:8px;margin-top:6px;">
+          <span>총 보유 코인</span><span><b>${s.coins}</b> 🪙</span>
+        </div>
+      </div>`;
+  }
+
+  // 틀린 단어 리스트
+  let wrongHtml = '';
+  if (wrongWords.length > 0) {
+    let allWords;
+    if (isSaturday) {
+      const [start, end] = getWeekRange(weekNum);
+      allWords = [];
+      for (let d = start; d <= end; d++) {
+        const dd = WORDS[s.profileId][d];
+        if (dd) allWords.push(...dd.words);
+      }
+    } else {
+      allWords = WORDS[s.profileId][params.day || (testState && testState.day)] 
+        ? WORDS[s.profileId][params.day || testState.day].words 
+        : [];
+    }
+    // wrongWords는 word 문자열들이므로 매칭
+    const wrongData = wrongWords.map(w => allWords.find(x => x.word === w)).filter(Boolean);
+    wrongHtml = `
+      <div class="card">
+        <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">❌ 틀린 단어 (${wrongData.length}개)</div>
+        ${wrongData.map(w => `
+          <div class="word-item" style="grid-template-columns:1fr 1.4fr 36px;">
+            <span class="word-eng">${w.word}</span>
+            <span class="word-kor">${w.meaning}</span>
+            <button class="speak-btn" onclick="speak('${w.word}', this)">🔊</button>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  // 다음 액션 버튼
+  let actionBtns = '';
+  if (isSaturday) {
+    actionBtns = `<button class="btn btn-block btn-primary btn-lg" onclick="navigate('home')">🏠 홈으로</button>`;
+  } else {
+    const day = testState ? testState.day : null;
+    const dayProgress = s.progress[day];
+    const passed = dayProgress && (
+      (dayProgress.firstScore || 0) >= 9 ||
+      (dayProgress.secondScore != null && dayProgress.secondScore >= 9)
+    );
+    if (passed) {
+      actionBtns = `<button class="btn btn-block btn-primary btn-lg" onclick="navigate('home')">🏠 홈으로</button>`;
+    } else if (dayProgress && dayProgress.firstScore != null && dayProgress.firstScore < 9 && dayProgress.secondScore == null) {
+      // 1차 9점 미만 → 2차 시험 권유
+      actionBtns = `
+        <button class="btn btn-block btn-primary btn-lg" onclick="navigate('study',{day:${day},highlightWrong:true})">📖 틀린 단어 복습</button>
+        <button class="btn btn-block btn-blue mt-8" onclick="startTest(${day}, true)">📝 2차 시험 도전</button>
+        <button class="btn btn-block btn-ghost mt-8" onclick="navigate('home')">홈으로</button>`;
+    } else {
+      actionBtns = `<button class="btn btn-block btn-primary btn-lg" onclick="navigate('home')">🏠 홈으로</button>`;
+    }
+  }
+
+  return `
+    <div>
+      <div class="app-header">
+        <div style="width:38px"></div>
+        <div class="app-title">${isSaturday ? '🎁 보너스 결과' : '📊 시험 결과'}</div>
+        <div style="width:38px"></div>
+      </div>
+      <div class="result-hero">
+        <div class="result-emoji">${emoji}</div>
+        <div class="result-score">${correct}<span style="font-size:24px;color:var(--ink-mute);">/10</span></div>
+        <div class="result-status ${statusCls}">${statusText}</div>
+        ${tierBadge}
+      </div>
+      ${rewardsHtml}
+      ${wrongHtml}
+      <div class="mt-12">${actionBtns}</div>
+    </div>`;
+}
+
+// ============================================================
+// 이력 화면
+// ============================================================
+function renderHistory() {
+  const s = currentProfile;
+  const todayDay = getTodayDay();
+  const allDays = Object.keys(WORDS[s.profileId]).map(Number).sort((a, b) => a - b);
+  const maxWeek = getWeekNum(allDays[allDays.length - 1]);
+
+  let weeksHtml = '';
+  for (let w = 1; w <= maxWeek; w++) {
+    const [start, end] = getWeekRange(w);
+    const tier = getWeekTier(s, w);
+    let tierBadge = '';
+    if (tier) tierBadge = `<span class="tier-badge tier-${tier}">${TIER_LABELS[tier]}</span>`;
+
+    let daysHtml = '';
+    for (let d = start; d <= end; d++) {
+      if (!WORDS[s.profileId][d]) continue;
+      const p = s.progress[d];
+      const dayData = WORDS[s.profileId][d];
+      const isToday = d === todayDay;
+      const isPast = d < todayDay;
+      const isFuture = d > todayDay;
+
+      let cellHtml = '';
+      if (p && p.firstScore != null) {
+        const dayTier = getDayTier(p);
+        const score = p.secondScore != null ? Math.max(p.firstScore, p.secondScore) : p.firstScore;
+        const tierEmoji = dayTier && dayTier !== 'fail' ? TIER_EMOJI[dayTier] : '';
+        cellHtml = `
+          <div class="day-cell muted" onclick="navigate('study',{day:${d}})" style="cursor:pointer;">📖</div>
+          <div class="day-cell score">
+            <span>${tierEmoji}</span><span>${score}/10</span>
+          </div>`;
+      } else if (isToday) {
+        cellHtml = `
+          <div class="day-cell" onclick="navigate('study',{day:${d}})">📖 단어</div>
+          <div class="day-cell action" onclick="startTest(${d}, false)">📝 시험</div>`;
+      } else if (isPast) {
+        cellHtml = `
+          <div class="day-cell muted" onclick="navigate('study',{day:${d}})" style="cursor:pointer;">📖</div>
+          <div class="day-cell urgent" onclick="startTest(${d}, false)">놓침! 시험</div>`;
+      } else {
+        cellHtml = `
+          <div class="day-cell muted" onclick="navigate('study',{day:${d}})" style="cursor:pointer;">📖 미리보기</div>
+          <div class="day-cell muted">🔒</div>`;
+      }
+      daysHtml += `
+        <div class="day-row ${isToday ? 'today' : ''}">
+          <div class="day-row-label">DAY ${d}<div style="font-size:10px;color:var(--ink-mute);font-weight:400;">${dayData.theme}</div></div>
+          ${cellHtml}
+        </div>`;
+    }
+
+    weeksHtml += `
+      <div class="week-block">
+        <div class="week-header">
+          <div class="week-header-title">${w}주차 (DAY ${start}~${end})</div>
+          <div class="week-header-info">${tierBadge || '진행 중'}</div>
+        </div>
+        ${daysHtml}
+      </div>`;
+  }
+
+  return `
+    <div>
+      <div class="app-header">
+        <button class="back-btn" onclick="navigate('home')">‹</button>
+        <div class="app-title">📅 이력</div>
+        <div style="width:38px"></div>
+      </div>
+      ${weeksHtml}
+    </div>`;
+}
+
+// ============================================================
+// 진도 화면
+// ============================================================
+function renderProgress() {
+  const s = currentProfile;
+  const lvl = calcLevel(s);
+  const completed = Object.keys(s.progress).length;
+  const todayDay = getTodayDay();
+
+  // 일일 등급별 카운트
+  let fireCount = 0, diaCount = 0, goldCount = 0;
+  Object.values(s.progress).forEach(p => {
+    const t = getDayTier(p);
+    if (t === 'fire') fireCount++;
+    else if (t === 'dia') diaCount++;
+    else if (t === 'gold') goldCount++;
+  });
+
+  // 정답률
+  let totalCorrect = 0, totalQ = 0;
+  Object.values(s.progress).forEach(p => {
+    totalCorrect += Math.max(p.firstScore || 0, p.secondScore || 0);
+    totalQ += 10;
+  });
+  const acc = totalQ ? Math.round((totalCorrect / totalQ) * 100) : 0;
+
+  // 주간 등급 카운트
+  let fireWeeks = 0, diaWeeks = 0, goldWeeks = 0;
+  for (let w = 1; w <= 5; w++) {
+    const t = getWeekTier(s, w);
+    if (t === 'fire') fireWeeks++;
+    else if (t === 'dia') diaWeeks++;
+    else if (t === 'gold') goldWeeks++;
+  }
+
+  // 진행률
+  const totalDays = 23; // 25일치 중 토일 빼고 — 대략 표시용
+  const progressPct = Math.min(100, Math.round((completed / totalDays) * 100));
+
+  return `
+    <div>
+      <div class="app-header">
+        <button class="back-btn" onclick="navigate('home')">‹</button>
+        <div class="app-title">📊 내 진도</div>
+        <div style="width:38px"></div>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg, var(--purple), var(--blue));color:white;border-color:var(--ink);">
+        <div style="font-family:var(--font-display);font-size:16px;opacity:0.9;">⚡ 레벨 ${lvl.level}</div>
+        <div style="font-family:var(--font-display);font-size:38px;margin:6px 0;">${lvl.score}점</div>
+        <div style="font-size:12px;opacity:0.85;">다음 레벨까지 ${lvl.nextAt - lvl.score}점 남음</div>
+        <div class="progress-section">
+          <div class="progress-bar" style="background:rgba(255,255,255,0.3);border-color:rgba(255,255,255,0.4);">
+            <div class="progress-fill" style="width:${(lvl.score % 100)}%;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">🎯 종합 통계</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div class="stat" style="background:var(--coral-soft);"><div class="stat-label">완료</div><div class="stat-value">${completed}일</div></div>
+          <div class="stat" style="background:var(--teal-soft);"><div class="stat-label">정답률</div><div class="stat-value">${acc}%</div></div>
+          <div class="stat" style="background:var(--gold-soft);"><div class="stat-label">코인</div><div class="stat-value">${s.coins}</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">🏆 일일 등급</div>
+        <div class="reward-row"><span>🔥 챌린저 (1차 만점)</span><span><b>${fireCount}</b>회</span></div>
+        <div class="reward-row"><span>💎 다이아 (1차 9+)</span><span><b>${diaCount}</b>회</span></div>
+        <div class="reward-row"><span>⭐ 골드 (2차 9+)</span><span><b>${goldCount}</b>회</span></div>
+      </div>
+      <div class="card">
+        <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">⭐ 주간 등급</div>
+        <div class="reward-row"><span>🔥 챌린저 주차</span><span><b>${fireWeeks}</b>주</span></div>
+        <div class="reward-row"><span>💎 다이아 주차</span><span><b>${diaWeeks}</b>주</span></div>
+        <div class="reward-row"><span>⭐ 골드 주차</span><span><b>${goldWeeks}</b>주</span></div>
+      </div>
+    </div>`;
+}
+
+// ============================================================
+// 전체 단어 미리보기
+// ============================================================
+function renderPreview() {
+  const s = currentProfile;
+  const allDays = Object.keys(WORDS[s.profileId]).map(Number).sort((a, b) => a - b);
+  
+  let html = '';
+  allDays.forEach(d => {
+    const dd = WORDS[s.profileId][d];
+    const wordsHtml = dd.words.map((w, i) => `
+      <div class="word-item">
+        <span class="word-num">${i + 1}</span>
+        <span class="word-eng">${w.word}</span>
+        <span class="word-kor">${w.meaning}</span>
+        <button class="speak-btn" onclick="speak('${w.word}', this)">🔊</button>
+      </div>`).join('');
+    html += `
+      <div class="word-list-header" style="background:linear-gradient(135deg, var(--teal), var(--blue));">
+        <div class="word-day-num">DAY ${d} · ${dd.theme}</div>
+      </div>
+      <div class="word-list">${wordsHtml}</div>`;
+  });
+
+  return `
+    <div>
+      <div class="app-header">
+        <button class="back-btn" onclick="navigate('home')">‹</button>
+        <div class="app-title">📖 전체 단어 (${allDays.length}일)</div>
+        <div style="width:38px"></div>
+      </div>
+      ${html}
+    </div>`;
+}
+
+// ============================================================
+// 인쇄
+// ============================================================
+function renderPrint() {
+  return `
+    <div>
+      <div class="app-header">
+        <button class="back-btn" onclick="navigate('home')">‹</button>
+        <div class="app-title">🖨️ 인쇄하기</div>
+        <div style="width:38px"></div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:48px;margin-bottom:8px;">📄</div>
+        <h2 style="margin-bottom:6px;">단어장 PDF/인쇄</h2>
+        <p style="color:var(--ink-soft);font-size:13px;margin-bottom:14px;">25일치 모든 단어를 종이로 받을 수 있어요</p>
+      </div>
+      <button class="btn btn-block btn-primary btn-lg mt-12" onclick="doPrint('all')">📄 전체 25일치 인쇄</button>
+      <button class="btn btn-block btn-blue mt-8" onclick="doPrint('week1')">1주차 (DAY 1~3)</button>
+      <button class="btn btn-block btn-blue mt-8" onclick="doPrint('week2')">2주차 (DAY 4~8)</button>
+      <button class="btn btn-block btn-blue mt-8" onclick="doPrint('week3')">3주차 (DAY 9~13)</button>
+      <button class="btn btn-block btn-blue mt-8" onclick="doPrint('week4')">4주차 (DAY 14~18)</button>
+      <button class="btn btn-block btn-blue mt-8" onclick="doPrint('week5')">5주차 (DAY 19~23)</button>
+      <button class="btn btn-block btn-ghost mt-12" onclick="navigate('home')">뒤로</button>
+    </div>`;
+}
+
+function doPrint(scope) {
+  const s = currentProfile;
+  let dayList;
+  if (scope === 'all') {
+    dayList = Object.keys(WORDS[s.profileId]).map(Number).sort((a, b) => a - b);
+  } else {
+    const w = parseInt(scope.replace('week', ''));
+    const [start, end] = getWeekRange(w);
+    dayList = [];
+    for (let d = start; d <= end; d++) if (WORDS[s.profileId][d]) dayList.push(d);
+  }
+
+  const profile = PROFILES[s.profileId];
+  let html = `
+    <div class="print-page">
+      <div class="print-cover">
+        <h1 style="font-family:'Jua',sans-serif;">${profile.emoji} ${profile.name}의 영단어 도전!</h1>
+        <p style="margin-top:6px;">${profile.grade} · 총 ${dayList.length}일치 · ${dayList.length * 20}단어</p>
+      </div>`;
+  
+  dayList.forEach(d => {
+    const dd = WORDS[s.profileId][d];
+    const rows = dd.words.map((w, i) => `
+      <tr>
+        <td class="num">${i + 1}</td>
+        <td class="eng">${w.word}</td>
+        <td>${w.meaning}</td>
+        <td class="check">☐</td>
+      </tr>`).join('');
+    html += `
+      <div class="print-day-block">
+        <div class="print-day-title">
+          <span>DAY ${d} · ${dd.theme}</span>
+          <span style="font-weight:400;font-size:12px;">날짜: _____ / _____</span>
+        </div>
+        <table class="print-word-table">${rows}</table>
+      </div>`;
+  });
+
+  html += `</div>`;
+  document.getElementById('print-area').innerHTML = html;
+  setTimeout(() => window.print(), 100);
+}
+window.doPrint = doPrint;
+
+// ============================================================
+// 설정
+// ============================================================
+function renderSettings() {
+  const s = currentProfile;
+  const profile = PROFILES[s.profileId];
+  return `
+    <div>
+      <div class="app-header">
+        <button class="back-btn" onclick="navigate('home')">‹</button>
+        <div class="app-title">⚙️ 설정</div>
+        <div style="width:38px"></div>
+      </div>
+      <div class="card">
+        <div style="text-align:center;">
+          <div style="font-size:48px;">${profile.emoji}</div>
+          <h2 style="margin-top:8px;">${profile.name}</h2>
+          <p style="color:var(--ink-soft);font-size:13px;margin-top:4px;">${profile.grade} · 시작일 ${START_DATE}</p>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">📊 데이터</div>
+        <div class="reward-row"><span>완료한 날</span><span><b>${Object.keys(s.progress).length}</b>일</span></div>
+        <div class="reward-row"><span>보유 코인</span><span><b>${s.coins}</b> 🪙</span></div>
+        <div class="reward-row"><span>레벨</span><span><b>Lv.${calcLevel(s).level}</b></span></div>
+      </div>
+      <button class="btn btn-block btn-ghost" onclick="confirmReset()" style="color:var(--tier-fire);border-color:var(--tier-fire);">⚠️ ${profile.name} 데이터 초기화</button>
+      <p style="text-align:center;color:var(--ink-mute);font-size:11px;margin-top:20px;">우리집 영단어 도전 v2.0</p>
+    </div>`;
+}
+
+function confirmReset() {
+  showModal(`
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">정말 초기화할까요?</div>
+    <div class="modal-text">${PROFILES[currentProfile.profileId].name}의 모든 시험 기록과 코인이 사라져요. 되돌릴 수 없어요.</div>
+    <button class="btn btn-block btn-primary" onclick="resetData()" style="background:var(--tier-fire);border-color:var(--tier-fire);">네, 초기화할게요</button>
+    <button class="btn btn-block btn-ghost mt-8" onclick="closeModal()">취소</button>
+  `);
+}
+window.confirmReset = confirmReset;
+
+function resetData() {
+  const id = currentProfile.profileId;
+  localStorage.removeItem(`vocab_v2_${id}`);
+  currentProfile = loadState(id);
+  closeModal();
+  showToast('초기화 완료');
+  navigate('home');
+}
+window.resetData = resetData;
+
+// ============================================================
+// 앱 시작!
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  navigate('profile-select');
+});
+</script>
+</body>
+</html>
