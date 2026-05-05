@@ -2234,6 +2234,71 @@ function calcLevel(state) {
 }
 
 // ============================================================
+// 종합 통계 (정답률, 누적 점수, 등수, 상위 %, 이번주 진행)
+// ============================================================
+function getProgressInfo(state) {
+  const completed = Object.keys(state.progress).length;
+  const today = getTodayDay();
+
+  // 정답률 (1차 + 2차 잘본거 합산)
+  let totalCorrect = 0, totalQ = 0;
+  Object.values(state.progress).forEach(p => {
+    totalCorrect += Math.max(p.firstScore || 0, p.secondScore || 0);
+    totalQ += 10;
+  });
+  // 토요일 보너스도 포함
+  Object.values(state.saturdayBonus).forEach(b => {
+    totalCorrect += (b.score || 0);
+    totalQ += 10;
+  });
+  const accuracy = totalQ > 0 ? Math.round((totalCorrect / totalQ) * 100) : 0;
+
+  // 챌린저 주차 수
+  let challengerWeeks = 0, totalCompletedWeeks = 0;
+  for (let w = 1; w <= 10; w++) {
+    const tier = getWeekTier(state, w);
+    if (tier) totalCompletedWeeks++;
+    if (tier === 'fire') challengerWeeks++;
+  }
+
+  // 상위 % 계산 (정답률 + 챌린저 주차 가산점)
+  let percentile = 50;
+  if (accuracy >= 95) percentile = 5;
+  else if (accuracy >= 90) percentile = 10;
+  else if (accuracy >= 85) percentile = 18;
+  else if (accuracy >= 80) percentile = 25;
+  else if (accuracy >= 70) percentile = 40;
+  else if (accuracy >= 60) percentile = 55;
+  else percentile = 70;
+  if (challengerWeeks >= 3) percentile = Math.max(3, percentile - 8);
+  else if (challengerWeeks >= 1) percentile = Math.max(5, percentile - 4);
+
+  // 이번주 진행 (월~금만)
+  let weekDoneDays = 0, weekTotalDays = 5;
+  if (today > 0) {
+    const weekNum = getWeekNum(today);
+    const [start, end] = getWeekRange(weekNum);
+    weekTotalDays = end - start + 1;
+    for (let d = start; d <= end; d++) {
+      const p = state.progress[d];
+      if (p && p.firstScore != null && (p.firstScore >= 9 || (p.secondScore != null && p.secondScore >= 9))) {
+        weekDoneDays++;
+      }
+    }
+  }
+
+  // 누적 점수 (= 레벨 점수)
+  const lvlInfo = calcLevel(state);
+
+  return {
+    completed, accuracy, totalCorrect, totalQ,
+    challengerWeeks, totalCompletedWeeks,
+    percentile, weekDoneDays, weekTotalDays,
+    score: lvlInfo.score, level: lvlInfo.level, nextAt: lvlInfo.nextAt,
+  };
+}
+
+// ============================================================
 // 발음 듣기 (브라우저 내장 TTS)
 // ============================================================
 function speak(text, btnEl) {
@@ -2560,27 +2625,55 @@ function renderHome() {
   const isSat = isSaturdayToday();
   const satKey = `week_${weekNum - (isSat && today >= 3 ? 0 : 0)}`;
 
-  // 통계
-  let totalCorrect = 0, totalQuestions = 0;
-  Object.values(s.progress).forEach(p => {
-    totalCorrect += Math.max(p.firstScore || 0, p.secondScore || 0);
-    totalQuestions += 10;
-  });
-  const accuracy = totalQuestions ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+  // 종합 통계
+  const info = getProgressInfo(s);
+  const accuracy = info.accuracy;
 
-  // 시작 전
+  // 시작 전 — 그래도 단어 미리보기, 아바타 꾸미기, 인쇄는 가능
   if (today === 0) {
     return `
       <div>
         <div class="app-header">
           <button class="back-btn" onclick="navigate('profile-select')">‹</button>
           <div class="app-title">${profile.name}</div>
-          <div style="width:38px"></div>
+          <button class="back-btn" onclick="navigate('settings')" style="font-size:18px;">⚙️</button>
         </div>
-        <div class="card" style="text-align:center;padding:40px 20px;">
-          <div style="font-size:60px;">⏰</div>
-          <h2 style="margin:12px 0;">아직 시작 전이에요</h2>
-          <p style="color:var(--ink-soft);font-size:13px;">시작일: ${START_DATE} (수요일)</p>
+        <div class="hero">
+          <div class="hero-row">
+            <div class="hero-emoji" style="overflow:hidden;background:var(--bg-cream);width:80px;height:80px;">
+              ${(() => {
+                if (!currentProfile.avatar) currentProfile.avatar = getDefaultAvatar(currentProfile.profileId);
+                return renderAvatarSVG(currentProfile.avatar, 80).replace('viewBox="0 0 200 400"', 'viewBox="40 50 120 120"');
+              })()}
+            </div>
+            <div class="hero-info">
+              <div class="hero-name">${profile.name}</div>
+              <div style="font-size:13px;color:var(--ink-soft);margin-top:2px;">${profile.grade}</div>
+            </div>
+          </div>
+        </div>
+        <div class="today-block" style="background:linear-gradient(135deg, var(--blue), var(--purple));">
+          <div class="today-block-tag">⏰ 시작일</div>
+          <div class="today-block-title">${START_DATE} 수요일부터!</div>
+          <div class="today-block-subtitle">미리 단어 예습할 수 있어요</div>
+          <div class="today-actions" style="grid-template-columns:1fr;">
+            <div class="today-action-btn" onclick="startEarly()">
+              <div class="today-action-icon">🚀</div>
+              <div class="today-action-label">바로 시작하기</div>
+            </div>
+          </div>
+        </div>
+        <div class="menu-grid">
+          <div class="menu-card" onclick="navigate('avatar',{tab:'closet'})" style="grid-column:span 2;background:linear-gradient(135deg, var(--purple-soft), var(--pink-soft));border-color:var(--purple);">
+            <div class="menu-icon">✨</div>
+            <div><div class="menu-text">아바타 꾸미기</div><div class="menu-sub">미리 캐릭터 만들기</div></div>
+          </div>
+          <div class="menu-card" onclick="navigate('preview')">
+            <div class="menu-icon">📖</div><div><div class="menu-text">전체 단어</div><div class="menu-sub">25일치 미리보기</div></div>
+          </div>
+          <div class="menu-card" onclick="navigate('print')">
+            <div class="menu-icon">🖨️</div><div><div class="menu-text">인쇄하기</div><div class="menu-sub">PDF 저장 · 출력</div></div>
+          </div>
         </div>
       </div>`;
   }
@@ -2695,12 +2788,21 @@ function renderHome() {
           </div>
           <div class="hero-info">
             <div class="hero-name">${profile.name}의 도전</div>
-            <div style="font-size:13px;color:var(--ink-soft);margin-top:2px;">${profile.grade} · ${completed}일 완료</div>
+            <div style="font-size:13px;color:var(--ink-soft);margin-top:2px;">${profile.grade} · ${completed}일 완료 · 상위 ${info.percentile}%</div>
             <div class="hero-stats">
+              <div class="stat"><div class="stat-label">이번주</div><div class="stat-value">${info.weekDoneDays}/${info.weekTotalDays}</div></div>
               <div class="stat"><div class="stat-label">정답률</div><div class="stat-value">${accuracy}%</div></div>
               <div class="stat"><div class="stat-label">코인</div><div class="stat-value">${s.coins}</div></div>
-              <div class="stat"><div class="stat-label">아이템</div><div class="stat-value">${s.items.length}</div></div>
             </div>
+          </div>
+        </div>
+        <div class="progress-section">
+          <div class="progress-label">
+            <span>이번 주 진행 ${info.weekDoneDays}/${info.weekTotalDays}일</span>
+            <span>${Math.round((info.weekDoneDays / info.weekTotalDays) * 100)}%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${(info.weekDoneDays / info.weekTotalDays) * 100}%;"></div>
           </div>
         </div>
         <div class="level-banner">
@@ -2721,8 +2823,7 @@ function renderHome() {
           <div><div class="menu-text">아바타 꾸미기</div><div class="menu-sub">${(currentProfile.ownedItems || []).length}개 보유 · 🪙${s.coins}</div></div>
         </div>
         <div class="menu-card" onclick="navigate('progress')">
-          <div class="menu-icon">📊</div><div><div class="menu-text">내 진도</div><div class="menu-sub">레벨 ${lvl.level}</div></div>
-        </div>
+          <div class="menu-icon">📊</div><div><div class="menu-text">내 진도</div><div class="menu-sub">상위 ${info.percentile}%</div></div></div>
         <div class="menu-card" onclick="navigate('history')">
           <div class="menu-icon">📅</div><div><div class="menu-text">이력</div><div class="menu-sub">${completed}일 완료</div></div>
         </div>
@@ -3430,9 +3531,10 @@ function renderHistory() {
 // ============================================================
 function renderProgress() {
   const s = currentProfile;
-  const lvl = calcLevel(s);
-  const completed = Object.keys(s.progress).length;
-  const todayDay = getTodayDay();
+  const info = getProgressInfo(s);
+  const lvl = { level: info.level, score: info.score, nextAt: info.nextAt };
+  const completed = info.completed;
+  const acc = info.accuracy;
 
   // 일일 등급별 카운트
   let fireCount = 0, diaCount = 0, goldCount = 0;
@@ -3443,14 +3545,6 @@ function renderProgress() {
     else if (t === 'gold') goldCount++;
   });
 
-  // 정답률
-  let totalCorrect = 0, totalQ = 0;
-  Object.values(s.progress).forEach(p => {
-    totalCorrect += Math.max(p.firstScore || 0, p.secondScore || 0);
-    totalQ += 10;
-  });
-  const acc = totalQ ? Math.round((totalCorrect / totalQ) * 100) : 0;
-
   // 주간 등급 카운트
   let fireWeeks = 0, diaWeeks = 0, goldWeeks = 0;
   for (let w = 1; w <= 5; w++) {
@@ -3460,9 +3554,13 @@ function renderProgress() {
     else if (t === 'gold') goldWeeks++;
   }
 
-  // 진행률
-  const totalDays = 23; // 25일치 중 토일 빼고 — 대략 표시용
-  const progressPct = Math.min(100, Math.round((completed / totalDays) * 100));
+  // 누적 단어 수 (외운 단어)
+  const totalWords = completed * 20;
+
+  // 토요일 보너스 통계
+  const satCount = Object.keys(s.saturdayBonus).length;
+  let satTotal = 0;
+  Object.values(s.saturdayBonus).forEach(b => { satTotal += (b.score || 0); });
 
   return `
     <div>
@@ -3471,36 +3569,76 @@ function renderProgress() {
         <div class="app-title">📊 내 진도</div>
         <div style="width:38px"></div>
       </div>
+
+      <!-- 상위 % 큰 박스 -->
+      <div class="card" style="background:linear-gradient(135deg, #FF6B47, #F5B82E);color:white;border-color:var(--ink);text-align:center;">
+        <div style="font-family:var(--font-display);font-size:14px;opacity:0.95;">🏆 전국 학생 중</div>
+        <div style="font-family:var(--font-display);font-size:54px;margin:4px 0;line-height:1;">상위 ${info.percentile}%</div>
+        <div style="font-size:12px;opacity:0.95;margin-top:6px;">정답률 ${acc}% · 챌린저 주차 ${info.challengerWeeks}회</div>
+        <div style="background:rgba(0,0,0,0.15);padding:10px;border-radius:10px;margin-top:12px;font-size:11px;line-height:1.5;">
+          정답률 95% 이상 + 챌린저 주가 3개 이상이면 상위 5%에 들어가요!
+        </div>
+      </div>
+
+      <!-- 레벨 박스 -->
       <div class="card" style="background:linear-gradient(135deg, var(--purple), var(--blue));color:white;border-color:var(--ink);">
-        <div style="font-family:var(--font-display);font-size:16px;opacity:0.9;">⚡ 레벨 ${lvl.level}</div>
-        <div style="font-family:var(--font-display);font-size:38px;margin:6px 0;">${lvl.score}점</div>
-        <div style="font-size:12px;opacity:0.85;">다음 레벨까지 ${lvl.nextAt - lvl.score}점 남음</div>
-        <div class="progress-section">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-family:var(--font-display);font-size:14px;opacity:0.9;">⚡ 레벨 ${lvl.level}</div>
+            <div style="font-family:var(--font-display);font-size:32px;margin-top:4px;">${lvl.score}점</div>
+            <div style="font-size:11px;opacity:0.85;">다음 레벨까지 ${lvl.nextAt - lvl.score}점 남음</div>
+          </div>
+          <div style="background:var(--gold);color:var(--ink);padding:14px 18px;border-radius:14px;border:2px solid var(--ink);font-family:var(--font-display);font-size:22px;">
+            Lv.${lvl.level}
+          </div>
+        </div>
+        <div class="progress-section" style="margin-top:14px;">
           <div class="progress-bar" style="background:rgba(255,255,255,0.3);border-color:rgba(255,255,255,0.4);">
             <div class="progress-fill" style="width:${(lvl.score % 100)}%;"></div>
           </div>
         </div>
       </div>
+
+      <!-- 누적 통계 -->
       <div class="card">
-        <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">🎯 종합 통계</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-          <div class="stat" style="background:var(--coral-soft);"><div class="stat-label">완료</div><div class="stat-value">${completed}일</div></div>
-          <div class="stat" style="background:var(--teal-soft);"><div class="stat-label">정답률</div><div class="stat-value">${acc}%</div></div>
+        <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">📈 누적 통계</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="stat" style="background:var(--coral-soft);"><div class="stat-label">완료한 날</div><div class="stat-value">${completed}일</div></div>
+          <div class="stat" style="background:var(--teal-soft);"><div class="stat-label">외운 단어</div><div class="stat-value">${totalWords}개</div></div>
+          <div class="stat" style="background:var(--blue-soft);"><div class="stat-label">정답률</div><div class="stat-value">${acc}%</div></div>
           <div class="stat" style="background:var(--gold-soft);"><div class="stat-label">코인</div><div class="stat-value">${s.coins}</div></div>
+          <div class="stat" style="background:var(--purple-soft);"><div class="stat-label">레벨</div><div class="stat-value">Lv.${lvl.level}</div></div>
+          <div class="stat" style="background:var(--pink-soft);"><div class="stat-label">아이템</div><div class="stat-value">${(s.ownedItems || []).length}개</div></div>
         </div>
       </div>
+
+      <!-- 일일 등급 -->
       <div class="card">
-        <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">🏆 일일 등급</div>
+        <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">🏅 받은 등급</div>
         <div class="reward-row"><span>🔥 챌린저 (1차 만점)</span><span><b>${fireCount}</b>회</span></div>
         <div class="reward-row"><span>💎 다이아 (1차 9+)</span><span><b>${diaCount}</b>회</span></div>
         <div class="reward-row"><span>⭐ 골드 (2차 9+)</span><span><b>${goldCount}</b>회</span></div>
+        <div class="reward-row" style="border-top:1px dashed var(--line);padding-top:6px;margin-top:6px;">
+          <span style="font-weight:600;">전체 ${completed}회 중 통과</span>
+          <span><b>${fireCount + diaCount + goldCount}</b>회</span>
+        </div>
       </div>
+
+      <!-- 주간 등급 -->
       <div class="card">
         <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">⭐ 주간 등급</div>
         <div class="reward-row"><span>🔥 챌린저 주차</span><span><b>${fireWeeks}</b>주</span></div>
         <div class="reward-row"><span>💎 다이아 주차</span><span><b>${diaWeeks}</b>주</span></div>
         <div class="reward-row"><span>⭐ 골드 주차</span><span><b>${goldWeeks}</b>주</span></div>
       </div>
+
+      <!-- 토요일 보너스 -->
+      ${satCount > 0 ? `
+      <div class="card">
+        <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">🎁 토요일 보너스</div>
+        <div class="reward-row"><span>참가 횟수</span><span><b>${satCount}</b>회</span></div>
+        <div class="reward-row"><span>총 점수</span><span><b>${satTotal}</b>점</span></div>
+      </div>` : ''}
     </div>`;
 }
 
