@@ -8,6 +8,26 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyBuqH0mtV6vadgq3TfGIdZiilsZZ8ubjk8",
+    authDomain: "vocab-408d5.firebaseapp.com",
+    projectId: "vocab-408d5",
+    storageBucket: "vocab-408d5.firebasestorage.app",
+    messagingSenderId: "956114594661",
+    appId: "1:956114594661:web:496171e698123442810f8c"
+  };
+  const fbApp = initializeApp(firebaseConfig);
+  const fbDb = getFirestore(fbApp);
+  // 전역으로 노출
+  window.__fb = { db: fbDb, doc, getDoc, setDoc, onSnapshot };
+  window.__fbReady = true;
+  // Firebase 준비됐다는 이벤트 발생
+  window.dispatchEvent(new Event('fb-ready'));
+</script>
 <style>
 :root {
   --bg-cream: #FFF8E8;
@@ -2112,9 +2132,41 @@ function saveState(state) {
   try {
     localStorage.setItem(`vocab_v2_${state.profileId}`, JSON.stringify(state));
   } catch (e) {
-    console.error('저장 실패', e);
+    console.error('로컬 저장 실패', e);
+  }
+  // Firebase에도 저장 (있으면)
+  if (window.__fb && window.__fb.db) {
+    const { db, doc, setDoc } = window.__fb;
+    setDoc(doc(db, 'profiles', state.profileId), state).catch(e => {
+      console.warn('클라우드 저장 실패 (로컬은 저장됨):', e.message);
+    });
   }
 }
+
+// Firebase에서 최신 데이터 가져오기 (앱 시작 시 1회)
+async function syncFromCloud(profileId) {
+  if (!window.__fb || !window.__fb.db) return null;
+  try {
+    const { db, doc, getDoc } = window.__fb;
+    const snap = await getDoc(doc(db, 'profiles', profileId));
+    if (snap.exists()) {
+      const cloudData = snap.data();
+      const localRaw = localStorage.getItem(`vocab_v2_${profileId}`);
+      const localData = localRaw ? JSON.parse(localRaw) : null;
+      // 클라우드 데이터가 더 진행되어 있으면 클라우드 사용
+      const cloudDays = Object.keys(cloudData.progress || {}).length;
+      const localDays = localData ? Object.keys(localData.progress || {}).length : 0;
+      if (cloudDays >= localDays) {
+        localStorage.setItem(`vocab_v2_${profileId}`, JSON.stringify(cloudData));
+        return cloudData;
+      }
+    }
+  } catch (e) {
+    console.warn('클라우드 동기화 실패:', e.message);
+  }
+  return null;
+}
+window.syncFromCloud = syncFromCloud;
 
 // ============================================================
 // 등급 계산 (정확히 정의된 규칙)
@@ -2474,8 +2526,12 @@ function renderProfileSelect() {
     </div>`;
 }
 function selectProfile(id) {
-  currentProfile = loadState(id);
-  navigate('home');
+  // 클라우드에서 먼저 가져오고 → 그 다음 화면 그리기
+  showToast('데이터 불러오는 중...', 1000);
+  syncFromCloud(id).then(() => {
+    currentProfile = loadState(id);
+    navigate('home');
+  });
 }
 window.selectProfile = selectProfile;
 
@@ -3523,6 +3579,16 @@ function renderSettings() {
         <div class="reward-row"><span>완료한 날</span><span><b>${Object.keys(s.progress).length}</b>일</span></div>
         <div class="reward-row"><span>보유 코인</span><span><b>${s.coins}</b> 🪙</span></div>
         <div class="reward-row"><span>레벨</span><span><b>Lv.${calcLevel(s).level}</b></span></div>
+      </div>
+      <div class="card">
+        <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">☁️ 클라우드 동기화</div>
+        <div class="reward-row">
+          <span>연결 상태</span>
+          <span id="cloud-status">${window.__fbReady ? '<b style="color:var(--green);">✓ 연결됨</b>' : '<b style="color:var(--ink-mute);">로딩중...</b>'}</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink-mute);margin-top:6px;line-height:1.5;">
+          핸드폰·태블릿·컴퓨터 어디서든 같은 데이터로 사용할 수 있어요. 시험 결과는 자동으로 클라우드에 저장돼요.
+        </div>
       </div>
       <button class="btn btn-block btn-ghost" onclick="confirmReset()" style="color:var(--tier-fire);border-color:var(--tier-fire);">⚠️ ${profile.name} 데이터 초기화</button>
       <p style="text-align:center;color:var(--ink-mute);font-size:11px;margin-top:20px;">우리집 영단어 도전 v2.0</p>
