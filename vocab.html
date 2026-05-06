@@ -2452,7 +2452,7 @@ function genQuestion(word, type, allWords) {
   const safe = distinct.length >= 4 ? distinct : pool;
 
   if (type === 'meaning') {
-    const distractors = sample(safe, 4).map(x => x.meaning);
+    const distractors = sample(safe, 3).map(x => x.meaning);
     return {
       type, word: word.word, meaning: word.meaning,
       prompt: '뜻을 고르세요',
@@ -2464,7 +2464,7 @@ function genQuestion(word, type, allWords) {
     };
   }
   if (type === 'spelling') {
-    const distractors = genSpellingDistractors(word.word, 4);
+    const distractors = genSpellingDistractors(word.word, 3);
     return {
       type, word: word.word, meaning: word.meaning,
       prompt: '맞는 스펠을 고르세요',
@@ -2476,13 +2476,30 @@ function genQuestion(word, type, allWords) {
     };
   }
   if (type === 'fill') {
-    const distractors = sample(safe, 4).map(x => x.word);
-    const sentence = word.sentence.replace(/_+/g,
-      '<u style="display:inline-block;min-width:60px;border-bottom:2px solid var(--coral);">&nbsp;</u>');
+    // 빈칸 채우기 쉽게:
+    // 1. 보기 4개 (정답 + 오답 3개)
+    // 2. 정답이 4글자 이상이면 첫 글자 힌트 표시
+    // 3. 보기는 단어 길이가 전혀 달라서 안 헷갈리게
+    const wordLen = word.word.length;
+    const candidates = safe.filter(x => Math.abs(x.word.length - wordLen) >= 2);
+    const pool = candidates.length >= 3 ? candidates : safe;
+    const distractors = sample(pool, 3).map(x => x.word);
+    
+    // 첫 글자 힌트: 4글자 이상일 때만
+    let sentenceWithBlank;
+    if (wordLen >= 4) {
+      const hint = word.word[0].toUpperCase();
+      sentenceWithBlank = word.sentence.replace(/_+/g,
+        `<span style="display:inline-block;min-width:70px;border-bottom:2px solid var(--coral);font-weight:600;color:var(--coral);">${hint}___</span>`);
+    } else {
+      sentenceWithBlank = word.sentence.replace(/_+/g,
+        '<u style="display:inline-block;min-width:60px;border-bottom:2px solid var(--coral);">&nbsp;</u>');
+    }
+    
     return {
       type, word: word.word, meaning: word.meaning,
-      prompt: '빈칸에 알맞은 단어를 고르세요',
-      display: `<div class="test-q-sentence">${sentence}</div>`,
+      prompt: `빈칸에 알맞은 단어를 고르세요 (뜻: ${word.meaning})`,
+      display: `<div class="test-q-sentence">${sentenceWithBlank}</div>`,
       options: shuffle([word.word, ...distractors]),
       answer: word.word,
       optionType: 'english',
@@ -2505,8 +2522,9 @@ function generateTest(words, isSecondAttempt = false, wrongWordList = []) {
     pickedWords = sample(words, 10);
   }
 
-  const types = ['meaning','meaning','meaning','meaning',
-                 'spelling','spelling','spelling','spelling',
+  // 뜻 6개 + 스펠 2개 + 빈칸 2개 (스펠은 어렵고 빈칸은 길어서 적게)
+  const types = ['meaning','meaning','meaning','meaning','meaning','meaning',
+                 'spelling','spelling',
                  'fill','fill'];
   return pickedWords.map((w, i) => genQuestion(w, types[i], words));
 }
