@@ -2040,8 +2040,8 @@ Object.assign(WORDS.jooha, WORDS_PART2.jooha_14_25);
 // 프로필 정의
 // ============================================================
 const PROFILES = {
-  juhyuk: { name: '주혁', emoji: '🦁', grade: '중1', color: 'blue' },
-  jooha:  { name: '주하', emoji: '🦄', grade: '초6', color: 'pink' },
+  juhyuk: { name: '주혁', emoji: '👦', grade: '중2', color: 'blue' },
+  jooha:  { name: '주하', emoji: '👧', grade: '중1', color: 'pink' },
 };
 
 // ============================================================
@@ -2049,7 +2049,7 @@ const PROFILES = {
 // 첫 주: 수(D1), 목(D2), 금(D3) — 3일치
 // 둘째 주부터: 월~금 5일치
 // ============================================================
-const START_DATE = '2026-05-06'; // 내일(수요일)부터 시작 — 부모님이 시작할 때 자동 계산
+const START_DATE = '2026-05-04'; // 월요일 시작 — 5/6 수요일=D3, 5/7 목요일=D4
 
 function getTodayDay() {
   const start = new Date(START_DATE + 'T00:00:00');
@@ -2059,26 +2059,16 @@ function getTodayDay() {
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   if (diffDays < 0) return 0; // 시작 전
 
-  // 첫 주 (D1~D3): 0,1,2일차 = DAY 1,2,3
-  if (diffDays <= 2) return diffDays + 1;
-
-  // 첫 주 토요일 = 3일차 / 일요일 = 4일차
-  // 둘째 주 월요일 = 5일차 → DAY 4
-  // 매주 월~금만 진행 (5일/주)
-  // 첫째 주(3일) + 그 후 주차들
-  const daysAfterFirstWeek = diffDays - 4; // 둘째 주 월요일(=4)부터 시작
-  if (daysAfterFirstWeek < 0) {
-    // 토/일이면 마지막 진행한 day 유지
-    return 3;
-  }
-  const fullWeeks = Math.floor(daysAfterFirstWeek / 7);
-  const dayInWeek = daysAfterFirstWeek % 7; // 0=월,1=화,2=수,3=목,4=금,5=토,6=일
+  // 5/4(월)부터 시작. 매주 월~금만 진행 (주 5일).
+  // 0=월,1=화,2=수,3=목,4=금,5=토,6=일
+  const fullWeeks = Math.floor(diffDays / 7);
+  const dayInWeek = diffDays % 7;
   if (dayInWeek <= 4) {
-    // 월~금 진행
-    return 3 + fullWeeks * 5 + dayInWeek + 1;
+    // 월~금
+    return fullWeeks * 5 + dayInWeek + 1;
   } else {
-    // 토,일 — 마지막 금요일 day
-    return 3 + fullWeeks * 5 + 5;
+    // 토/일 → 그 주 금요일 DAY 유지
+    return fullWeeks * 5 + 5;
   }
 }
 
@@ -2087,21 +2077,16 @@ function isSaturdayToday() {
   return new Date().getDay() === 6;
 }
 
-// 이번주 번호 (currentDay 기준)
-// 첫 주: DAY 1~3 = 1주차, 둘째 주: DAY 4~8 = 2주차, ...
+// 이번주 번호 — 5일치 단위 (DAY 1~5=1주차, 6~10=2주차, ...)
 function getWeekNum(day) {
-  if (day <= 3) return 1;
-  return 1 + Math.ceil((day - 3) / 5);
+  return Math.ceil(day / 5);
 }
 function getWeekRange(weekNum) {
-  if (weekNum === 1) return [1, 3];
-  const start = 3 + (weekNum - 2) * 5 + 1;
+  const start = (weekNum - 1) * 5 + 1;
   return [start, start + 4];
 }
 function isWeekLastDay(day) {
-  if (day === 3) return true; // 1주차 마지막
-  if (day < 3) return false;
-  return (day - 3) % 5 === 0; // 8, 13, 18, 23 = 마지막
+  return day % 5 === 0;
 }
 
 // ============================================================
@@ -2476,25 +2461,15 @@ function genQuestion(word, type, allWords) {
     };
   }
   if (type === 'fill') {
-    // 빈칸 채우기 쉽게:
-    // 1. 보기 4개 (정답 + 오답 3개)
-    // 2. 정답이 4글자 이상이면 첫 글자 힌트 표시
-    // 3. 보기는 단어 길이가 전혀 달라서 안 헷갈리게
+    // 보기 4개 (정답 + 오답 3개) · 길이 다른 단어들로
     const wordLen = word.word.length;
     const candidates = safe.filter(x => Math.abs(x.word.length - wordLen) >= 2);
     const pool = candidates.length >= 3 ? candidates : safe;
     const distractors = sample(pool, 3).map(x => x.word);
     
-    // 첫 글자 힌트: 4글자 이상일 때만
-    let sentenceWithBlank;
-    if (wordLen >= 4) {
-      const hint = word.word[0].toUpperCase();
-      sentenceWithBlank = word.sentence.replace(/_+/g,
-        `<span style="display:inline-block;min-width:70px;border-bottom:2px solid var(--coral);font-weight:600;color:var(--coral);">${hint}___</span>`);
-    } else {
-      sentenceWithBlank = word.sentence.replace(/_+/g,
-        '<u style="display:inline-block;min-width:60px;border-bottom:2px solid var(--coral);">&nbsp;</u>');
-    }
+    // 전체 빈칸 (힌트 없음)
+    const sentenceWithBlank = word.sentence.replace(/_+/g,
+      '<u style="display:inline-block;min-width:80px;border-bottom:2px solid var(--coral);">&nbsp;</u>');
     
     return {
       type, word: word.word, meaning: word.meaning,
