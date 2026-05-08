@@ -913,125 +913,419 @@ h3 { font-size: 18px; }
 // 각 25일치 (5주분), 하루 20단어, 총 1000단어
 // =====================================================
 
+// ==================== 단어 데이터 (중2 / 중1) ====================
+// 주혁: 중2 EBS / 주하: 중1 EBS
+// 주제별 25일치 × 20단어 × 2명 = 1000단어
+// =================================================================
+
 const WORDS = {
   juhyuk: {
     1: { theme: "감정과 성격", words: [
-      { word: "believe", meaning: "믿다", sentence: "I ___ you can do it." },
-      { word: "careful", meaning: "조심스러운", sentence: "Be ___ on the road." },
-      { word: "friendly", meaning: "친근한", sentence: "He is very ___ to everyone." },
-      { word: "kind", meaning: "친절한", sentence: "She is ___ to her friends." },
-      { word: "nervous", meaning: "긴장한", sentence: "I feel ___ before the test." },
-      { word: "polite", meaning: "예의 바른", sentence: "She is always ___." },
-      { word: "proud", meaning: "자랑스러운", sentence: "I am ___ of my sister." },
-      { word: "surprised", meaning: "놀란", sentence: "He was ___ by the gift." },
-      { word: "excited", meaning: "신난", sentence: "I am ___ for the trip." },
-      { word: "confident", meaning: "자신감 있는", sentence: "She looks ___ today." },
-      { word: "comfortable", meaning: "편안한", sentence: "This chair is ___." },
-      { word: "familiar", meaning: "익숙한", sentence: "Her face looks ___." },
+      { word: "depend", meaning: "의지하다, 의존하다", sentence: "I ___ on my parents." },
+      { word: "confident", meaning: "자신감 있는", sentence: "She is ___ in herself." },
+      { word: "ashamed", meaning: "부끄러운", sentence: "I'm ___ of my mistake." },
+      { word: "mature", meaning: "성숙한", sentence: "He is very ___ for his age." },
+      { word: "patience", meaning: "인내심", sentence: "___ is a great virtue." },
+      { word: "courage", meaning: "용기", sentence: "She showed great ___." },
+      { word: "selfish", meaning: "이기적인", sentence: "Don't be ___." },
+      { word: "anxious", meaning: "불안한", sentence: "He felt ___ about the test." },
+      { word: "thoughtful", meaning: "사려 깊은", sentence: "He is ___ and kind." },
+      { word: "humble", meaning: "겸손한", sentence: "Be ___ when you succeed." },
+      { word: "ambition", meaning: "야망", sentence: "His ___ is to be a doctor." },
+      { word: "encourage", meaning: "격려하다", sentence: "Parents ___ their children." },
+      { word: "confess", meaning: "고백하다", sentence: "He ___ed his feelings." },
+      { word: "impress", meaning: "감명을 주다", sentence: "The view ___ed me deeply." },
       { word: "behavior", meaning: "행동", sentence: "His ___ was excellent." },
-      { word: "character", meaning: "성격", sentence: "She has a strong ___." },
-      { word: "emotion", meaning: "감정", sentence: "Music expresses ___." },
-      { word: "recognize", meaning: "알아보다", sentence: "I didn't ___ you at first." },
-      { word: "encourage", meaning: "격려하다", sentence: "Parents ___ their kids." },
+      { word: "character", meaning: "성격, 인격", sentence: "She has a strong ___." },
+      { word: "attitude", meaning: "태도", sentence: "A positive ___ matters." },
+      { word: "sincere", meaning: "진실한", sentence: "Her smile was ___." },
+      { word: "grateful", meaning: "감사하는", sentence: "I'm ___ for your help." },
+      { word: "stubborn", meaning: "고집 센", sentence: "He is too ___." }
+    ]},
+    2: { theme: "학교와 공부", words: [
+      { word: "assignment", meaning: "과제", sentence: "Did you finish the ___?" },
+      { word: "concentrate", meaning: "집중하다", sentence: "You must ___ on studying." },
+      { word: "memorize", meaning: "암기하다", sentence: "I have to ___ these words." },
+      { word: "review", meaning: "복습하다", sentence: "Always ___ your notes." },
+      { word: "lecture", meaning: "강의", sentence: "The ___ was interesting." },
+      { word: "principal", meaning: "교장", sentence: "The ___ greeted us." },
+      { word: "graduate", meaning: "졸업하다", sentence: "She will ___ next year." },
+      { word: "solve", meaning: "풀다, 해결하다", sentence: "Can you ___ this problem?" },
+      { word: "require", meaning: "요구하다", sentence: "This job ___s skills." },
+      { word: "essential", meaning: "필수적인", sentence: "Sleep is ___ for health." },
+      { word: "challenge", meaning: "도전", sentence: "Math is a real ___." },
       { word: "opportunity", meaning: "기회", sentence: "Don't miss this ___." },
-      { word: "experience", meaning: "경험", sentence: "Travel gives us ___." },
+      { word: "effort", meaning: "노력", sentence: "Make more ___." },
+      { word: "progress", meaning: "진보, 발전", sentence: "She made great ___." },
+      { word: "achieve", meaning: "성취하다", sentence: "I want to ___ my goal." },
+      { word: "accomplish", meaning: "완수하다", sentence: "He ___ed his task." },
+      { word: "knowledge", meaning: "지식", sentence: "___ is power." },
+      { word: "instruction", meaning: "지시", sentence: "Read the ___s carefully." },
+      { word: "scholar", meaning: "학자", sentence: "He is a famous ___." },
+      { word: "discipline", meaning: "규율, 훈련", sentence: "Self-___ is important." }
+    ]},
+    3: { theme: "가족과 관계", words: [
+      { word: "relative", meaning: "친척", sentence: "My ___ visited us." },
+      { word: "ancestor", meaning: "조상", sentence: "Our ___s came from Korea." },
+      { word: "generation", meaning: "세대", sentence: "Each ___ is different." },
+      { word: "household", meaning: "가구, 가정", sentence: "The ___ has 5 members." },
+      { word: "nephew", meaning: "조카(남)", sentence: "My ___ is in school." },
+      { word: "niece", meaning: "조카(여)", sentence: "My ___ is 5 years old." },
+      { word: "acquaintance", meaning: "지인", sentence: "He's just an ___." },
+      { word: "companion", meaning: "동반자", sentence: "A loyal ___ is rare." },
+      { word: "respect", meaning: "존경하다", sentence: "I ___ my grandfather." },
+      { word: "argue", meaning: "논쟁하다", sentence: "Please don't ___." },
+      { word: "resemble", meaning: "닮다", sentence: "You ___ your father." },
+      { word: "reunion", meaning: "재회", sentence: "The family ___ was fun." },
+      { word: "relationship", meaning: "관계", sentence: "Their ___ is close." },
+      { word: "marriage", meaning: "결혼", sentence: "___ is a big decision." },
+      { word: "trust", meaning: "신뢰하다", sentence: "I ___ my best friend." },
+      { word: "forgive", meaning: "용서하다", sentence: "Please ___ me." },
+      { word: "apologize", meaning: "사과하다", sentence: "You should ___." },
+      { word: "quarrel", meaning: "다툼", sentence: "They had a small ___." },
+      { word: "sympathy", meaning: "공감", sentence: "She showed ___." },
+      { word: "loyal", meaning: "충실한", sentence: "He is ___ to his friends." }
+    ]},
+    4: { theme: "자연과 환경", words: [
+      { word: "environment", meaning: "환경", sentence: "Protect the ___." },
+      { word: "pollution", meaning: "오염", sentence: "Air ___ is serious." },
+      { word: "preserve", meaning: "보존하다", sentence: "We must ___ nature." },
+      { word: "destroy", meaning: "파괴하다", sentence: "Don't ___ the forest." },
+      { word: "habitat", meaning: "서식지", sentence: "This is the panda's ___." },
+      { word: "extinct", meaning: "멸종한", sentence: "Dinosaurs are ___." },
+      { word: "endangered", meaning: "멸종 위기의", sentence: "Tigers are ___." },
+      { word: "species", meaning: "종(생물)", sentence: "Many ___ are in danger." },
+      { word: "ecosystem", meaning: "생태계", sentence: "The ___ is fragile." },
+      { word: "climate", meaning: "기후", sentence: "The ___ is changing." },
+      { word: "atmosphere", meaning: "대기, 분위기", sentence: "The ___ is polluted." },
+      { word: "resource", meaning: "자원", sentence: "We need new ___s." },
+      { word: "natural", meaning: "자연의", sentence: "This is ___ water." },
+      { word: "disaster", meaning: "재난", sentence: "It was a huge ___." },
+      { word: "earthquake", meaning: "지진", sentence: "The ___ shook the city." },
+      { word: "flood", meaning: "홍수", sentence: "The ___ destroyed homes." },
+      { word: "drought", meaning: "가뭄", sentence: "The ___ lasted a year." },
+      { word: "wildlife", meaning: "야생 동물", sentence: "We must protect ___." },
+      { word: "global", meaning: "지구의", sentence: "It's a ___ problem." },
+      { word: "renewable", meaning: "재생 가능한", sentence: "Solar is a ___ energy." }
+    ]},
+    5: { theme: "여행과 장소", words: [
+      { word: "journey", meaning: "여정", sentence: "Life is a long ___." },
+      { word: "destination", meaning: "목적지", sentence: "What's your ___?" },
+      { word: "adventure", meaning: "모험", sentence: "This trip is an ___." },
+      { word: "abroad", meaning: "해외에", sentence: "She went ___ to study." },
+      { word: "departure", meaning: "출발", sentence: "The ___ time is 9 AM." },
+      { word: "arrival", meaning: "도착", sentence: "The ___ was delayed." },
+      { word: "luggage", meaning: "수하물", sentence: "Pack your ___." },
+      { word: "souvenir", meaning: "기념품", sentence: "I bought a ___." },
+      { word: "accommodation", meaning: "숙박", sentence: "Find ___ near here." },
+      { word: "sightseeing", meaning: "관광", sentence: "We went ___ in Paris." },
+      { word: "tourist", meaning: "관광객", sentence: "Many ___s visit Seoul." },
+      { word: "passenger", meaning: "승객", sentence: "Each ___ has a ticket." },
+      { word: "transport", meaning: "운송", sentence: "Public ___ is convenient." },
+      { word: "landscape", meaning: "풍경", sentence: "The ___ was beautiful." },
+      { word: "monument", meaning: "기념물", sentence: "The ___ is famous." },
+      { word: "ancient", meaning: "고대의", sentence: "We saw ___ ruins." },
+      { word: "capital", meaning: "수도", sentence: "Seoul is the ___ of Korea." },
+      { word: "region", meaning: "지역", sentence: "This ___ is rural." },
+      { word: "distance", meaning: "거리", sentence: "The ___ is too far." },
+      { word: "nearby", meaning: "근처에", sentence: "There's a park ___." }
+    ]},
+    6: { theme: "음식과 요리", words: [
+      { word: "appetite", meaning: "식욕", sentence: "I have a big ___." },
+      { word: "cuisine", meaning: "요리", sentence: "Italian ___ is famous." },
+      { word: "ingredient", meaning: "재료", sentence: "Sugar is a main ___." },
+      { word: "recipe", meaning: "조리법", sentence: "Mom shared her ___." },
+      { word: "flavor", meaning: "맛, 향", sentence: "My favorite ___ is mint." },
+      { word: "delicious", meaning: "맛있는", sentence: "This pizza is ___." },
+      { word: "vegetarian", meaning: "채식주의자", sentence: "She is a ___." },
+      { word: "nutrition", meaning: "영양", sentence: "Good ___ matters." },
+      { word: "balanced", meaning: "균형잡힌", sentence: "Eat a ___ diet." },
+      { word: "fresh", meaning: "신선한", sentence: "I love ___ fruit." },
+      { word: "spicy", meaning: "매운", sentence: "Kimchi is ___." },
+      { word: "sweet", meaning: "달콤한", sentence: "Honey is ___." },
+      { word: "salty", meaning: "짠", sentence: "The soup is too ___." },
+      { word: "boil", meaning: "끓이다", sentence: "Please ___ the water." },
+      { word: "fry", meaning: "튀기다", sentence: "Mom will ___ chicken." },
+      { word: "bake", meaning: "굽다", sentence: "Let's ___ a cake." },
+      { word: "snack", meaning: "간식", sentence: "Chips are a ___." },
+      { word: "dessert", meaning: "후식", sentence: "Cake is for ___." },
+      { word: "leftover", meaning: "남은 음식", sentence: "Eat the ___s." },
+      { word: "raw", meaning: "날것의", sentence: "Don't eat ___ meat." }
+    ]},
+    7: { theme: "직업과 일", words: [
+      { word: "career", meaning: "경력", sentence: "Plan your ___ early." },
+      { word: "profession", meaning: "전문직", sentence: "Teaching is a ___." },
+      { word: "occupation", meaning: "직업", sentence: "What is your ___?" },
+      { word: "employee", meaning: "직원", sentence: "She is an ___ here." },
+      { word: "employer", meaning: "고용주", sentence: "His ___ is kind." },
+      { word: "salary", meaning: "급여", sentence: "His ___ is good." },
+      { word: "interview", meaning: "면접", sentence: "I have an ___ today." },
+      { word: "resume", meaning: "이력서", sentence: "Submit your ___." },
+      { word: "skill", meaning: "기술", sentence: "Cooking is a useful ___." },
+      { word: "expert", meaning: "전문가", sentence: "She is a math ___." },
+      { word: "succeed", meaning: "성공하다", sentence: "I want to ___." },
+      { word: "promote", meaning: "승진시키다", sentence: "He was ___ed." },
+      { word: "manage", meaning: "관리하다", sentence: "She ___s the team." },
+      { word: "responsible", meaning: "책임이 있는", sentence: "Be ___ for your work." },
+      { word: "duty", meaning: "의무", sentence: "It's my ___ to help." },
+      { word: "task", meaning: "임무", sentence: "Finish this ___." },
+      { word: "performance", meaning: "성과", sentence: "His ___ was great." },
+      { word: "industry", meaning: "산업", sentence: "The IT ___ is growing." },
+      { word: "factory", meaning: "공장", sentence: "He works at a ___." },
+      { word: "client", meaning: "고객", sentence: "Treat the ___ well." }
+    ]},
+    8: { theme: "건강과 신체", words: [
+      { word: "physical", meaning: "신체의", sentence: "Take a ___ exam." },
+      { word: "mental", meaning: "정신의", sentence: "___ health is vital." },
+      { word: "exercise", meaning: "운동하다", sentence: "Daily ___ helps you." },
+      { word: "diet", meaning: "식단", sentence: "A balanced ___ is key." },
+      { word: "obesity", meaning: "비만", sentence: "___ is a problem." },
+      { word: "overweight", meaning: "과체중인", sentence: "He's a bit ___." },
+      { word: "muscle", meaning: "근육", sentence: "Athletes have strong ___s." },
+      { word: "injury", meaning: "부상", sentence: "His ___ is healing." },
+      { word: "recover", meaning: "회복하다", sentence: "She will ___ soon." },
+      { word: "patient", meaning: "환자", sentence: "Be kind to the ___." },
+      { word: "disease", meaning: "병", sentence: "He has a serious ___." },
+      { word: "symptom", meaning: "증상", sentence: "Headache is a ___." },
+      { word: "treatment", meaning: "치료", sentence: "The ___ worked." },
+      { word: "medicine", meaning: "약", sentence: "Take this ___." },
+      { word: "vitamin", meaning: "비타민", sentence: "Take your ___s." },
+      { word: "checkup", meaning: "건강검진", sentence: "Get a yearly ___." },
+      { word: "prevent", meaning: "예방하다", sentence: "Hand washing ___s flu." },
+      { word: "infection", meaning: "감염", sentence: "Stop the ___." },
+      { word: "recovery", meaning: "회복", sentence: "Her ___ is fast." },
+      { word: "fitness", meaning: "건강", sentence: "Improve your ___." }
+    ]},
+    9: { theme: "취미와 여가", words: [
+      { word: "leisure", meaning: "여가", sentence: "I read in my ___ time." },
+      { word: "vacation", meaning: "휴가", sentence: "Our ___ was great." },
+      { word: "entertainment", meaning: "오락", sentence: "Movies are ___." },
+      { word: "audience", meaning: "관객", sentence: "The ___ clapped." },
+      { word: "performance", meaning: "공연", sentence: "Her ___ was amazing." },
+      { word: "concert", meaning: "콘서트", sentence: "I went to a ___." },
+      { word: "festival", meaning: "축제", sentence: "The ___ is fun." },
+      { word: "hobby", meaning: "취미", sentence: "My ___ is reading." },
+      { word: "collect", meaning: "수집하다", sentence: "I ___ stamps." },
+      { word: "photograph", meaning: "사진", sentence: "Take a ___." },
+      { word: "draw", meaning: "그리다", sentence: "She loves to ___." },
+      { word: "paint", meaning: "색칠하다", sentence: "Let's ___ together." },
+      { word: "compose", meaning: "작곡하다", sentence: "He ___s songs." },
+      { word: "perform", meaning: "공연하다", sentence: "She will ___ tonight." },
+      { word: "instrument", meaning: "악기", sentence: "Piano is my ___." },
+      { word: "novel", meaning: "소설", sentence: "I read a ___." },
+      { word: "magazine", meaning: "잡지", sentence: "Buy this ___." },
+      { word: "athlete", meaning: "운동선수", sentence: "He is a top ___." },
+      { word: "compete", meaning: "경쟁하다", sentence: "They ___ for gold." },
+      { word: "amateur", meaning: "아마추어", sentence: "I'm just an ___." }
+    ]},
+    10: { theme: "기술과 미래", words: [
+      { word: "technology", meaning: "기술", sentence: "Modern ___ is amazing." },
+      { word: "device", meaning: "기기", sentence: "My ___ needs charging." },
+      { word: "invent", meaning: "발명하다", sentence: "She wants to ___ something." },
+      { word: "discover", meaning: "발견하다", sentence: "Did you ___ anything?" },
+      { word: "create", meaning: "창조하다", sentence: "Artists ___ beauty." },
+      { word: "develop", meaning: "개발하다", sentence: "We ___ new ideas." },
+      { word: "design", meaning: "디자인하다", sentence: "He will ___ a logo." },
+      { word: "innovation", meaning: "혁신", sentence: "AI is an ___." },
+      { word: "modern", meaning: "현대의", sentence: "This is a ___ design." },
+      { word: "advance", meaning: "발전하다", sentence: "Science ___s daily." },
+      { word: "digital", meaning: "디지털의", sentence: "We live in a ___ age." },
+      { word: "virtual", meaning: "가상의", sentence: "___ reality is fun." },
+      { word: "wireless", meaning: "무선의", sentence: "My ___ headset broke." },
+      { word: "robot", meaning: "로봇", sentence: "The ___ can clean." },
+      { word: "artificial", meaning: "인공의", sentence: "___ flowers look real." },
+      { word: "automatic", meaning: "자동의", sentence: "It's an ___ car." },
+      { word: "function", meaning: "기능", sentence: "What's its ___?" },
+      { word: "operate", meaning: "작동하다", sentence: "How do I ___ this?" },
+      { word: "convenient", meaning: "편리한", sentence: "Subways are ___." },
+      { word: "efficient", meaning: "효율적인", sentence: "She is very ___." }
+    ]},
+    11: { theme: "운동과 스포츠", words: [
+      { word: "athlete", meaning: "운동선수", sentence: "He is a young ___." },
+      { word: "competitor", meaning: "경쟁자", sentence: "She is a tough ___." },
+      { word: "champion", meaning: "챔피언", sentence: "She is the ___." },
+      { word: "victory", meaning: "승리", sentence: "Sweet ___ at last!" },
+      { word: "defeat", meaning: "패배", sentence: "He suffered a ___." },
+      { word: "tournament", meaning: "토너먼트", sentence: "Join the ___." },
+      { word: "champion", meaning: "챔피언", sentence: "She's the ___." },
+      { word: "stadium", meaning: "경기장", sentence: "The ___ is huge." },
+      { word: "coach", meaning: "감독", sentence: "Our ___ is great." },
+      { word: "referee", meaning: "심판", sentence: "The ___ blew the whistle." },
+      { word: "compete", meaning: "경쟁하다", sentence: "They ___ for gold." },
+      { word: "exercise", meaning: "운동", sentence: "Daily ___ matters." },
+      { word: "marathon", meaning: "마라톤", sentence: "She ran a ___." },
+      { word: "Olympic", meaning: "올림픽의", sentence: "He won an ___ gold." },
+      { word: "amateur", meaning: "아마추어", sentence: "I'm an ___ player." },
+      { word: "professional", meaning: "전문의", sentence: "He is a ___ player." },
+      { word: "training", meaning: "훈련", sentence: "Hard ___ pays off." },
+      { word: "muscle", meaning: "근육", sentence: "Build your ___s." },
+      { word: "stretch", meaning: "스트레칭하다", sentence: "Always ___ first." },
+      { word: "warm-up", meaning: "준비운동", sentence: "Do a ___ first." }
+    ]},
+    12: { theme: "동물과 식물", words: [
+      { word: "creature", meaning: "생물", sentence: "It's a strange ___." },
+      { word: "mammal", meaning: "포유류", sentence: "Whales are ___s." },
+      { word: "reptile", meaning: "파충류", sentence: "Snakes are ___s." },
+      { word: "predator", meaning: "포식자", sentence: "Lions are ___s." },
+      { word: "prey", meaning: "먹이", sentence: "Rabbits are ___." },
+      { word: "wildlife", meaning: "야생 동물", sentence: "Save the ___." },
+      { word: "endangered", meaning: "멸종 위기의", sentence: "Pandas are ___." },
+      { word: "habitat", meaning: "서식지", sentence: "Forests are their ___." },
+      { word: "extinct", meaning: "멸종한", sentence: "Dinosaurs are ___." },
+      { word: "domestic", meaning: "가축의", sentence: "Cows are ___ animals." },
+      { word: "vegetation", meaning: "초목", sentence: "The ___ is dense." },
+      { word: "blossom", meaning: "꽃", sentence: "Cherry ___s are pink." },
+      { word: "branch", meaning: "가지", sentence: "Birds sit on the ___." },
+      { word: "root", meaning: "뿌리", sentence: "Trees have deep ___s." },
+      { word: "seed", meaning: "씨앗", sentence: "Plant the ___." },
+      { word: "crop", meaning: "농작물", sentence: "Rice is a major ___." },
+      { word: "harvest", meaning: "수확하다", sentence: "We ___ in fall." },
+      { word: "feed", meaning: "먹이를 주다", sentence: "Don't ___ wild animals." },
+      { word: "tame", meaning: "길들이다", sentence: "He ___d the dog." },
+      { word: "breed", meaning: "기르다", sentence: "They ___ horses." }
+    ]},
+    13: { theme: "의류와 패션", words: [
+      { word: "fashion", meaning: "패션", sentence: "She loves ___." },
+      { word: "trendy", meaning: "유행하는", sentence: "This style is ___." },
+      { word: "stylish", meaning: "세련된", sentence: "He looks ___." },
+      { word: "casual", meaning: "캐주얼한", sentence: "Wear ___ clothes." },
+      { word: "formal", meaning: "격식의", sentence: "It's a ___ event." },
+      { word: "uniform", meaning: "교복", sentence: "School ___ is required." },
+      { word: "outfit", meaning: "옷차림", sentence: "Nice ___!" },
+      { word: "accessory", meaning: "액세서리", sentence: "Add an ___." },
+      { word: "fabric", meaning: "직물", sentence: "Silk is a soft ___." },
+      { word: "pattern", meaning: "무늬", sentence: "I love this ___." },
+      { word: "sleeve", meaning: "소매", sentence: "The ___ is too long." },
+      { word: "collar", meaning: "옷깃", sentence: "Fix your ___." },
+      { word: "wardrobe", meaning: "옷장", sentence: "My ___ is full." },
+      { word: "tailor", meaning: "재단사", sentence: "The ___ fixed it." },
+      { word: "discount", meaning: "할인", sentence: "Get a ___ here." },
+      { word: "boutique", meaning: "부티크", sentence: "Visit the ___." },
+      { word: "elegant", meaning: "우아한", sentence: "She looks ___." },
+      { word: "modest", meaning: "수수한", sentence: "Her dress is ___." },
+      { word: "luxurious", meaning: "사치스러운", sentence: "It's a ___ bag." },
+      { word: "bargain", meaning: "싸게 산 물건", sentence: "What a ___!" }
+    ]}
+  },
+
+  jooha: {
+    1: { theme: "감정과 성격", words: [
+      { word: "believe", meaning: "믿다", sentence: "I ___ in you." },
+      { word: "proud", meaning: "자랑스러운", sentence: "I'm ___ of my work." },
+      { word: "nervous", meaning: "긴장한", sentence: "I feel ___ before tests." },
+      { word: "excited", meaning: "신난", sentence: "We're ___ for the trip." },
+      { word: "surprised", meaning: "놀란", sentence: "He was ___ by the news." },
+      { word: "polite", meaning: "예의 바른", sentence: "Always be ___." },
+      { word: "friendly", meaning: "친근한", sentence: "She is very ___." },
+      { word: "careful", meaning: "조심스러운", sentence: "Be ___ on the road." },
+      { word: "brave", meaning: "용감한", sentence: "The boy is ___." },
+      { word: "honest", meaning: "정직한", sentence: "Be ___ with me." },
+      { word: "behavior", meaning: "행동", sentence: "His ___ is good." },
+      { word: "emotion", meaning: "감정", sentence: "Music shows ___." },
+      { word: "character", meaning: "성격", sentence: "He has a strong ___." },
+      { word: "recognize", meaning: "알아보다", sentence: "I didn't ___ you." },
+      { word: "encourage", meaning: "격려하다", sentence: "Parents ___ kids." },
+      { word: "confident", meaning: "자신감 있는", sentence: "She looks ___." },
+      { word: "shy", meaning: "수줍은", sentence: "He is too ___." },
+      { word: "lonely", meaning: "외로운", sentence: "She felt ___." },
+      { word: "cheerful", meaning: "쾌활한", sentence: "He is always ___." },
       { word: "attitude", meaning: "태도", sentence: "Her ___ is positive." }
     ]},
     2: { theme: "학교와 공부", words: [
-      { word: "answer", meaning: "대답", sentence: "What is the ___?" },
-      { word: "ask", meaning: "묻다", sentence: "Please ___ the teacher." },
-      { word: "exam", meaning: "시험", sentence: "I have an ___ tomorrow." },
-      { word: "homework", meaning: "숙제", sentence: "Did you finish your ___?" },
-      { word: "library", meaning: "도서관", sentence: "I study at the ___." },
-      { word: "study", meaning: "공부하다", sentence: "I ___ English every day." },
-      { word: "teach", meaning: "가르치다", sentence: "She will ___ math." },
-      { word: "learn", meaning: "배우다", sentence: "We ___ new things daily." },
-      { word: "language", meaning: "언어", sentence: "English is a global ___." },
-      { word: "lesson", meaning: "수업", sentence: "Today's ___ is fun." },
-      { word: "subject", meaning: "과목", sentence: "My favorite ___ is art." },
-      { word: "knowledge", meaning: "지식", sentence: "Books give us ___." },
-      { word: "improve", meaning: "향상시키다", sentence: "I want to ___ my grades." },
+      { word: "subject", meaning: "과목", sentence: "Math is my favorite ___." },
+      { word: "lesson", meaning: "수업", sentence: "Today's ___ was fun." },
+      { word: "answer", meaning: "대답하다", sentence: "Please ___ me." },
+      { word: "question", meaning: "질문", sentence: "I have a ___." },
+      { word: "example", meaning: "예", sentence: "Give me an ___." },
+      { word: "mistake", meaning: "실수", sentence: "Everyone makes ___s." },
+      { word: "correct", meaning: "맞은", sentence: "Your answer is ___." },
+      { word: "understand", meaning: "이해하다", sentence: "I ___ now." },
+      { word: "remember", meaning: "기억하다", sentence: "Please ___ this." },
+      { word: "forget", meaning: "잊다", sentence: "Don't ___ your bag." },
+      { word: "practice", meaning: "연습하다", sentence: "___ makes perfect." },
       { word: "explain", meaning: "설명하다", sentence: "Can you ___ this?" },
-      { word: "understand", meaning: "이해하다", sentence: "I ___ the lesson now." },
-      { word: "remember", meaning: "기억하다", sentence: "Please ___ to bring it." },
-      { word: "memorize", meaning: "암기하다", sentence: "Try to ___ these words." },
-      { word: "practice", meaning: "연습하다", sentence: "I ___ piano every day." },
-      { word: "achieve", meaning: "성취하다", sentence: "She wants to ___ her goal." },
-      { word: "education", meaning: "교육", sentence: "___ is very important." }
+      { word: "memorize", meaning: "암기하다", sentence: "I ___ ten words." },
+      { word: "review", meaning: "복습하다", sentence: "Always ___ your notes." },
+      { word: "progress", meaning: "발전", sentence: "She made ___." },
+      { word: "effort", meaning: "노력", sentence: "Make more ___." },
+      { word: "challenge", meaning: "도전", sentence: "Math is a ___." },
+      { word: "opportunity", meaning: "기회", sentence: "Don't miss this ___." },
+      { word: "knowledge", meaning: "지식", sentence: "___ is power." },
+      { word: "experience", meaning: "경험", sentence: "Travel gives us ___." }
     ]},
     3: { theme: "가족과 사람", words: [
-      { word: "family", meaning: "가족", sentence: "I love my ___." },
-      { word: "parent", meaning: "부모", sentence: "Each ___ teaches us." },
-      { word: "child", meaning: "아이", sentence: "Every ___ is special." },
-      { word: "cousin", meaning: "사촌", sentence: "My ___ visits us often." },
+      { word: "parent", meaning: "부모", sentence: "My ___s are kind." },
+      { word: "cousin", meaning: "사촌", sentence: "My ___ is my age." },
       { word: "uncle", meaning: "삼촌", sentence: "My ___ is a doctor." },
-      { word: "aunt", meaning: "이모", sentence: "My ___ lives in Busan." },
-      { word: "neighbor", meaning: "이웃", sentence: "Our ___ is very kind." },
-      { word: "friend", meaning: "친구", sentence: "She is my best ___." },
-      { word: "people", meaning: "사람들", sentence: "Many ___ live in Seoul." },
-      { word: "respect", meaning: "존경하다", sentence: "I ___ my teachers." },
-      { word: "trust", meaning: "신뢰하다", sentence: "I ___ my friends." },
-      { word: "share", meaning: "공유하다", sentence: "Let's ___ the cake." },
-      { word: "argue", meaning: "다투다", sentence: "Please don't ___." },
-      { word: "marry", meaning: "결혼하다", sentence: "They will ___ next year." },
-      { word: "introduce", meaning: "소개하다", sentence: "Let me ___ my friend." },
+      { word: "aunt", meaning: "이모, 고모", sentence: "My ___ visits us." },
+      { word: "neighbor", meaning: "이웃", sentence: "Our ___ is kind." },
       { word: "stranger", meaning: "낯선 사람", sentence: "Don't talk to a ___." },
-      { word: "elderly", meaning: "어르신의", sentence: "Help the ___ people." },
-      { word: "generation", meaning: "세대", sentence: "Each ___ is different." },
-      { word: "relationship", meaning: "관계", sentence: "Their ___ is strong." },
-      { word: "support", meaning: "지지하다", sentence: "I ___ your decision." }
+      { word: "relative", meaning: "친척", sentence: "All my ___s came." },
+      { word: "respect", meaning: "존경하다", sentence: "I ___ teachers." },
+      { word: "trust", meaning: "신뢰하다", sentence: "I ___ my friends." },
+      { word: "share", meaning: "나누다", sentence: "Let's ___ the cake." },
+      { word: "introduce", meaning: "소개하다", sentence: "Let me ___ him." },
+      { word: "invite", meaning: "초대하다", sentence: "I'll ___ you." },
+      { word: "follow", meaning: "따라가다", sentence: "Please ___ me." },
+      { word: "promise", meaning: "약속하다", sentence: "I ___ to come." },
+      { word: "agree", meaning: "동의하다", sentence: "I ___ with you." },
+      { word: "argue", meaning: "다투다", sentence: "Please don't ___." },
+      { word: "apologize", meaning: "사과하다", sentence: "You should ___." },
+      { word: "forgive", meaning: "용서하다", sentence: "Please ___ me." },
+      { word: "relationship", meaning: "관계", sentence: "Their ___ is close." },
+      { word: "marriage", meaning: "결혼", sentence: "They are planning ___." }
     ]},
     4: { theme: "자연과 환경", words: [
-      { word: "tree", meaning: "나무", sentence: "Birds live in the ___." },
+      { word: "nature", meaning: "자연", sentence: "I love ___." },
+      { word: "forest", meaning: "숲", sentence: "The ___ is quiet." },
+      { word: "mountain", meaning: "산", sentence: "Climb the ___." },
       { word: "river", meaning: "강", sentence: "The ___ is wide." },
-      { word: "mountain", meaning: "산", sentence: "Let's climb the ___." },
       { word: "ocean", meaning: "바다", sentence: "The ___ is deep." },
-      { word: "forest", meaning: "숲", sentence: "We hiked in the ___." },
-      { word: "weather", meaning: "날씨", sentence: "How is the ___ today?" },
-      { word: "season", meaning: "계절", sentence: "Spring is my favorite ___." },
-      { word: "nature", meaning: "자연", sentence: "I love walking in ___." },
-      { word: "earth", meaning: "지구", sentence: "We must protect the ___." },
-      { word: "animal", meaning: "동물", sentence: "Tigers are wild ___." },
-      { word: "plant", meaning: "식물", sentence: "Water the ___ daily." },
-      { word: "environment", meaning: "환경", sentence: "We must save the ___." },
-      { word: "pollution", meaning: "오염", sentence: "Air ___ is a problem." },
-      { word: "recycle", meaning: "재활용하다", sentence: "Please ___ paper." },
-      { word: "protect", meaning: "보호하다", sentence: "We ___ the forest." },
-      { word: "climate", meaning: "기후", sentence: "Korea has a mild ___." },
-      { word: "planet", meaning: "행성", sentence: "Mars is a red ___." },
-      { word: "garbage", meaning: "쓰레기", sentence: "Don't throw ___ here." },
-      { word: "save", meaning: "절약하다", sentence: "We must ___ water." },
-      { word: "energy", meaning: "에너지", sentence: "Solar ___ is clean." }
+      { word: "weather", meaning: "날씨", sentence: "The ___ is nice." },
+      { word: "season", meaning: "계절", sentence: "Spring is my ___." },
+      { word: "environment", meaning: "환경", sentence: "Save the ___." },
+      { word: "pollution", meaning: "오염", sentence: "Air ___ is bad." },
+      { word: "recycle", meaning: "재활용하다", sentence: "Always ___ paper." },
+      { word: "protect", meaning: "보호하다", sentence: "We must ___ animals." },
+      { word: "waste", meaning: "낭비", sentence: "Don't ___ water." },
+      { word: "fresh", meaning: "신선한", sentence: "I love ___ air." },
+      { word: "wild", meaning: "야생의", sentence: "Tigers are ___." },
+      { word: "species", meaning: "종(생물)", sentence: "Many ___ are gone." },
+      { word: "earth", meaning: "지구", sentence: "Save the ___." },
+      { word: "climate", meaning: "기후", sentence: "The ___ is changing." },
+      { word: "natural", meaning: "자연의", sentence: "This is ___ water." },
+      { word: "planet", meaning: "행성", sentence: "Our ___ is in danger." },
+      { word: "dangerous", meaning: "위험한", sentence: "Fire is ___." }
     ]},
     5: { theme: "여행과 장소", words: [
-      { word: "travel", meaning: "여행하다", sentence: "I want to ___ the world." },
-      { word: "trip", meaning: "여행", sentence: "Our ___ was wonderful." },
-      { word: "visit", meaning: "방문하다", sentence: "We will ___ grandma." },
+      { word: "travel", meaning: "여행하다", sentence: "I want to ___ Europe." },
+      { word: "trip", meaning: "여행", sentence: "Our ___ was fun." },
       { word: "country", meaning: "나라", sentence: "Korea is my ___." },
       { word: "city", meaning: "도시", sentence: "Seoul is a big ___." },
-      { word: "village", meaning: "마을", sentence: "She lives in a small ___." },
+      { word: "village", meaning: "마을", sentence: "She lives in a ___." },
       { word: "airport", meaning: "공항", sentence: "We arrived at the ___." },
-      { word: "station", meaning: "역", sentence: "The ___ is very busy." },
-      { word: "hotel", meaning: "호텔", sentence: "Our ___ is near the beach." },
-      { word: "restaurant", meaning: "식당", sentence: "We ate at a ___." },
-      { word: "tourist", meaning: "관광객", sentence: "Many ___ visit Jeju." },
-      { word: "foreign", meaning: "외국의", sentence: "I learn a ___ language." },
-      { word: "passport", meaning: "여권", sentence: "Don't forget your ___." },
-      { word: "luggage", meaning: "짐", sentence: "Pack your ___ tonight." },
-      { word: "souvenir", meaning: "기념품", sentence: "I bought a ___ for mom." },
+      { word: "station", meaning: "역", sentence: "The ___ is busy." },
+      { word: "tourist", meaning: "관광객", sentence: "Many ___s visit." },
+      { word: "foreign", meaning: "외국의", sentence: "She speaks a ___ language." },
+      { word: "passport", meaning: "여권", sentence: "Don't lose your ___." },
+      { word: "luggage", meaning: "짐", sentence: "Pack your ___." },
+      { word: "souvenir", meaning: "기념품", sentence: "I bought a ___." },
+      { word: "arrive", meaning: "도착하다", sentence: "We ___ at noon." },
+      { word: "depart", meaning: "출발하다", sentence: "The bus will ___." },
+      { word: "return", meaning: "돌아오다", sentence: "I'll ___ next week." },
+      { word: "distance", meaning: "거리", sentence: "The ___ is far." },
       { word: "journey", meaning: "여정", sentence: "Life is a long ___." },
-      { word: "adventure", meaning: "모험", sentence: "Our trip was an ___." },
-      { word: "transport", meaning: "교통수단", sentence: "Buses are public ___." },
-      { word: "traffic", meaning: "교통", sentence: "The ___ was heavy." },
-      { word: "destination", meaning: "목적지", sentence: "What's your ___?" }
+      { word: "adventure", meaning: "모험", sentence: "The trip was an ___." },
+      { word: "capital", meaning: "수도", sentence: "Seoul is the ___." },
+      { word: "ancient", meaning: "고대의", sentence: "We saw ___ ruins." }
     ]},
     6: { theme: "음식과 요리", words: [
-      { word: "breakfast", meaning: "아침식사", sentence: "I eat ___ at 7 am." },
-      { word: "lunch", meaning: "점심", sentence: "Let's have ___ together." },
+      { word: "breakfast", meaning: "아침식사", sentence: "I eat ___ at 7." },
+      { word: "lunch", meaning: "점심", sentence: "Let's have ___." },
       { word: "dinner", meaning: "저녁식사", sentence: "Mom makes ___." },
       { word: "delicious", meaning: "맛있는", sentence: "This pizza is ___." },
-      { word: "vegetable", meaning: "채소", sentence: "Eat your ___ daily." },
-      { word: "fruit", meaning: "과일", sentence: "Apples are my favorite ___." },
+      { word: "vegetable", meaning: "채소", sentence: "Eat your ___s." },
+      { word: "fruit", meaning: "과일", sentence: "Apples are my ___." },
       { word: "meat", meaning: "고기", sentence: "I love beef ___." },
       { word: "dessert", meaning: "후식", sentence: "Cake is for ___." },
       { word: "snack", meaning: "간식", sentence: "Chips are a ___." },
@@ -1039,17 +1333,17 @@ const WORDS = {
       { word: "hungry", meaning: "배고픈", sentence: "I am ___ now." },
       { word: "spicy", meaning: "매운", sentence: "Kimchi is ___." },
       { word: "sweet", meaning: "달콤한", sentence: "Honey is ___." },
-      { word: "salty", meaning: "짠", sentence: "The soup is too ___." },
-      { word: "recipe", meaning: "조리법", sentence: "Mom shared her ___." },
-      { word: "cook", meaning: "요리하다", sentence: "Mom can ___ very well." },
+      { word: "salty", meaning: "짠", sentence: "The soup is ___." },
+      { word: "recipe", meaning: "조리법", sentence: "Mom has a ___." },
+      { word: "cook", meaning: "요리하다", sentence: "Mom can ___ well." },
       { word: "taste", meaning: "맛", sentence: "What ___ do you like?" },
-      { word: "flavor", meaning: "맛, 향", sentence: "Strawberry is the best ___." },
+      { word: "flavor", meaning: "맛, 향", sentence: "Strawberry ___ is best." },
       { word: "appetite", meaning: "식욕", sentence: "I have a big ___." },
-      { word: "ingredient", meaning: "재료", sentence: "Sugar is a main ___." }
+      { word: "ingredient", meaning: "재료", sentence: "Sugar is an ___." }
     ]},
     7: { theme: "직업과 일", words: [
       { word: "job", meaning: "직업", sentence: "She has a good ___." },
-      { word: "work", meaning: "일하다", sentence: "Dad will ___ late today." },
+      { word: "work", meaning: "일하다", sentence: "Dad will ___ late." },
       { word: "doctor", meaning: "의사", sentence: "The ___ helped me." },
       { word: "teacher", meaning: "선생님", sentence: "Our ___ is kind." },
       { word: "nurse", meaning: "간호사", sentence: "The ___ is gentle." },
@@ -1057,43 +1351,43 @@ const WORDS = {
       { word: "writer", meaning: "작가", sentence: "He is a famous ___." },
       { word: "artist", meaning: "예술가", sentence: "She is a great ___." },
       { word: "scientist", meaning: "과학자", sentence: "A ___ studies nature." },
-      { word: "engineer", meaning: "기술자", sentence: "He is a software ___." },
+      { word: "engineer", meaning: "기술자", sentence: "He is an ___." },
       { word: "office", meaning: "사무실", sentence: "Dad goes to the ___." },
       { word: "company", meaning: "회사", sentence: "Mom's ___ is big." },
-      { word: "career", meaning: "경력", sentence: "Plan your ___ early." },
+      { word: "career", meaning: "경력", sentence: "Plan your ___." },
       { word: "salary", meaning: "급여", sentence: "His ___ is good." },
       { word: "manager", meaning: "관리자", sentence: "She is the ___." },
       { word: "boss", meaning: "상사", sentence: "My dad's ___ is nice." },
-      { word: "skill", meaning: "기술", sentence: "Cooking is a useful ___." },
-      { word: "succeed", meaning: "성공하다", sentence: "I want to ___ in life." },
+      { word: "skill", meaning: "기술", sentence: "Cooking is a ___." },
+      { word: "succeed", meaning: "성공하다", sentence: "I want to ___." },
       { word: "fail", meaning: "실패하다", sentence: "Don't be afraid to ___." },
-      { word: "professional", meaning: "전문가의", sentence: "She is a ___ player." }
+      { word: "professional", meaning: "전문의", sentence: "She is a ___." }
     ]},
     8: { theme: "건강과 신체", words: [
-      { word: "health", meaning: "건강", sentence: "Your ___ is most important." },
-      { word: "healthy", meaning: "건강한", sentence: "Eat ___ food daily." },
-      { word: "sick", meaning: "아픈", sentence: "I feel ___ today." },
+      { word: "health", meaning: "건강", sentence: "Your ___ matters." },
+      { word: "healthy", meaning: "건강한", sentence: "Eat ___ food." },
+      { word: "sick", meaning: "아픈", sentence: "I feel ___." },
       { word: "hospital", meaning: "병원", sentence: "She works at a ___." },
       { word: "medicine", meaning: "약", sentence: "Take this ___." },
-      { word: "exercise", meaning: "운동", sentence: "Daily ___ helps you." },
+      { word: "exercise", meaning: "운동", sentence: "Daily ___ helps." },
       { word: "diet", meaning: "식단", sentence: "A balanced ___ is key." },
       { word: "sleep", meaning: "잠을 자다", sentence: "I ___ for 8 hours." },
-      { word: "rest", meaning: "쉬다", sentence: "Take a ___ now." },
-      { word: "tired", meaning: "피곤한", sentence: "I feel ___ today." },
+      { word: "rest", meaning: "쉬다", sentence: "Take a ___." },
+      { word: "tired", meaning: "피곤한", sentence: "I feel ___." },
       { word: "headache", meaning: "두통", sentence: "I have a ___." },
       { word: "stomach", meaning: "배", sentence: "My ___ hurts." },
-      { word: "muscle", meaning: "근육", sentence: "Athletes have strong ___." },
+      { word: "muscle", meaning: "근육", sentence: "Athletes have ___s." },
       { word: "blood", meaning: "피", sentence: "My ___ type is O." },
       { word: "breath", meaning: "숨", sentence: "Take a deep ___." },
       { word: "patient", meaning: "환자", sentence: "Be kind to the ___." },
       { word: "recover", meaning: "회복하다", sentence: "She will ___ soon." },
-      { word: "disease", meaning: "병", sentence: "He has a serious ___." },
+      { word: "disease", meaning: "병", sentence: "He has a ___." },
       { word: "injury", meaning: "부상", sentence: "His ___ is healing." },
-      { word: "fever", meaning: "열", sentence: "She has a high ___." }
+      { word: "fever", meaning: "열", sentence: "She has a ___." }
     ]},
     9: { theme: "취미와 여가", words: [
       { word: "hobby", meaning: "취미", sentence: "My ___ is reading." },
-      { word: "free", meaning: "자유로운", sentence: "I have ___ time today." },
+      { word: "free", meaning: "자유로운", sentence: "I have ___ time." },
       { word: "weekend", meaning: "주말", sentence: "I love the ___." },
       { word: "vacation", meaning: "휴가", sentence: "Our ___ was great." },
       { word: "holiday", meaning: "휴일", sentence: "Today is a ___." },
@@ -1101,15 +1395,15 @@ const WORDS = {
       { word: "music", meaning: "음악", sentence: "I love K-pop ___." },
       { word: "game", meaning: "게임", sentence: "Let's play a ___." },
       { word: "sport", meaning: "운동경기", sentence: "Soccer is my ___." },
-      { word: "team", meaning: "팀", sentence: "Our ___ won today." },
+      { word: "team", meaning: "팀", sentence: "Our ___ won." },
       { word: "concert", meaning: "공연", sentence: "I went to a ___." },
       { word: "festival", meaning: "축제", sentence: "The ___ is fun." },
-      { word: "party", meaning: "파티", sentence: "It's a birthday ___." },
-      { word: "dance", meaning: "춤추다", sentence: "Let's ___ together." },
+      { word: "party", meaning: "파티", sentence: "It's a ___." },
+      { word: "dance", meaning: "춤추다", sentence: "Let's ___." },
       { word: "sing", meaning: "노래하다", sentence: "She can ___ well." },
       { word: "draw", meaning: "그리다", sentence: "She loves to ___." },
       { word: "collect", meaning: "모으다", sentence: "I ___ stamps." },
-      { word: "enjoy", meaning: "즐기다", sentence: "I ___ playing piano." },
+      { word: "enjoy", meaning: "즐기다", sentence: "I ___ piano." },
       { word: "relax", meaning: "쉬다", sentence: "I ___ on Sundays." },
       { word: "favorite", meaning: "가장 좋아하는", sentence: "It's my ___ song." }
     ]},
@@ -1118,14 +1412,14 @@ const WORDS = {
       { word: "internet", meaning: "인터넷", sentence: "I search on the ___." },
       { word: "phone", meaning: "전화기", sentence: "My ___ is new." },
       { word: "message", meaning: "메시지", sentence: "I got your ___." },
-      { word: "online", meaning: "온라인의", sentence: "I shop ___ often." },
+      { word: "online", meaning: "온라인의", sentence: "I shop ___." },
       { word: "screen", meaning: "화면", sentence: "Don't touch the ___." },
       { word: "machine", meaning: "기계", sentence: "This ___ is broken." },
       { word: "robot", meaning: "로봇", sentence: "The ___ can clean." },
       { word: "future", meaning: "미래", sentence: "I dream about my ___." },
-      { word: "modern", meaning: "현대의", sentence: "This is a ___ design." },
-      { word: "invent", meaning: "발명하다", sentence: "She wants to ___ something." },
-      { word: "discover", meaning: "발견하다", sentence: "Did you ___ anything?" },
+      { word: "modern", meaning: "현대의", sentence: "This is ___." },
+      { word: "invent", meaning: "발명하다", sentence: "She wants to ___." },
+      { word: "discover", meaning: "발견하다", sentence: "Did you ___ it?" },
       { word: "create", meaning: "창조하다", sentence: "Artists ___ beauty." },
       { word: "design", meaning: "디자인하다", sentence: "He will ___ a logo." },
       { word: "develop", meaning: "개발하다", sentence: "We ___ new ideas." },
@@ -1136,7 +1430,7 @@ const WORDS = {
       { word: "battery", meaning: "배터리", sentence: "My ___ is dead." }
     ]},
     11: { theme: "운동과 스포츠", words: [
-      { word: "soccer", meaning: "축구", sentence: "I play ___ on weekends." },
+      { word: "soccer", meaning: "축구", sentence: "I play ___." },
       { word: "baseball", meaning: "야구", sentence: "He hit the ___." },
       { word: "basketball", meaning: "농구", sentence: "She plays ___ well." },
       { word: "tennis", meaning: "테니스", sentence: "Let's play ___." },
@@ -1171,26 +1465,26 @@ const WORDS = {
       { word: "flower", meaning: "꽃", sentence: "The ___ smells nice." },
       { word: "leaf", meaning: "잎", sentence: "A ___ fell down." },
       { word: "grass", meaning: "풀", sentence: "Cows eat ___." },
-      { word: "seed", meaning: "씨앗", sentence: "Plant the ___ now." },
-      { word: "root", meaning: "뿌리", sentence: "Trees have deep ___." },
+      { word: "seed", meaning: "씨앗", sentence: "Plant the ___." },
+      { word: "root", meaning: "뿌리", sentence: "Trees have deep ___s." },
       { word: "branch", meaning: "가지", sentence: "Birds sit on the ___." },
       { word: "wild", meaning: "야생의", sentence: "The ___ animals run free." },
       { word: "pet", meaning: "반려동물", sentence: "My ___ is a hamster." },
       { word: "feed", meaning: "먹이를 주다", sentence: "Don't ___ wild animals." },
-      { word: "grow", meaning: "기르다, 자라다", sentence: "Plants ___ in spring." }
+      { word: "grow", meaning: "기르다", sentence: "Plants ___ in spring." }
     ]},
     13: { theme: "옷과 패션", words: [
       { word: "shirt", meaning: "셔츠", sentence: "His ___ is blue." },
       { word: "pants", meaning: "바지", sentence: "These ___ fit well." },
       { word: "dress", meaning: "원피스", sentence: "Her ___ is pretty." },
       { word: "skirt", meaning: "치마", sentence: "She wore a long ___." },
-      { word: "jacket", meaning: "재킷", sentence: "Wear your ___ outside." },
+      { word: "jacket", meaning: "재킷", sentence: "Wear your ___." },
       { word: "coat", meaning: "코트", sentence: "My ___ is warm." },
       { word: "shoes", meaning: "신발", sentence: "These ___ are new." },
       { word: "socks", meaning: "양말", sentence: "Put on warm ___." },
       { word: "hat", meaning: "모자", sentence: "I love this ___." },
       { word: "glasses", meaning: "안경", sentence: "He wears ___." },
-      { word: "wear", meaning: "입다", sentence: "I will ___ this shirt." },
+      { word: "wear", meaning: "입다", sentence: "I will ___ this." },
       { word: "fit", meaning: "맞다", sentence: "These shoes ___ me." },
       { word: "size", meaning: "크기", sentence: "What ___ are you?" },
       { word: "style", meaning: "스타일", sentence: "Her ___ is unique." },
@@ -1199,306 +1493,282 @@ const WORDS = {
       { word: "dirty", meaning: "더러운", sentence: "These pants are ___." },
       { word: "fancy", meaning: "고급스러운", sentence: "It's a ___ dress." },
       { word: "casual", meaning: "캐주얼한", sentence: "I prefer ___ clothes." },
-      { word: "uniform", meaning: "교복, 제복", sentence: "School ___ is required." }
-    ]}
-  },
-
-  jooha: {
-    1: { theme: "일상 동작", words: [
-      { word: "wake", meaning: "일어나다", sentence: "I ___ up at 7." },
-      { word: "wash", meaning: "씻다", sentence: "Please ___ your hands." },
-      { word: "eat", meaning: "먹다", sentence: "I ___ breakfast every day." },
-      { word: "drink", meaning: "마시다", sentence: "I ___ milk daily." },
-      { word: "brush", meaning: "닦다", sentence: "___ your teeth." },
-      { word: "walk", meaning: "걷다", sentence: "Let's ___ to school." },
-      { word: "run", meaning: "달리다", sentence: "I ___ in the park." },
-      { word: "sit", meaning: "앉다", sentence: "Please ___ down." },
-      { word: "stand", meaning: "서다", sentence: "Don't ___ here." },
-      { word: "sleep", meaning: "자다", sentence: "I ___ at 10 pm." },
-      { word: "read", meaning: "읽다", sentence: "I ___ books daily." },
-      { word: "write", meaning: "쓰다", sentence: "Please ___ your name." },
-      { word: "listen", meaning: "듣다", sentence: "Please ___ to me." },
-      { word: "watch", meaning: "보다", sentence: "Let's ___ TV." },
-      { word: "play", meaning: "놀다", sentence: "Let's ___ outside." },
-      { word: "study", meaning: "공부하다", sentence: "I ___ math today." },
-      { word: "help", meaning: "돕다", sentence: "Can you ___ me?" },
-      { word: "wait", meaning: "기다리다", sentence: "Please ___ here." },
-      { word: "open", meaning: "열다", sentence: "Please ___ the door." },
-      { word: "close", meaning: "닫다", sentence: "Please ___ the window." }
-    ]},
-    2: { theme: "학교 생활", words: [
-      { word: "school", meaning: "학교", sentence: "I go to ___ daily." },
-      { word: "teacher", meaning: "선생님", sentence: "My ___ is kind." },
-      { word: "student", meaning: "학생", sentence: "I am a ___." },
-      { word: "class", meaning: "수업", sentence: "Math ___ is fun." },
-      { word: "book", meaning: "책", sentence: "This ___ is great." },
-      { word: "pencil", meaning: "연필", sentence: "I need a ___." },
-      { word: "eraser", meaning: "지우개", sentence: "Use the ___." },
-      { word: "notebook", meaning: "공책", sentence: "Open your ___." },
-      { word: "desk", meaning: "책상", sentence: "Sit at your ___." },
-      { word: "chair", meaning: "의자", sentence: "This ___ is mine." },
-      { word: "lesson", meaning: "수업", sentence: "Today's ___ is easy." },
-      { word: "homework", meaning: "숙제", sentence: "I did my ___." },
-      { word: "test", meaning: "시험", sentence: "We have a ___." },
-      { word: "answer", meaning: "정답", sentence: "What's the ___?" },
-      { word: "question", meaning: "질문", sentence: "I have a ___." },
-      { word: "subject", meaning: "과목", sentence: "Art is my ___." },
-      { word: "math", meaning: "수학", sentence: "I love ___." },
-      { word: "science", meaning: "과학", sentence: "___ is interesting." },
-      { word: "history", meaning: "역사", sentence: "I study ___." },
-      { word: "music", meaning: "음악", sentence: "I enjoy ___ class." }
-    ]},
-    3: { theme: "가족", words: [
-      { word: "father", meaning: "아버지", sentence: "My ___ is tall." },
-      { word: "mother", meaning: "어머니", sentence: "My ___ is kind." },
-      { word: "brother", meaning: "형, 남동생", sentence: "I have one ___." },
-      { word: "sister", meaning: "누나, 여동생", sentence: "My ___ is cute." },
-      { word: "grandfather", meaning: "할아버지", sentence: "My ___ is old." },
-      { word: "grandmother", meaning: "할머니", sentence: "My ___ bakes well." },
-      { word: "uncle", meaning: "삼촌", sentence: "My ___ is funny." },
-      { word: "aunt", meaning: "이모", sentence: "My ___ visits us." },
-      { word: "cousin", meaning: "사촌", sentence: "My ___ is here." },
-      { word: "family", meaning: "가족", sentence: "I love my ___." },
-      { word: "baby", meaning: "아기", sentence: "The ___ is cute." },
-      { word: "kid", meaning: "아이", sentence: "Each ___ is special." },
-      { word: "boy", meaning: "남자아이", sentence: "That ___ is fast." },
-      { word: "girl", meaning: "여자아이", sentence: "That ___ is smart." },
-      { word: "man", meaning: "남자", sentence: "He is a kind ___." },
-      { word: "woman", meaning: "여자", sentence: "She is a brave ___." },
-      { word: "people", meaning: "사람들", sentence: "Many ___ are here." },
-      { word: "love", meaning: "사랑하다", sentence: "I ___ my parents." },
-      { word: "care", meaning: "돌보다", sentence: "Mom ___ for us." },
-      { word: "hug", meaning: "껴안다", sentence: "Give me a ___." }
-    ]},
-    4: { theme: "감정", words: [
-      { word: "happy", meaning: "행복한", sentence: "I am so ___." },
-      { word: "sad", meaning: "슬픈", sentence: "She looks ___." },
-      { word: "angry", meaning: "화난", sentence: "Don't be ___." },
-      { word: "tired", meaning: "피곤한", sentence: "I feel ___." },
-      { word: "excited", meaning: "신난", sentence: "I am ___ today." },
-      { word: "bored", meaning: "지루한", sentence: "I feel ___." },
-      { word: "scared", meaning: "무서워하는", sentence: "I am ___ of dogs." },
-      { word: "shy", meaning: "수줍은", sentence: "He is very ___." },
-      { word: "kind", meaning: "친절한", sentence: "She is ___ to all." },
-      { word: "nice", meaning: "좋은", sentence: "He is a ___ boy." },
-      { word: "smart", meaning: "똑똑한", sentence: "She is so ___." },
-      { word: "funny", meaning: "웃긴", sentence: "He is ___." },
-      { word: "lazy", meaning: "게으른", sentence: "Don't be ___." },
-      { word: "brave", meaning: "용감한", sentence: "She is very ___." },
-      { word: "proud", meaning: "자랑스러운", sentence: "I am ___ of you." },
-      { word: "love", meaning: "사랑", sentence: "I feel ___." },
-      { word: "smile", meaning: "웃다", sentence: "Please ___." },
-      { word: "cry", meaning: "울다", sentence: "Don't ___." },
-      { word: "laugh", meaning: "웃다", sentence: "We ___ together." },
-      { word: "feel", meaning: "느끼다", sentence: "How do you ___?" }
-    ]},
-    5: { theme: "음식", words: [
-      { word: "rice", meaning: "밥", sentence: "I eat ___ daily." },
-      { word: "bread", meaning: "빵", sentence: "I love ___." },
-      { word: "egg", meaning: "달걀", sentence: "I like ___." },
-      { word: "milk", meaning: "우유", sentence: "Drink your ___." },
-      { word: "water", meaning: "물", sentence: "I drink ___." },
-      { word: "juice", meaning: "주스", sentence: "I want ___." },
-      { word: "apple", meaning: "사과", sentence: "An ___ a day." },
-      { word: "banana", meaning: "바나나", sentence: "I eat a ___." },
-      { word: "orange", meaning: "오렌지", sentence: "An ___ is sweet." },
-      { word: "chicken", meaning: "닭고기", sentence: "I love ___." },
-      { word: "fish", meaning: "생선", sentence: "I eat ___ on Friday." },
-      { word: "soup", meaning: "수프", sentence: "Hot ___ is good." },
-      { word: "salad", meaning: "샐러드", sentence: "A ___ is healthy." },
-      { word: "cake", meaning: "케이크", sentence: "This ___ is sweet." },
-      { word: "cookie", meaning: "쿠키", sentence: "I want a ___." },
-      { word: "pizza", meaning: "피자", sentence: "Let's eat ___." },
-      { word: "hungry", meaning: "배고픈", sentence: "I am ___." },
-      { word: "thirsty", meaning: "목마른", sentence: "I am ___." },
-      { word: "tasty", meaning: "맛있는", sentence: "It's so ___." },
-      { word: "sweet", meaning: "달콤한", sentence: "Honey is ___." }
-    ]},
-    6: { theme: "동물", words: [
-      { word: "dog", meaning: "개", sentence: "My ___ is cute." },
-      { word: "cat", meaning: "고양이", sentence: "The ___ is small." },
-      { word: "bird", meaning: "새", sentence: "A ___ flies." },
-      { word: "fish", meaning: "물고기", sentence: "A ___ swims." },
-      { word: "rabbit", meaning: "토끼", sentence: "A ___ hops." },
-      { word: "horse", meaning: "말", sentence: "A ___ runs fast." },
-      { word: "cow", meaning: "소", sentence: "A ___ gives milk." },
-      { word: "pig", meaning: "돼지", sentence: "The ___ is pink." },
-      { word: "sheep", meaning: "양", sentence: "A ___ is fluffy." },
-      { word: "duck", meaning: "오리", sentence: "A ___ swims." },
-      { word: "tiger", meaning: "호랑이", sentence: "A ___ is wild." },
-      { word: "lion", meaning: "사자", sentence: "A ___ roars." },
-      { word: "elephant", meaning: "코끼리", sentence: "An ___ is big." },
-      { word: "monkey", meaning: "원숭이", sentence: "A ___ is funny." },
-      { word: "bear", meaning: "곰", sentence: "A ___ sleeps." },
-      { word: "snake", meaning: "뱀", sentence: "A ___ is long." },
-      { word: "frog", meaning: "개구리", sentence: "A ___ jumps." },
-      { word: "turtle", meaning: "거북이", sentence: "A ___ is slow." },
-      { word: "ant", meaning: "개미", sentence: "An ___ is tiny." },
-      { word: "butterfly", meaning: "나비", sentence: "A ___ is pretty." }
-    ]},
-    7: { theme: "색깔과 모양", words: [
-      { word: "red", meaning: "빨강", sentence: "An apple is ___." },
-      { word: "blue", meaning: "파랑", sentence: "The sky is ___." },
-      { word: "yellow", meaning: "노랑", sentence: "The sun is ___." },
-      { word: "green", meaning: "초록", sentence: "Grass is ___." },
-      { word: "black", meaning: "검정", sentence: "My cat is ___." },
-      { word: "white", meaning: "흰색", sentence: "Snow is ___." },
-      { word: "pink", meaning: "분홍", sentence: "I love ___." },
-      { word: "purple", meaning: "보라", sentence: "Grapes are ___." },
-      { word: "brown", meaning: "갈색", sentence: "Bears are ___." },
-      { word: "orange", meaning: "주황", sentence: "Carrots are ___." },
-      { word: "circle", meaning: "원", sentence: "Draw a ___." },
-      { word: "square", meaning: "정사각형", sentence: "It's a ___." },
-      { word: "triangle", meaning: "삼각형", sentence: "Cut a ___." },
-      { word: "star", meaning: "별", sentence: "I see a ___." },
-      { word: "heart", meaning: "하트", sentence: "Draw a ___." },
-      { word: "big", meaning: "큰", sentence: "It's a ___ dog." },
-      { word: "small", meaning: "작은", sentence: "It's a ___ cat." },
-      { word: "long", meaning: "긴", sentence: "It's a ___ road." },
-      { word: "short", meaning: "짧은", sentence: "It's a ___ stick." },
-      { word: "round", meaning: "둥근", sentence: "A ball is ___." }
-    ]},
-    8: { theme: "시간과 날씨", words: [
-      { word: "morning", meaning: "아침", sentence: "Good ___!" },
-      { word: "afternoon", meaning: "오후", sentence: "Good ___!" },
-      { word: "evening", meaning: "저녁", sentence: "Good ___!" },
-      { word: "night", meaning: "밤", sentence: "Good ___!" },
-      { word: "today", meaning: "오늘", sentence: "I am happy ___." },
-      { word: "yesterday", meaning: "어제", sentence: "I went home ___." },
-      { word: "tomorrow", meaning: "내일", sentence: "See you ___." },
-      { word: "day", meaning: "날", sentence: "Have a nice ___." },
-      { word: "week", meaning: "주", sentence: "I'll see you next ___." },
-      { word: "month", meaning: "달", sentence: "May is my ___." },
-      { word: "year", meaning: "년", sentence: "Happy New ___." },
-      { word: "hour", meaning: "시간", sentence: "It takes one ___." },
-      { word: "minute", meaning: "분", sentence: "Wait a ___." },
-      { word: "sunny", meaning: "맑은", sentence: "It is ___ today." },
-      { word: "rainy", meaning: "비 오는", sentence: "It's a ___ day." },
-      { word: "cloudy", meaning: "흐린", sentence: "It is ___." },
-      { word: "snowy", meaning: "눈 오는", sentence: "It's ___ outside." },
-      { word: "windy", meaning: "바람 부는", sentence: "It's a ___ day." },
-      { word: "hot", meaning: "더운", sentence: "Summer is ___." },
-      { word: "cold", meaning: "추운", sentence: "Winter is ___." }
-    ]},
-    9: { theme: "신체", words: [
-      { word: "head", meaning: "머리", sentence: "Touch your ___." },
-      { word: "face", meaning: "얼굴", sentence: "Wash your ___." },
-      { word: "eye", meaning: "눈", sentence: "I see with my ___." },
-      { word: "ear", meaning: "귀", sentence: "I hear with my ___." },
-      { word: "nose", meaning: "코", sentence: "Blow your ___." },
-      { word: "mouth", meaning: "입", sentence: "Open your ___." },
-      { word: "tooth", meaning: "이", sentence: "Brush your ___." },
-      { word: "hair", meaning: "머리카락", sentence: "Her ___ is long." },
-      { word: "neck", meaning: "목", sentence: "Stretch your ___." },
-      { word: "shoulder", meaning: "어깨", sentence: "Tap his ___." },
-      { word: "arm", meaning: "팔", sentence: "Stretch your ___." },
-      { word: "hand", meaning: "손", sentence: "Wash your ___." },
-      { word: "finger", meaning: "손가락", sentence: "Hold up one ___." },
-      { word: "leg", meaning: "다리", sentence: "I hurt my ___." },
-      { word: "foot", meaning: "발", sentence: "My ___ hurts." },
-      { word: "knee", meaning: "무릎", sentence: "Bend your ___." },
-      { word: "back", meaning: "등", sentence: "My ___ hurts." },
-      { word: "stomach", meaning: "배", sentence: "My ___ is full." },
-      { word: "heart", meaning: "심장", sentence: "My ___ beats fast." },
-      { word: "body", meaning: "몸", sentence: "Take care of your ___." }
-    ]},
-    10: { theme: "옷과 물건", words: [
-      { word: "shirt", meaning: "셔츠", sentence: "My ___ is blue." },
-      { word: "pants", meaning: "바지", sentence: "These ___ are new." },
-      { word: "dress", meaning: "원피스", sentence: "What a pretty ___." },
-      { word: "skirt", meaning: "치마", sentence: "Her ___ is pink." },
-      { word: "shoes", meaning: "신발", sentence: "These ___ are mine." },
-      { word: "socks", meaning: "양말", sentence: "Wear warm ___." },
-      { word: "hat", meaning: "모자", sentence: "I wear a ___." },
-      { word: "bag", meaning: "가방", sentence: "My ___ is heavy." },
-      { word: "watch", meaning: "시계", sentence: "Look at my ___." },
-      { word: "glasses", meaning: "안경", sentence: "I wear ___." },
-      { word: "cap", meaning: "모자", sentence: "He wears a ___." },
-      { word: "coat", meaning: "코트", sentence: "Put on your ___." },
-      { word: "scarf", meaning: "목도리", sentence: "Wear a warm ___." },
-      { word: "ring", meaning: "반지", sentence: "She has a ___." },
-      { word: "key", meaning: "열쇠", sentence: "Where is the ___?" },
-      { word: "wallet", meaning: "지갑", sentence: "My ___ is empty." },
-      { word: "phone", meaning: "전화기", sentence: "My ___ is new." },
-      { word: "umbrella", meaning: "우산", sentence: "Take an ___." },
-      { word: "toy", meaning: "장난감", sentence: "My ___ is broken." },
-      { word: "doll", meaning: "인형", sentence: "I love this ___." }
-    ]},
-    11: { theme: "장소", words: [
-      { word: "home", meaning: "집", sentence: "I'm going ___." },
-      { word: "house", meaning: "집", sentence: "My ___ is big." },
-      { word: "room", meaning: "방", sentence: "Clean your ___." },
-      { word: "kitchen", meaning: "부엌", sentence: "Mom is in the ___." },
-      { word: "bathroom", meaning: "화장실", sentence: "Where is the ___?" },
-      { word: "school", meaning: "학교", sentence: "I go to ___." },
-      { word: "park", meaning: "공원", sentence: "Let's go to the ___." },
-      { word: "store", meaning: "가게", sentence: "The ___ is open." },
-      { word: "shop", meaning: "상점", sentence: "Let's go ___." },
-      { word: "library", meaning: "도서관", sentence: "I read at the ___." },
-      { word: "hospital", meaning: "병원", sentence: "Mom works at a ___." },
-      { word: "bank", meaning: "은행", sentence: "The ___ is closed." },
-      { word: "post office", meaning: "우체국", sentence: "I go to the ___." },
-      { word: "zoo", meaning: "동물원", sentence: "Let's go to the ___." },
-      { word: "beach", meaning: "해변", sentence: "We play at the ___." },
-      { word: "city", meaning: "도시", sentence: "Seoul is a big ___." },
-      { word: "country", meaning: "나라", sentence: "Korea is my ___." },
-      { word: "street", meaning: "거리", sentence: "Cross the ___." },
-      { word: "road", meaning: "도로", sentence: "The ___ is long." },
-      { word: "bridge", meaning: "다리", sentence: "Cross the ___." }
-    ]},
-    12: { theme: "취미", words: [
-      { word: "hobby", meaning: "취미", sentence: "My ___ is reading." },
-      { word: "game", meaning: "게임", sentence: "Let's play a ___." },
-      { word: "movie", meaning: "영화", sentence: "Let's watch a ___." },
-      { word: "music", meaning: "음악", sentence: "I love ___." },
-      { word: "song", meaning: "노래", sentence: "Sing a ___." },
-      { word: "dance", meaning: "춤", sentence: "Let's ___." },
-      { word: "draw", meaning: "그리다", sentence: "I can ___." },
-      { word: "paint", meaning: "색칠하다", sentence: "Let's ___." },
-      { word: "read", meaning: "읽다", sentence: "I ___ books." },
-      { word: "write", meaning: "쓰다", sentence: "___ your name." },
-      { word: "sing", meaning: "노래하다", sentence: "She can ___." },
-      { word: "swim", meaning: "수영하다", sentence: "I ___ on Sundays." },
-      { word: "ride", meaning: "타다", sentence: "I ___ a bike." },
-      { word: "run", meaning: "달리다", sentence: "Let's ___." },
-      { word: "walk", meaning: "걷다", sentence: "Let's ___ home." },
-      { word: "jump", meaning: "뛰다", sentence: "I can ___ high." },
-      { word: "climb", meaning: "오르다", sentence: "Cats ___ trees." },
-      { word: "fish", meaning: "낚시하다", sentence: "Let's go ___." },
-      { word: "camp", meaning: "캠핑하다", sentence: "We ___ in summer." },
-      { word: "fun", meaning: "재미있는", sentence: "It was so ___." }
-    ]},
-    13: { theme: "자연", words: [
-      { word: "tree", meaning: "나무", sentence: "A bird sits on the ___." },
-      { word: "flower", meaning: "꽃", sentence: "The ___ is pretty." },
-      { word: "grass", meaning: "잔디", sentence: "Don't step on the ___." },
-      { word: "leaf", meaning: "잎", sentence: "A ___ fell." },
-      { word: "sun", meaning: "해", sentence: "The ___ is bright." },
-      { word: "moon", meaning: "달", sentence: "The ___ is full." },
-      { word: "star", meaning: "별", sentence: "Look at the ___." },
-      { word: "sky", meaning: "하늘", sentence: "The ___ is blue." },
-      { word: "cloud", meaning: "구름", sentence: "A ___ is white." },
-      { word: "wind", meaning: "바람", sentence: "The ___ is cold." },
-      { word: "rain", meaning: "비", sentence: "The ___ is heavy." },
-      { word: "snow", meaning: "눈", sentence: "The ___ is white." },
-      { word: "river", meaning: "강", sentence: "The ___ is wide." },
-      { word: "sea", meaning: "바다", sentence: "The ___ is deep." },
-      { word: "lake", meaning: "호수", sentence: "The ___ is calm." },
-      { word: "mountain", meaning: "산", sentence: "Climb the ___." },
-      { word: "rock", meaning: "바위", sentence: "Sit on the ___." },
-      { word: "stone", meaning: "돌", sentence: "Throw the ___." },
-      { word: "sand", meaning: "모래", sentence: "Play with ___." },
-      { word: "earth", meaning: "지구", sentence: "We live on ___." }
+      { word: "uniform", meaning: "교복", sentence: "School ___ is required." }
     ]}
   }
 };
 
-// 주혁 14~25일 / 주하 14~25일 (이어서)
 const WORDS_PART2 = {
   juhyuk_14_25: {
     14: { theme: "쇼핑과 돈", words: [
+      { word: "purchase", meaning: "구매하다", sentence: "I will ___ a book." },
+      { word: "consumer", meaning: "소비자", sentence: "The ___ is king." },
+      { word: "currency", meaning: "통화", sentence: "What's the ___?" },
+      { word: "expensive", meaning: "비싼", sentence: "This bag is ___." },
+      { word: "affordable", meaning: "저렴한", sentence: "It's an ___ price." },
+      { word: "discount", meaning: "할인", sentence: "Get a ___." },
+      { word: "bargain", meaning: "싸게 산 물건", sentence: "What a ___!" },
+      { word: "refund", meaning: "환불", sentence: "I want a ___." },
+      { word: "exchange", meaning: "교환하다", sentence: "Can I ___ this?" },
+      { word: "warranty", meaning: "보증", sentence: "It has a 1-year ___." },
+      { word: "receipt", meaning: "영수증", sentence: "Keep the ___." },
+      { word: "afford", meaning: "여유가 되다", sentence: "I can't ___ it." },
+      { word: "earn", meaning: "벌다", sentence: "She ___s a salary." },
+      { word: "spend", meaning: "쓰다", sentence: "Don't ___ too much." },
+      { word: "save", meaning: "저축하다", sentence: "I ___ my money." },
+      { word: "investment", meaning: "투자", sentence: "It's a good ___." },
+      { word: "budget", meaning: "예산", sentence: "Stay within ___." },
+      { word: "income", meaning: "수입", sentence: "His ___ is high." },
+      { word: "expense", meaning: "지출", sentence: "Travel is an ___." },
+      { word: "advertise", meaning: "광고하다", sentence: "They ___ on TV." }
+    ]},
+    15: { theme: "집과 가구", words: [
+      { word: "apartment", meaning: "아파트", sentence: "I live in an ___." },
+      { word: "neighborhood", meaning: "이웃, 동네", sentence: "Our ___ is safe." },
+      { word: "residence", meaning: "거주지", sentence: "His ___ is in Seoul." },
+      { word: "ceiling", meaning: "천장", sentence: "Look at the ___." },
+      { word: "basement", meaning: "지하실", sentence: "The ___ is dark." },
+      { word: "balcony", meaning: "발코니", sentence: "We have a ___." },
+      { word: "garage", meaning: "차고", sentence: "Park in the ___." },
+      { word: "furniture", meaning: "가구", sentence: "New ___ is nice." },
+      { word: "appliance", meaning: "가전제품", sentence: "Buy a new ___." },
+      { word: "decorate", meaning: "장식하다", sentence: "Let's ___ the room." },
+      { word: "renovate", meaning: "개조하다", sentence: "We will ___ the kitchen." },
+      { word: "rent", meaning: "임대료, 빌리다", sentence: "Pay the ___." },
+      { word: "tenant", meaning: "세입자", sentence: "The ___ is quiet." },
+      { word: "landlord", meaning: "집주인", sentence: "The ___ is strict." },
+      { word: "mortgage", meaning: "주택담보대출", sentence: "We have a ___." },
+      { word: "comfortable", meaning: "편안한", sentence: "This sofa is ___." },
+      { word: "spacious", meaning: "넓은", sentence: "This room is ___." },
+      { word: "cozy", meaning: "아늑한", sentence: "Our home is ___." },
+      { word: "modern", meaning: "현대의", sentence: "It's a ___ design." },
+      { word: "traditional", meaning: "전통적인", sentence: "It's a ___ house." }
+    ]},
+    16: { theme: "도시와 교통", words: [
+      { word: "downtown", meaning: "시내", sentence: "Let's go ___." },
+      { word: "suburb", meaning: "교외", sentence: "We live in the ___s." },
+      { word: "skyscraper", meaning: "고층 빌딩", sentence: "Look at the ___." },
+      { word: "intersection", meaning: "교차로", sentence: "Stop at the ___." },
+      { word: "pedestrian", meaning: "보행자", sentence: "___s have rights." },
+      { word: "vehicle", meaning: "차량", sentence: "Park your ___." },
+      { word: "license", meaning: "면허증", sentence: "Show your ___." },
+      { word: "traffic", meaning: "교통", sentence: "The ___ is heavy." },
+      { word: "commute", meaning: "통근하다", sentence: "I ___ daily." },
+      { word: "transportation", meaning: "교통수단", sentence: "Public ___ is good." },
+      { word: "highway", meaning: "고속도로", sentence: "Take the ___." },
+      { word: "bridge", meaning: "다리", sentence: "Cross the ___." },
+      { word: "tunnel", meaning: "터널", sentence: "Go through the ___." },
+      { word: "passenger", meaning: "승객", sentence: "Each ___ has a seat." },
+      { word: "destination", meaning: "목적지", sentence: "What's your ___?" },
+      { word: "route", meaning: "경로", sentence: "Find the best ___." },
+      { word: "delay", meaning: "지연", sentence: "There's a 30-min ___." },
+      { word: "arrive", meaning: "도착하다", sentence: "We ___ at noon." },
+      { word: "depart", meaning: "출발하다", sentence: "We ___ tomorrow." },
+      { word: "transfer", meaning: "환승하다", sentence: "___ at the next stop." }
+    ]},
+    17: { theme: "예술과 문화", words: [
+      { word: "culture", meaning: "문화", sentence: "Korean ___ is rich." },
+      { word: "tradition", meaning: "전통", sentence: "It's our ___." },
+      { word: "heritage", meaning: "유산", sentence: "Cultural ___ matters." },
+      { word: "exhibition", meaning: "전시회", sentence: "Visit the art ___." },
+      { word: "masterpiece", meaning: "걸작", sentence: "It's a ___." },
+      { word: "sculpture", meaning: "조각", sentence: "The ___ is huge." },
+      { word: "portrait", meaning: "초상화", sentence: "Paint a ___." },
+      { word: "abstract", meaning: "추상적인", sentence: "It's an ___ painting." },
+      { word: "gallery", meaning: "미술관", sentence: "Visit the ___." },
+      { word: "museum", meaning: "박물관", sentence: "The ___ is open." },
+      { word: "theater", meaning: "극장", sentence: "Meet at the ___." },
+      { word: "audience", meaning: "관객", sentence: "The ___ clapped." },
+      { word: "stage", meaning: "무대", sentence: "She is on ___." },
+      { word: "actor", meaning: "배우", sentence: "He is a famous ___." },
+      { word: "director", meaning: "감독", sentence: "The ___ is great." },
+      { word: "perform", meaning: "공연하다", sentence: "She will ___ tonight." },
+      { word: "instrument", meaning: "악기", sentence: "Piano is my ___." },
+      { word: "compose", meaning: "작곡하다", sentence: "He ___s songs." },
+      { word: "literature", meaning: "문학", sentence: "I love English ___." },
+      { word: "poetry", meaning: "시", sentence: "Read this ___." }
+    ]},
+    18: { theme: "과학과 발견", words: [
+      { word: "scientist", meaning: "과학자", sentence: "She is a great ___." },
+      { word: "experiment", meaning: "실험", sentence: "Do the ___ carefully." },
+      { word: "research", meaning: "연구", sentence: "His ___ is important." },
+      { word: "theory", meaning: "이론", sentence: "His ___ is correct." },
+      { word: "evidence", meaning: "증거", sentence: "Show me the ___." },
+      { word: "data", meaning: "자료", sentence: "Collect more ___." },
+      { word: "result", meaning: "결과", sentence: "Check the ___." },
+      { word: "observe", meaning: "관찰하다", sentence: "___ the plant daily." },
+      { word: "measure", meaning: "측정하다", sentence: "Let's ___ this." },
+      { word: "compare", meaning: "비교하다", sentence: "___ the two." },
+      { word: "analyze", meaning: "분석하다", sentence: "Let's ___ the data." },
+      { word: "prove", meaning: "증명하다", sentence: "She will ___ it." },
+      { word: "matter", meaning: "물질", sentence: "All ___ has mass." },
+      { word: "energy", meaning: "에너지", sentence: "Solar ___ is clean." },
+      { word: "gravity", meaning: "중력", sentence: "___ pulls us down." },
+      { word: "molecule", meaning: "분자", sentence: "Water has ___s." },
+      { word: "atom", meaning: "원자", sentence: "An ___ is tiny." },
+      { word: "universe", meaning: "우주", sentence: "The ___ is huge." },
+      { word: "galaxy", meaning: "은하", sentence: "Our ___ is the Milky Way." },
+      { word: "phenomenon", meaning: "현상", sentence: "It's a strange ___." }
+    ]},
+    19: { theme: "역사와 시간", words: [
+      { word: "history", meaning: "역사", sentence: "Korea has long ___." },
+      { word: "ancient", meaning: "고대의", sentence: "Visit ___ ruins." },
+      { word: "medieval", meaning: "중세의", sentence: "It's a ___ castle." },
+      { word: "century", meaning: "세기", sentence: "The 21st ___." },
+      { word: "decade", meaning: "10년", sentence: "It's been a ___." },
+      { word: "era", meaning: "시대", sentence: "The dinosaur ___." },
+      { word: "civilization", meaning: "문명", sentence: "Ancient ___s grew." },
+      { word: "empire", meaning: "제국", sentence: "The Roman ___." },
+      { word: "monarchy", meaning: "군주제", sentence: "It's a ___." },
+      { word: "revolution", meaning: "혁명", sentence: "The French ___." },
+      { word: "independence", meaning: "독립", sentence: "Korea got ___ in 1945." },
+      { word: "tradition", meaning: "전통", sentence: "Keep the ___." },
+      { word: "ancestor", meaning: "조상", sentence: "Honor your ___s." },
+      { word: "warrior", meaning: "전사", sentence: "He is a ___." },
+      { word: "battle", meaning: "전투", sentence: "The ___ was fierce." },
+      { word: "conflict", meaning: "갈등", sentence: "Solve the ___." },
+      { word: "treaty", meaning: "조약", sentence: "Sign the ___." },
+      { word: "discover", meaning: "발견하다", sentence: "Columbus ___ed America." },
+      { word: "explore", meaning: "탐험하다", sentence: "Let's ___ this place." },
+      { word: "originate", meaning: "기원하다", sentence: "Pizza ___d in Italy." }
+    ]},
+    20: { theme: "도전과 성공", words: [
+      { word: "challenge", meaning: "도전", sentence: "Accept the ___." },
+      { word: "ambition", meaning: "야망", sentence: "He has big ___s." },
+      { word: "dream", meaning: "꿈", sentence: "Follow your ___." },
+      { word: "goal", meaning: "목표", sentence: "Set a clear ___." },
+      { word: "achievement", meaning: "업적", sentence: "It's a great ___." },
+      { word: "succeed", meaning: "성공하다", sentence: "I want to ___." },
+      { word: "fail", meaning: "실패하다", sentence: "Don't ___." },
+      { word: "overcome", meaning: "극복하다", sentence: "I will ___ this." },
+      { word: "persistent", meaning: "끈기 있는", sentence: "Be ___." },
+      { word: "determined", meaning: "결심한", sentence: "She is ___." },
+      { word: "motivate", meaning: "동기부여하다", sentence: "Music ___s me." },
+      { word: "inspire", meaning: "영감을 주다", sentence: "Books ___ us." },
+      { word: "courage", meaning: "용기", sentence: "She showed ___." },
+      { word: "strength", meaning: "힘", sentence: "He has great ___." },
+      { word: "weakness", meaning: "약점", sentence: "Know your ___." },
+      { word: "victory", meaning: "승리", sentence: "Sweet ___!" },
+      { word: "defeat", meaning: "패배", sentence: "Accept the ___." },
+      { word: "potential", meaning: "잠재력", sentence: "She has ___." },
+      { word: "talent", meaning: "재능", sentence: "His ___ is amazing." },
+      { word: "effort", meaning: "노력", sentence: "Make an ___." }
+    ]},
+    21: { theme: "친구와 우정", words: [
+      { word: "friendship", meaning: "우정", sentence: "Our ___ is strong." },
+      { word: "bond", meaning: "유대", sentence: "Our ___ is special." },
+      { word: "loyalty", meaning: "충성심", sentence: "Show your ___." },
+      { word: "betray", meaning: "배신하다", sentence: "Never ___ a friend." },
+      { word: "honest", meaning: "정직한", sentence: "Be ___ with me." },
+      { word: "secret", meaning: "비밀", sentence: "Keep this ___." },
+      { word: "promise", meaning: "약속하다", sentence: "I ___ to come." },
+      { word: "share", meaning: "공유하다", sentence: "We ___ everything." },
+      { word: "support", meaning: "지지하다", sentence: "I ___ you." },
+      { word: "comfort", meaning: "위로하다", sentence: "She ___ed me." },
+      { word: "encourage", meaning: "격려하다", sentence: "Friends ___ each other." },
+      { word: "appreciate", meaning: "감사하다", sentence: "I ___ your help." },
+      { word: "depend", meaning: "의지하다", sentence: "I ___ on her." },
+      { word: "miss", meaning: "그리워하다", sentence: "I ___ you." },
+      { word: "forgive", meaning: "용서하다", sentence: "Please ___ me." },
+      { word: "argue", meaning: "다투다", sentence: "Don't ___." },
+      { word: "apologize", meaning: "사과하다", sentence: "I ___." },
+      { word: "advice", meaning: "조언", sentence: "I need your ___." },
+      { word: "trust", meaning: "신뢰하다", sentence: "I ___ you." },
+      { word: "faithful", meaning: "충실한", sentence: "He's a ___ friend." }
+    ]},
+    22: { theme: "마음과 생각", words: [
+      { word: "thought", meaning: "생각", sentence: "Deep ___s matter." },
+      { word: "consider", meaning: "고려하다", sentence: "Please ___ this." },
+      { word: "imagine", meaning: "상상하다", sentence: "___ a perfect day." },
+      { word: "realize", meaning: "깨닫다", sentence: "I now ___ it." },
+      { word: "doubt", meaning: "의심하다", sentence: "Don't ___ yourself." },
+      { word: "decide", meaning: "결정하다", sentence: "I will ___ today." },
+      { word: "choose", meaning: "선택하다", sentence: "Please ___ one." },
+      { word: "wonder", meaning: "궁금해하다", sentence: "I ___ why." },
+      { word: "memory", meaning: "기억", sentence: "Sweet ___s." },
+      { word: "forget", meaning: "잊다", sentence: "Don't ___ this." },
+      { word: "agree", meaning: "동의하다", sentence: "I ___ with you." },
+      { word: "disagree", meaning: "동의하지 않다", sentence: "I ___ politely." },
+      { word: "opinion", meaning: "의견", sentence: "Share your ___." },
+      { word: "belief", meaning: "믿음", sentence: "Strong ___s help." },
+      { word: "concept", meaning: "개념", sentence: "The ___ is clear." },
+      { word: "logic", meaning: "논리", sentence: "Use ___." },
+      { word: "intelligent", meaning: "지능적인", sentence: "She is ___." },
+      { word: "wise", meaning: "지혜로운", sentence: "She is very ___." },
+      { word: "clever", meaning: "영리한", sentence: "He is ___." },
+      { word: "creative", meaning: "창의적인", sentence: "Be ___." }
+    ]},
+    23: { theme: "환경과 지구", words: [
+      { word: "earth", meaning: "지구", sentence: "Save the ___." },
+      { word: "planet", meaning: "행성", sentence: "Our ___ is unique." },
+      { word: "atmosphere", meaning: "대기", sentence: "The ___ is changing." },
+      { word: "pollution", meaning: "오염", sentence: "Stop air ___." },
+      { word: "recycle", meaning: "재활용하다", sentence: "Always ___." },
+      { word: "reduce", meaning: "줄이다", sentence: "___ plastic use." },
+      { word: "reuse", meaning: "재사용하다", sentence: "Try to ___ bags." },
+      { word: "waste", meaning: "쓰레기", sentence: "Less ___." },
+      { word: "fossil", meaning: "화석의", sentence: "___ fuels pollute." },
+      { word: "renewable", meaning: "재생 가능한", sentence: "Solar is ___." },
+      { word: "sustainable", meaning: "지속 가능한", sentence: "Live ___." },
+      { word: "conserve", meaning: "보존하다", sentence: "We ___ water." },
+      { word: "global", meaning: "지구의", sentence: "A ___ issue." },
+      { word: "warming", meaning: "온난화", sentence: "Stop global ___." },
+      { word: "endangered", meaning: "멸종 위기의", sentence: "Pandas are ___." },
+      { word: "extinct", meaning: "멸종한", sentence: "Dinosaurs are ___." },
+      { word: "wildlife", meaning: "야생 동물", sentence: "Protect ___." },
+      { word: "ecosystem", meaning: "생태계", sentence: "The ___ is fragile." },
+      { word: "biodiversity", meaning: "생물 다양성", sentence: "___ matters." },
+      { word: "drought", meaning: "가뭄", sentence: "The ___ was long." }
+    ]},
+    24: { theme: "건강한 생활", words: [
+      { word: "wellness", meaning: "웰빙", sentence: "Focus on ___." },
+      { word: "fitness", meaning: "건강", sentence: "Improve your ___." },
+      { word: "habit", meaning: "습관", sentence: "Build good ___s." },
+      { word: "routine", meaning: "일상", sentence: "I have a ___." },
+      { word: "balance", meaning: "균형", sentence: "Find a ___." },
+      { word: "nutrition", meaning: "영양", sentence: "Good ___ matters." },
+      { word: "vitamin", meaning: "비타민", sentence: "Take your ___s." },
+      { word: "calorie", meaning: "칼로리", sentence: "Count ___s." },
+      { word: "protein", meaning: "단백질", sentence: "Eat enough ___." },
+      { word: "stress", meaning: "스트레스", sentence: "Avoid ___." },
+      { word: "relax", meaning: "쉬다", sentence: "Just ___." },
+      { word: "meditate", meaning: "명상하다", sentence: "I ___ daily." },
+      { word: "stretch", meaning: "스트레칭하다", sentence: "Let's ___." },
+      { word: "active", meaning: "활동적인", sentence: "Stay ___." },
+      { word: "regular", meaning: "규칙적인", sentence: "Be ___." },
+      { word: "hygiene", meaning: "위생", sentence: "Good ___ is key." },
+      { word: "checkup", meaning: "건강검진", sentence: "Get a ___." },
+      { word: "prevent", meaning: "예방하다", sentence: "___ illness." },
+      { word: "energy", meaning: "활력", sentence: "I have ___." },
+      { word: "recover", meaning: "회복하다", sentence: "I will ___ soon." }
+    ]},
+    25: { theme: "중요 동사", words: [
+      { word: "establish", meaning: "설립하다", sentence: "She ___ed a company." },
+      { word: "maintain", meaning: "유지하다", sentence: "___ your health." },
+      { word: "obtain", meaning: "얻다", sentence: "I ___ed a license." },
+      { word: "abandon", meaning: "버리다", sentence: "Don't ___ hope." },
+      { word: "occupy", meaning: "차지하다", sentence: "Books ___ this shelf." },
+      { word: "remove", meaning: "제거하다", sentence: "Please ___ it." },
+      { word: "replace", meaning: "교체하다", sentence: "___ the battery." },
+      { word: "represent", meaning: "대표하다", sentence: "She ___s us." },
+      { word: "consist", meaning: "구성되다", sentence: "It ___s of three." },
+      { word: "include", meaning: "포함하다", sentence: "It ___s tax." },
+      { word: "exclude", meaning: "제외하다", sentence: "We ___ Sundays." },
+      { word: "involve", meaning: "관련시키다", sentence: "It ___s teamwork." },
+      { word: "require", meaning: "요구하다", sentence: "It ___s effort." },
+      { word: "provide", meaning: "제공하다", sentence: "We ___ help." },
+      { word: "supply", meaning: "공급하다", sentence: "They ___ water." },
+      { word: "deliver", meaning: "배달하다", sentence: "I ___ed it." },
+      { word: "arrange", meaning: "준비하다", sentence: "Let's ___ a meeting." },
+      { word: "prepare", meaning: "준비하다", sentence: "___ for the test." },
+      { word: "examine", meaning: "조사하다", sentence: "Doctors ___ patients." },
+      { word: "indicate", meaning: "나타내다", sentence: "This ___s success." }
+    ]}
+  },
+  jooha_14_25: {
+    14: { theme: "쇼핑과 돈", words: [
       { word: "buy", meaning: "사다", sentence: "I will ___ a book." },
-      { word: "sell", meaning: "팔다", sentence: "They ___ flowers here." },
+      { word: "sell", meaning: "팔다", sentence: "They ___ flowers." },
       { word: "money", meaning: "돈", sentence: "I have some ___." },
       { word: "price", meaning: "가격", sentence: "The ___ is high." },
       { word: "expensive", meaning: "비싼", sentence: "This bag is ___." },
@@ -1507,15 +1777,15 @@ const WORDS_PART2 = {
       { word: "store", meaning: "가게", sentence: "The ___ is busy." },
       { word: "market", meaning: "시장", sentence: "We went to the ___." },
       { word: "mall", meaning: "쇼핑몰", sentence: "Meet me at the ___." },
-      { word: "discount", meaning: "할인", sentence: "Get a ___ here." },
-      { word: "free", meaning: "무료의", sentence: "This sample is ___." },
+      { word: "discount", meaning: "할인", sentence: "Get a ___." },
+      { word: "free", meaning: "무료의", sentence: "This is ___." },
       { word: "pay", meaning: "지불하다", sentence: "I will ___ in cash." },
       { word: "cash", meaning: "현금", sentence: "I have no ___." },
       { word: "card", meaning: "카드", sentence: "Use your ___." },
-      { word: "spend", meaning: "쓰다, 소비하다", sentence: "Don't ___ too much." },
+      { word: "spend", meaning: "쓰다", sentence: "Don't ___ too much." },
       { word: "save", meaning: "저축하다", sentence: "I ___ my money." },
       { word: "afford", meaning: "여유가 되다", sentence: "I can ___ this." },
-      { word: "earn", meaning: "벌다", sentence: "She ___ a salary." },
+      { word: "earn", meaning: "벌다", sentence: "She ___s a salary." },
       { word: "wallet", meaning: "지갑", sentence: "My ___ is empty." }
     ]},
     15: { theme: "집과 가구", words: [
@@ -1524,7 +1794,6 @@ const WORDS_PART2 = {
       { word: "kitchen", meaning: "부엌", sentence: "Mom cooks in the ___." },
       { word: "bedroom", meaning: "침실", sentence: "Clean your ___." },
       { word: "bathroom", meaning: "욕실", sentence: "The ___ is clean." },
-      { word: "living room", meaning: "거실", sentence: "We watch TV in the ___." },
       { word: "garden", meaning: "정원", sentence: "Our ___ has flowers." },
       { word: "window", meaning: "창문", sentence: "Open the ___." },
       { word: "door", meaning: "문", sentence: "Close the ___." },
@@ -1538,11 +1807,12 @@ const WORDS_PART2 = {
       { word: "lamp", meaning: "전등", sentence: "Turn on the ___." },
       { word: "mirror", meaning: "거울", sentence: "Look in the ___." },
       { word: "clock", meaning: "시계", sentence: "The ___ shows 3." },
-      { word: "furniture", meaning: "가구", sentence: "New ___ is nice." }
+      { word: "furniture", meaning: "가구", sentence: "New ___ is nice." },
+      { word: "decorate", meaning: "장식하다", sentence: "Let's ___ the room." }
     ]},
     16: { theme: "도시와 교통", words: [
       { word: "street", meaning: "거리", sentence: "The ___ is busy." },
-      { word: "road", meaning: "도로", sentence: "Cross the ___ safely." },
+      { word: "road", meaning: "도로", sentence: "Cross the ___." },
       { word: "bridge", meaning: "다리", sentence: "Walk over the ___." },
       { word: "building", meaning: "건물", sentence: "That ___ is tall." },
       { word: "tower", meaning: "탑", sentence: "Climb the ___." },
@@ -1555,7 +1825,7 @@ const WORDS_PART2 = {
       { word: "bicycle", meaning: "자전거", sentence: "I ride my ___." },
       { word: "car", meaning: "자동차", sentence: "Dad's ___ is white." },
       { word: "drive", meaning: "운전하다", sentence: "Mom can ___." },
-      { word: "ride", meaning: "타다", sentence: "I ___ the bus daily." },
+      { word: "ride", meaning: "타다", sentence: "I ___ the bus." },
       { word: "stop", meaning: "멈추다", sentence: "Please ___ here." },
       { word: "cross", meaning: "건너다", sentence: "___ at the light." },
       { word: "follow", meaning: "따라가다", sentence: "Please ___ me." },
@@ -1564,40 +1834,40 @@ const WORDS_PART2 = {
     ]},
     17: { theme: "예술과 문화", words: [
       { word: "art", meaning: "예술", sentence: "I love modern ___." },
-      { word: "music", meaning: "음악", sentence: "She plays ___ daily." },
+      { word: "music", meaning: "음악", sentence: "She plays ___." },
       { word: "song", meaning: "노래", sentence: "This ___ is great." },
       { word: "dance", meaning: "춤", sentence: "She loves to ___." },
       { word: "movie", meaning: "영화", sentence: "Let's watch a ___." },
       { word: "drama", meaning: "드라마", sentence: "I love this ___." },
       { word: "actor", meaning: "배우", sentence: "He is a famous ___." },
-      { word: "musician", meaning: "음악가", sentence: "She is a top ___." },
+      { word: "musician", meaning: "음악가", sentence: "She is a ___." },
       { word: "instrument", meaning: "악기", sentence: "Piano is my ___." },
       { word: "concert", meaning: "공연", sentence: "The ___ was great." },
       { word: "theater", meaning: "극장", sentence: "Meet at the ___." },
       { word: "museum", meaning: "박물관", sentence: "The ___ is open." },
       { word: "gallery", meaning: "미술관", sentence: "Visit the ___." },
       { word: "painting", meaning: "그림", sentence: "This ___ is famous." },
-      { word: "photograph", meaning: "사진", sentence: "Take a ___ here." },
+      { word: "photograph", meaning: "사진", sentence: "Take a ___." },
       { word: "culture", meaning: "문화", sentence: "Korean ___ is rich." },
       { word: "tradition", meaning: "전통", sentence: "It's our ___." },
-      { word: "perform", meaning: "공연하다", sentence: "She will ___ tonight." },
+      { word: "perform", meaning: "공연하다", sentence: "She will ___." },
       { word: "audience", meaning: "관객", sentence: "The ___ clapped." },
       { word: "stage", meaning: "무대", sentence: "She is on the ___." }
     ]},
     18: { theme: "과학과 발견", words: [
       { word: "science", meaning: "과학", sentence: "I love ___ class." },
-      { word: "scientist", meaning: "과학자", sentence: "She is a great ___." },
-      { word: "experiment", meaning: "실험", sentence: "Do the ___ carefully." },
+      { word: "scientist", meaning: "과학자", sentence: "She is a ___." },
+      { word: "experiment", meaning: "실험", sentence: "Do the ___." },
       { word: "research", meaning: "연구", sentence: "His ___ is important." },
-      { word: "discover", meaning: "발견하다", sentence: "They ___ a new star." },
-      { word: "invent", meaning: "발명하다", sentence: "Edison ___ the bulb." },
+      { word: "discover", meaning: "발견하다", sentence: "They ___ed a star." },
+      { word: "invent", meaning: "발명하다", sentence: "Edison ___ed the bulb." },
       { word: "theory", meaning: "이론", sentence: "His ___ is correct." },
       { word: "fact", meaning: "사실", sentence: "It's a clear ___." },
       { word: "data", meaning: "자료", sentence: "Collect more ___." },
       { word: "result", meaning: "결과", sentence: "Check the ___." },
       { word: "study", meaning: "연구하다", sentence: "She will ___ stars." },
-      { word: "observe", meaning: "관찰하다", sentence: "___ the plant daily." },
-      { word: "measure", meaning: "측정하다", sentence: "Let's ___ the room." },
+      { word: "observe", meaning: "관찰하다", sentence: "___ the plant." },
+      { word: "measure", meaning: "측정하다", sentence: "Let's ___ this." },
       { word: "compare", meaning: "비교하다", sentence: "___ the two." },
       { word: "explain", meaning: "설명하다", sentence: "Can you ___ this?" },
       { word: "prove", meaning: "증명하다", sentence: "She will ___ it." },
@@ -1638,7 +1908,7 @@ const WORDS_PART2 = {
       { word: "challenge", meaning: "도전", sentence: "Accept the ___." },
       { word: "effort", meaning: "노력", sentence: "Make an ___." },
       { word: "success", meaning: "성공", sentence: "Hard work brings ___." },
-      { word: "fail", meaning: "실패하다", sentence: "Don't be afraid to ___." },
+      { word: "fail", meaning: "실패하다", sentence: "Don't fear to ___." },
       { word: "win", meaning: "이기다", sentence: "We will ___ today." },
       { word: "lose", meaning: "지다", sentence: "We didn't ___." },
       { word: "brave", meaning: "용감한", sentence: "She is ___." },
@@ -1719,7 +1989,7 @@ const WORDS_PART2 = {
     24: { theme: "건강한 생활", words: [
       { word: "exercise", meaning: "운동하다", sentence: "I ___ daily." },
       { word: "healthy", meaning: "건강한", sentence: "Eat ___ food." },
-      { word: "habit", meaning: "습관", sentence: "Build good ___." },
+      { word: "habit", meaning: "습관", sentence: "Build good ___s." },
       { word: "regular", meaning: "규칙적인", sentence: "Have ___ meals." },
       { word: "balance", meaning: "균형", sentence: "Find a ___." },
       { word: "rest", meaning: "휴식", sentence: "Take a ___." },
@@ -1738,7 +2008,7 @@ const WORDS_PART2 = {
       { word: "fitness", meaning: "건강", sentence: "My ___ is improving." },
       { word: "wellness", meaning: "웰빙", sentence: "Focus on ___." }
     ]},
-    25: { theme: "중요 동사 모음", words: [
+    25: { theme: "중요 단어", words: [
       { word: "make", meaning: "만들다", sentence: "I will ___ a cake." },
       { word: "take", meaning: "가져가다", sentence: "Please ___ this." },
       { word: "give", meaning: "주다", sentence: "Please ___ me a hand." },
@@ -1760,279 +2030,8 @@ const WORDS_PART2 = {
       { word: "break", meaning: "부수다", sentence: "Don't ___ it." },
       { word: "fix", meaning: "고치다", sentence: "Can you ___ this?" }
     ]}
-  },
-  jooha_14_25: {
-    14: { theme: "교통과 이동", words: [
-      { word: "car", meaning: "자동차", sentence: "My dad has a ___." },
-      { word: "bus", meaning: "버스", sentence: "Take the ___." },
-      { word: "train", meaning: "기차", sentence: "The ___ is fast." },
-      { word: "subway", meaning: "지하철", sentence: "Use the ___." },
-      { word: "taxi", meaning: "택시", sentence: "Call a ___." },
-      { word: "bike", meaning: "자전거", sentence: "I ride my ___." },
-      { word: "boat", meaning: "배", sentence: "The ___ is small." },
-      { word: "ship", meaning: "선박", sentence: "A big ___." },
-      { word: "plane", meaning: "비행기", sentence: "The ___ is high." },
-      { word: "truck", meaning: "트럭", sentence: "A big ___." },
-      { word: "go", meaning: "가다", sentence: "Let's ___." },
-      { word: "come", meaning: "오다", sentence: "Please ___ here." },
-      { word: "stop", meaning: "멈추다", sentence: "Please ___." },
-      { word: "ride", meaning: "타다", sentence: "I ___ the bus." },
-      { word: "drive", meaning: "운전하다", sentence: "Mom can ___." },
-      { word: "fast", meaning: "빠른", sentence: "He runs ___." },
-      { word: "slow", meaning: "느린", sentence: "It is ___." },
-      { word: "near", meaning: "가까운", sentence: "It's ___ here." },
-      { word: "far", meaning: "먼", sentence: "It's ___ away." },
-      { word: "way", meaning: "길", sentence: "I know the ___." }
-    ]},
-    15: { theme: "숫자와 시간", words: [
-      { word: "one", meaning: "하나", sentence: "I have ___ apple." },
-      { word: "two", meaning: "둘", sentence: "I have ___ books." },
-      { word: "three", meaning: "셋", sentence: "I have ___ pencils." },
-      { word: "four", meaning: "넷", sentence: "There are ___ cats." },
-      { word: "five", meaning: "다섯", sentence: "I have ___ fingers." },
-      { word: "ten", meaning: "열", sentence: "Count to ___." },
-      { word: "twenty", meaning: "스물", sentence: "I am ___." },
-      { word: "hundred", meaning: "백", sentence: "One ___ won." },
-      { word: "first", meaning: "첫째", sentence: "I am the ___." },
-      { word: "second", meaning: "둘째", sentence: "I came ___." },
-      { word: "last", meaning: "마지막", sentence: "It's the ___ one." },
-      { word: "next", meaning: "다음", sentence: "See you ___ time." },
-      { word: "now", meaning: "지금", sentence: "Come here ___." },
-      { word: "early", meaning: "일찍", sentence: "I wake up ___." },
-      { word: "late", meaning: "늦은", sentence: "Don't be ___." },
-      { word: "soon", meaning: "곧", sentence: "I will come ___." },
-      { word: "before", meaning: "전에", sentence: "Eat ___ school." },
-      { word: "after", meaning: "후에", sentence: "Go ___ class." },
-      { word: "again", meaning: "다시", sentence: "Try ___." },
-      { word: "always", meaning: "항상", sentence: "I ___ smile." }
-    ]},
-    16: { theme: "방향과 위치", words: [
-      { word: "up", meaning: "위로", sentence: "Look ___." },
-      { word: "down", meaning: "아래로", sentence: "Sit ___." },
-      { word: "left", meaning: "왼쪽", sentence: "Turn ___." },
-      { word: "right", meaning: "오른쪽", sentence: "Turn ___." },
-      { word: "front", meaning: "앞", sentence: "I am in ___." },
-      { word: "back", meaning: "뒤", sentence: "Stay in the ___." },
-      { word: "north", meaning: "북쪽", sentence: "Go ___." },
-      { word: "south", meaning: "남쪽", sentence: "It's in the ___." },
-      { word: "east", meaning: "동쪽", sentence: "The sun rises in the ___." },
-      { word: "west", meaning: "서쪽", sentence: "The sun sets in the ___." },
-      { word: "here", meaning: "여기", sentence: "Come ___." },
-      { word: "there", meaning: "거기", sentence: "Look ___." },
-      { word: "inside", meaning: "안에", sentence: "Stay ___." },
-      { word: "outside", meaning: "밖에", sentence: "Play ___." },
-      { word: "above", meaning: "위에", sentence: "Look ___." },
-      { word: "below", meaning: "아래에", sentence: "Sign ___." },
-      { word: "near", meaning: "가까이", sentence: "Stay ___ me." },
-      { word: "far", meaning: "멀리", sentence: "Don't go ___." },
-      { word: "between", meaning: "사이에", sentence: "Sit ___ us." },
-      { word: "next to", meaning: "옆에", sentence: "Sit ___ me." }
-    ]},
-    17: { theme: "직업", words: [
-      { word: "doctor", meaning: "의사", sentence: "The ___ is kind." },
-      { word: "nurse", meaning: "간호사", sentence: "The ___ helps." },
-      { word: "teacher", meaning: "선생님", sentence: "My ___ is fun." },
-      { word: "police", meaning: "경찰", sentence: "Call the ___." },
-      { word: "firefighter", meaning: "소방관", sentence: "A brave ___." },
-      { word: "farmer", meaning: "농부", sentence: "The ___ works hard." },
-      { word: "cook", meaning: "요리사", sentence: "He is a ___." },
-      { word: "driver", meaning: "운전사", sentence: "The bus ___." },
-      { word: "singer", meaning: "가수", sentence: "She is a ___." },
-      { word: "dancer", meaning: "댄서", sentence: "She is a great ___." },
-      { word: "actor", meaning: "배우", sentence: "He is a famous ___." },
-      { word: "writer", meaning: "작가", sentence: "He is a ___." },
-      { word: "artist", meaning: "예술가", sentence: "She is an ___." },
-      { word: "scientist", meaning: "과학자", sentence: "A ___ studies." },
-      { word: "pilot", meaning: "조종사", sentence: "The ___ flies planes." },
-      { word: "vet", meaning: "수의사", sentence: "Take the cat to a ___." },
-      { word: "baker", meaning: "제빵사", sentence: "The ___ makes bread." },
-      { word: "dentist", meaning: "치과의사", sentence: "Visit the ___." },
-      { word: "job", meaning: "직업", sentence: "What is your ___?" },
-      { word: "work", meaning: "일하다", sentence: "Dad will ___." }
-    ]},
-    18: { theme: "몸의 활동", words: [
-      { word: "see", meaning: "보다", sentence: "I ___ a bird." },
-      { word: "look", meaning: "보다", sentence: "Please ___ here." },
-      { word: "hear", meaning: "듣다", sentence: "I ___ music." },
-      { word: "smell", meaning: "냄새 맡다", sentence: "I ___ flowers." },
-      { word: "touch", meaning: "만지다", sentence: "Don't ___ it." },
-      { word: "speak", meaning: "말하다", sentence: "Please ___ slowly." },
-      { word: "talk", meaning: "이야기하다", sentence: "Let's ___." },
-      { word: "say", meaning: "말하다", sentence: "What did you ___?" },
-      { word: "tell", meaning: "말하다", sentence: "___ me a story." },
-      { word: "shout", meaning: "소리치다", sentence: "Don't ___." },
-      { word: "whisper", meaning: "속삭이다", sentence: "She will ___." },
-      { word: "smile", meaning: "미소짓다", sentence: "Please ___." },
-      { word: "laugh", meaning: "웃다", sentence: "We ___ together." },
-      { word: "cry", meaning: "울다", sentence: "Don't ___." },
-      { word: "kiss", meaning: "키스하다", sentence: "Mom gave a ___." },
-      { word: "hug", meaning: "껴안다", sentence: "Give me a ___." },
-      { word: "wave", meaning: "손을 흔들다", sentence: "Please ___ goodbye." },
-      { word: "point", meaning: "가리키다", sentence: "Don't ___." },
-      { word: "catch", meaning: "잡다", sentence: "___ the ball." },
-      { word: "throw", meaning: "던지다", sentence: "___ it to me." }
-    ]},
-    19: { theme: "도구와 물건", words: [
-      { word: "pen", meaning: "펜", sentence: "Use this ___." },
-      { word: "pencil", meaning: "연필", sentence: "Sharpen the ___." },
-      { word: "paper", meaning: "종이", sentence: "Write on ___." },
-      { word: "book", meaning: "책", sentence: "Open the ___." },
-      { word: "ruler", meaning: "자", sentence: "Use a ___." },
-      { word: "scissors", meaning: "가위", sentence: "Use the ___." },
-      { word: "tape", meaning: "테이프", sentence: "Pass the ___." },
-      { word: "glue", meaning: "풀", sentence: "Use ___." },
-      { word: "box", meaning: "상자", sentence: "Open the ___." },
-      { word: "bag", meaning: "가방", sentence: "Carry your ___." },
-      { word: "bottle", meaning: "병", sentence: "A water ___." },
-      { word: "cup", meaning: "컵", sentence: "Use this ___." },
-      { word: "plate", meaning: "접시", sentence: "A clean ___." },
-      { word: "spoon", meaning: "숟가락", sentence: "Use a ___." },
-      { word: "fork", meaning: "포크", sentence: "Pass the ___." },
-      { word: "knife", meaning: "칼", sentence: "Be careful with the ___." },
-      { word: "key", meaning: "열쇠", sentence: "Where is the ___?" },
-      { word: "lock", meaning: "자물쇠", sentence: "Open the ___." },
-      { word: "tool", meaning: "도구", sentence: "Use the right ___." },
-      { word: "thing", meaning: "물건", sentence: "What is this ___?" }
-    ]},
-    20: { theme: "스포츠와 게임", words: [
-      { word: "soccer", meaning: "축구", sentence: "I play ___." },
-      { word: "baseball", meaning: "야구", sentence: "He plays ___." },
-      { word: "basketball", meaning: "농구", sentence: "She plays ___." },
-      { word: "tennis", meaning: "테니스", sentence: "Let's play ___." },
-      { word: "badminton", meaning: "배드민턴", sentence: "I love ___." },
-      { word: "ball", meaning: "공", sentence: "Pass the ___." },
-      { word: "team", meaning: "팀", sentence: "Our ___ is great." },
-      { word: "game", meaning: "경기", sentence: "We won the ___." },
-      { word: "win", meaning: "이기다", sentence: "We will ___." },
-      { word: "lose", meaning: "지다", sentence: "Don't ___." },
-      { word: "score", meaning: "점수", sentence: "What's the ___?" },
-      { word: "kick", meaning: "차다", sentence: "___ the ball." },
-      { word: "hit", meaning: "치다", sentence: "___ the ball hard." },
-      { word: "pass", meaning: "패스하다", sentence: "Please ___." },
-      { word: "run", meaning: "달리다", sentence: "Let's ___." },
-      { word: "race", meaning: "경주", sentence: "Win the ___." },
-      { word: "fast", meaning: "빠른", sentence: "He is ___." },
-      { word: "strong", meaning: "강한", sentence: "Be ___." },
-      { word: "play", meaning: "놀다, 경기하다", sentence: "Let's ___." },
-      { word: "champion", meaning: "챔피언", sentence: "She is the ___." }
-    ]},
-    21: { theme: "특별한 날", words: [
-      { word: "birthday", meaning: "생일", sentence: "Happy ___!" },
-      { word: "party", meaning: "파티", sentence: "It's a fun ___." },
-      { word: "gift", meaning: "선물", sentence: "Open the ___." },
-      { word: "card", meaning: "카드", sentence: "Send a ___." },
-      { word: "candle", meaning: "양초", sentence: "Light the ___." },
-      { word: "cake", meaning: "케이크", sentence: "Eat the ___." },
-      { word: "balloon", meaning: "풍선", sentence: "Hold the ___." },
-      { word: "Christmas", meaning: "크리스마스", sentence: "Merry ___!" },
-      { word: "holiday", meaning: "휴일", sentence: "Today is a ___." },
-      { word: "celebrate", meaning: "축하하다", sentence: "Let's ___!" },
-      { word: "happy", meaning: "행복한", sentence: "I am ___." },
-      { word: "thank", meaning: "감사하다", sentence: "___ you." },
-      { word: "welcome", meaning: "환영하다", sentence: "You're ___." },
-      { word: "sorry", meaning: "미안한", sentence: "I'm ___." },
-      { word: "please", meaning: "부디", sentence: "___ help me." },
-      { word: "wish", meaning: "소원", sentence: "Make a ___." },
-      { word: "surprise", meaning: "놀람", sentence: "What a ___!" },
-      { word: "lucky", meaning: "운이 좋은", sentence: "I am ___." },
-      { word: "dream", meaning: "꿈", sentence: "I had a ___." },
-      { word: "fun", meaning: "재미있는", sentence: "It was ___." }
-    ]},
-    22: { theme: "행동과 동작", words: [
-      { word: "go", meaning: "가다", sentence: "Let's ___." },
-      { word: "come", meaning: "오다", sentence: "Please ___." },
-      { word: "stay", meaning: "머물다", sentence: "Please ___." },
-      { word: "leave", meaning: "떠나다", sentence: "I will ___." },
-      { word: "give", meaning: "주다", sentence: "Please ___ me." },
-      { word: "take", meaning: "가져가다", sentence: "Please ___ this." },
-      { word: "make", meaning: "만들다", sentence: "Let's ___ a card." },
-      { word: "do", meaning: "하다", sentence: "Just ___ it." },
-      { word: "use", meaning: "사용하다", sentence: "Don't ___ it." },
-      { word: "find", meaning: "찾다", sentence: "I can ___ it." },
-      { word: "buy", meaning: "사다", sentence: "I will ___." },
-      { word: "sell", meaning: "팔다", sentence: "They ___." },
-      { word: "want", meaning: "원하다", sentence: "I ___ a toy." },
-      { word: "need", meaning: "필요하다", sentence: "I ___ help." },
-      { word: "like", meaning: "좋아하다", sentence: "I ___ pizza." },
-      { word: "hate", meaning: "싫어하다", sentence: "I ___ it." },
-      { word: "know", meaning: "알다", sentence: "I ___ you." },
-      { word: "learn", meaning: "배우다", sentence: "I ___ English." },
-      { word: "try", meaning: "시도하다", sentence: "Just ___." },
-      { word: "start", meaning: "시작하다", sentence: "Let's ___." }
-    ]},
-    23: { theme: "기분과 상태", words: [
-      { word: "good", meaning: "좋은", sentence: "I feel ___." },
-      { word: "bad", meaning: "나쁜", sentence: "Today is ___." },
-      { word: "great", meaning: "훌륭한", sentence: "It's ___." },
-      { word: "fine", meaning: "괜찮은", sentence: "I am ___." },
-      { word: "okay", meaning: "괜찮은", sentence: "I am ___." },
-      { word: "wonderful", meaning: "멋진", sentence: "It's ___." },
-      { word: "nice", meaning: "좋은", sentence: "Have a ___ day." },
-      { word: "perfect", meaning: "완벽한", sentence: "It's ___." },
-      { word: "easy", meaning: "쉬운", sentence: "It's ___." },
-      { word: "hard", meaning: "어려운", sentence: "Math is ___." },
-      { word: "fun", meaning: "재미있는", sentence: "It's ___." },
-      { word: "boring", meaning: "지루한", sentence: "It's ___." },
-      { word: "interesting", meaning: "흥미로운", sentence: "It's ___." },
-      { word: "important", meaning: "중요한", sentence: "It's ___." },
-      { word: "different", meaning: "다른", sentence: "We are ___." },
-      { word: "same", meaning: "같은", sentence: "We are the ___." },
-      { word: "new", meaning: "새로운", sentence: "I have a ___ bag." },
-      { word: "old", meaning: "오래된", sentence: "This is an ___ book." },
-      { word: "young", meaning: "젊은", sentence: "He is ___." },
-      { word: "popular", meaning: "인기 있는", sentence: "She is ___." }
-    ]},
-    24: { theme: "꿈과 미래", words: [
-      { word: "dream", meaning: "꿈", sentence: "Follow your ___." },
-      { word: "future", meaning: "미래", sentence: "Plan your ___." },
-      { word: "hope", meaning: "희망", sentence: "I ___ for it." },
-      { word: "wish", meaning: "소원", sentence: "Make a ___." },
-      { word: "want", meaning: "원하다", sentence: "I ___ to fly." },
-      { word: "goal", meaning: "목표", sentence: "Reach your ___." },
-      { word: "plan", meaning: "계획", sentence: "Make a ___." },
-      { word: "try", meaning: "노력하다", sentence: "Just ___." },
-      { word: "study", meaning: "공부하다", sentence: "I will ___ hard." },
-      { word: "grow", meaning: "자라다", sentence: "I will ___ up." },
-      { word: "become", meaning: "되다", sentence: "I will ___ a doctor." },
-      { word: "learn", meaning: "배우다", sentence: "I will ___ a lot." },
-      { word: "smart", meaning: "똑똑한", sentence: "Be ___." },
-      { word: "kind", meaning: "친절한", sentence: "Be ___." },
-      { word: "strong", meaning: "강한", sentence: "Be ___." },
-      { word: "happy", meaning: "행복한", sentence: "Be ___." },
-      { word: "famous", meaning: "유명한", sentence: "She is ___." },
-      { word: "rich", meaning: "부유한", sentence: "He is ___." },
-      { word: "world", meaning: "세계", sentence: "Travel the ___." },
-      { word: "best", meaning: "최고의", sentence: "Be the ___." }
-    ]},
-    25: { theme: "중요 단어 모음", words: [
-      { word: "yes", meaning: "예", sentence: "___, I can." },
-      { word: "no", meaning: "아니오", sentence: "___, thanks." },
-      { word: "and", meaning: "그리고", sentence: "Mom ___ Dad." },
-      { word: "but", meaning: "그러나", sentence: "I want it, ___ no." },
-      { word: "or", meaning: "또는", sentence: "Tea ___ coffee?" },
-      { word: "with", meaning: "함께", sentence: "Come ___ me." },
-      { word: "for", meaning: "위해", sentence: "It's ___ you." },
-      { word: "very", meaning: "매우", sentence: "I am ___ tired." },
-      { word: "really", meaning: "정말", sentence: "It's ___ good." },
-      { word: "many", meaning: "많은", sentence: "I have ___ books." },
-      { word: "few", meaning: "적은", sentence: "Only a ___." },
-      { word: "some", meaning: "약간의", sentence: "Have ___ water." },
-      { word: "all", meaning: "모든", sentence: "We ___ love it." },
-      { word: "every", meaning: "매", sentence: "I read ___ day." },
-      { word: "this", meaning: "이것", sentence: "What is ___?" },
-      { word: "that", meaning: "저것", sentence: "What is ___?" },
-      { word: "who", meaning: "누구", sentence: "___ are you?" },
-      { word: "what", meaning: "무엇", sentence: "___ is this?" },
-      { word: "where", meaning: "어디", sentence: "___ are you?" },
-      { word: "why", meaning: "왜", sentence: "___ are you sad?" }
-    ]}
   }
 };
-
-// ============================================================
-// 단어 데이터 통합 (1~25일)
-// ============================================================
-// (words_data.js의 WORDS와 words_part2.js의 WORDS_PART2를 합침)
 Object.assign(WORDS.juhyuk, WORDS_PART2.juhyuk_14_25);
 Object.assign(WORDS.jooha, WORDS_PART2.jooha_14_25);
 
@@ -2158,19 +2157,25 @@ window.syncFromCloud = syncFromCloud;
 // ============================================================
 // 일일 등급
 //  🔥 챌린저: 1차 10/10 만점
-//  💎 다이아: 1차 9/10 이상
-//  ⭐ 골드:  1차 실패 후 2차 9/10 이상
+// 일일 등급 (새 기준)
+//  🔥 챌린저: 1·2차 중 최고점이 10점 (만점)
+//  💎 다이아: 1차에 9점 (1차에 잘 본 사람)
+//  ⭐ 골드:  1차 9점 미만 + 2차 9점 이상
 function getDayTier(p) {
   if (!p || p.firstScore == null) return null;
-  if (p.firstScore === 10) return 'fire';
+  // 챌린저: 최고점 10점
+  const best = Math.max(p.firstScore || 0, p.secondScore || 0);
+  if (best === 10) return 'fire';
+  // 다이아: 1차에 9점 (이상)
   if (p.firstScore >= 9) return 'dia';
+  // 골드: 1차는 9점 미만이지만 2차에서 9점 이상
   if (p.secondScore != null && p.secondScore >= 9) return 'gold';
   return 'fail';
 }
 
-// 주간 등급
-//  🔥 챌린저 주차: 그 주 모두 1차 만점
-//  💎 다이아 주차: 그 주 모두 1차 9점 이상
+// 주간 등급 (새 기준)
+//  🔥 챌린저 주차: 5일 모두 1·2차 중 최고점이 10점 (만점)
+//  💎 다이아 주차: 5일 모두 1·2차 중 최고점이 9점 이상
 //  ⭐ 골드 주차: 1·2차 중 잘 본 점수 합산이 (그 주 일수 × 9) 이상
 function getWeekTier(state, weekNum) {
   const [start, end] = getWeekRange(weekNum);
@@ -2181,14 +2186,14 @@ function getWeekTier(state, weekNum) {
     if (!p || p.firstScore == null) return null;
     days.push(p);
   }
-  const firstScores = days.map(d => d.firstScore);
-  // 챌린저: 모두 1차 만점
-  if (firstScores.every(s => s === 10)) return 'fire';
-  // 다이아: 모두 1차 9점 이상
-  if (firstScores.every(s => s >= 9)) return 'dia';
-  // 골드: 1·2차 중 잘 본 점수 합산
-  const bestSum = days.reduce((sum, d) =>
-    sum + Math.max(d.firstScore || 0, d.secondScore || 0), 0);
+  // 각 날의 최고점 (1차/2차 중 잘 본 거)
+  const bestScores = days.map(d => Math.max(d.firstScore || 0, d.secondScore || 0));
+  // 챌린저: 모두 최고점 10점
+  if (bestScores.every(s => s === 10)) return 'fire';
+  // 다이아: 모두 최고점 9점 이상
+  if (bestScores.every(s => s >= 9)) return 'dia';
+  // 골드: 최고점 합산
+  const bestSum = bestScores.reduce((sum, s) => sum + s, 0);
   if (bestSum >= totalDays * 9) return 'gold';
   return null;
 }
@@ -2473,7 +2478,7 @@ function genQuestion(word, type, allWords) {
     
     return {
       type, word: word.word, meaning: word.meaning,
-      prompt: `빈칸에 알맞은 단어를 고르세요 (뜻: ${word.meaning})`,
+      prompt: `빈칸에 알맞은 단어를 고르세요`,
       display: `<div class="test-q-sentence">${sentenceWithBlank}</div>`,
       options: shuffle([word.word, ...distractors]),
       answer: word.word,
@@ -2682,25 +2687,30 @@ function renderHome() {
         <div class="today-block-subtitle">정말 대단해요!</div>
       </div>`;
   } else {
-    const passed = todayProgress && (
-      (todayProgress.firstScore || 0) >= 9 ||
-      (todayProgress.secondScore != null && todayProgress.secondScore >= 9)
+    // 통과 기준: 만점(10점)이면 더 볼 거 없음. 9점 이하면 2차 도전 가능.
+    const isPerfect = todayProgress && (
+      (todayProgress.firstScore || 0) === 10 ||
+      (todayProgress.secondScore != null && todayProgress.secondScore === 10)
     );
-    const needSecond = todayProgress &&
-      todayProgress.firstScore != null &&
-      todayProgress.firstScore < 9 &&
-      todayProgress.secondScore == null;
+    const hasFirst = todayProgress && todayProgress.firstScore != null;
+    const hasSecond = todayProgress && todayProgress.secondScore != null;
+    // 2차 시험 가능: 1차 봤고, 2차 안 봤고, 만점 아님
+    const canSecond = hasFirst && !hasSecond && !isPerfect;
+    // 1차 9점 미만이면 2차 강조 표시 (urgent)
+    const needSecondUrgent = canSecond && todayProgress.firstScore < 9;
 
     let testBtn, wordBtn, subtitle;
-    if (passed) {
-      const tier = getDayTier(todayProgress);
-      testBtn = `<div class="today-action-btn disabled"><div class="today-action-icon">${TIER_EMOJI[tier]}</div><div class="today-action-label">시험 완료</div></div>`;
+    if (isPerfect) {
+      testBtn = `<div class="today-action-btn disabled"><div class="today-action-icon">🔥</div><div class="today-action-label">만점! 완료</div></div>`;
       wordBtn = `navigate('study',{day:${today}})`;
-      subtitle = `${dayData.theme} · ${TIER_LABELS[tier]} 달성!`;
-    } else if (needSecond) {
-      testBtn = `<div class="today-action-btn urgent" onclick="startTest(${today}, true)"><div class="today-action-icon">📝</div><div class="today-action-label">2차 시험 보기</div></div>`;
+      subtitle = `${dayData.theme} · 챌린저 달성!`;
+    } else if (canSecond) {
+      const btnClass = needSecondUrgent ? 'urgent' : '';
+      const btnLabel = needSecondUrgent ? '2차 시험 보기' : '만점 도전 (2차)';
+      testBtn = `<div class="today-action-btn ${btnClass}" onclick="startTest(${today}, true)"><div class="today-action-icon">📝</div><div class="today-action-label">${btnLabel}</div></div>`;
       wordBtn = `navigate('study',{day:${today},highlightWrong:true})`;
-      subtitle = `⚠ 1차 ${todayProgress.firstScore}/10 · 자정까지 도전!`;
+      const subjectMsg = needSecondUrgent ? `⚠ 1차 ${todayProgress.firstScore}/10 · 자정까지 도전!` : `${dayData.theme} · 1차 ${todayProgress.firstScore}/10 · 만점 도전 가능!`;
+      subtitle = subjectMsg;
     } else {
       testBtn = `<div class="today-action-btn" onclick="startTest(${today}, false)"><div class="today-action-icon">📝</div><div class="today-action-label">시험 보기</div></div>`;
       wordBtn = `navigate('study',{day:${today}})`;
@@ -2710,12 +2720,12 @@ function renderHome() {
     todayCard = `
       <div class="today-block">
         <div class="today-block-tag">📅 오늘 · DAY ${today} (${weekNum}주차)</div>
-        <div class="today-block-title">${needSecond ? '한번 더 도전!' : '오늘의 도전!'}</div>
+        <div class="today-block-title">${needSecondUrgent ? '한번 더 도전!' : (canSecond ? '만점 도전!' : '오늘의 도전!')}</div>
         <div class="today-block-subtitle">${subtitle}</div>
         <div class="today-actions">
           <div class="today-action-btn" onclick="${wordBtn}">
             <div class="today-action-icon">📖</div>
-            <div class="today-action-label">${needSecond ? '틀린 단어 복습' : '단어 외우기'}</div>
+            <div class="today-action-label">${needSecondUrgent ? '틀린 단어 복습' : (canSecond ? '단어 다시보기' : '단어 외우기')}</div>
           </div>
           ${testBtn}
         </div>
@@ -2868,19 +2878,22 @@ function renderStudy(params) {
   }).join('');
 
   const isToday = day === todayDay;
-  const passed = todayProgress && (
-    (todayProgress.firstScore || 0) >= 9 ||
-    (todayProgress.secondScore != null && todayProgress.secondScore >= 9)
+  const isPerfect = todayProgress && (
+    (todayProgress.firstScore || 0) === 10 ||
+    (todayProgress.secondScore != null && todayProgress.secondScore === 10)
   );
-  const needSecond = todayProgress && todayProgress.firstScore != null && todayProgress.firstScore < 9 && todayProgress.secondScore == null;
+  const hasFirst = todayProgress && todayProgress.firstScore != null;
+  const hasSecond = todayProgress && todayProgress.secondScore != null;
+  const canSecond = hasFirst && !hasSecond && !isPerfect;
   const isPast = day < todayDay;
   const isFuture = day > todayDay;
 
   let actionHtml = '';
-  if (isToday && !passed) {
-    if (needSecond) {
+  if (isToday && !isPerfect) {
+    if (canSecond) {
+      const label = todayProgress.firstScore < 9 ? '📝 2차 시험 보기 →' : '🔥 만점 도전 (2차) →';
       actionHtml = `
-        <button class="btn btn-block btn-primary btn-lg" onclick="startTest(${day}, true)">📝 2차 시험 보기 →</button>
+        <button class="btn btn-block btn-primary btn-lg" onclick="startTest(${day}, true)">${label}</button>
         <button class="btn btn-block btn-ghost mt-8" onclick="navigate('home')">뒤로</button>`;
     } else {
       actionHtml = `
@@ -3406,17 +3419,24 @@ function renderResult(params) {
   } else {
     const day = testState ? testState.day : null;
     const dayProgress = s.progress[day];
-    const passed = dayProgress && (
-      (dayProgress.firstScore || 0) >= 9 ||
-      (dayProgress.secondScore != null && dayProgress.secondScore >= 9)
+    const isPerfect = dayProgress && (
+      (dayProgress.firstScore || 0) === 10 ||
+      (dayProgress.secondScore != null && dayProgress.secondScore === 10)
     );
-    if (passed) {
+    const hasFirst = dayProgress && dayProgress.firstScore != null;
+    const hasSecond = dayProgress && dayProgress.secondScore != null;
+    const canSecond = hasFirst && !hasSecond && !isPerfect;
+    
+    if (isPerfect) {
       actionBtns = `<button class="btn btn-block btn-primary btn-lg" onclick="navigate('home')">🏠 홈으로</button>`;
-    } else if (dayProgress && dayProgress.firstScore != null && dayProgress.firstScore < 9 && dayProgress.secondScore == null) {
-      // 1차 9점 미만 → 2차 시험 권유
+    } else if (canSecond) {
+      // 1차 봤고 만점 아님 → 2차 도전 가능
+      const isUrgent = dayProgress.firstScore < 9;
+      const label = isUrgent ? '📝 2차 시험 도전' : '🔥 만점 도전 (2차)';
+      const subLabel = isUrgent ? '📖 틀린 단어 복습' : '📖 단어 다시 보기';
       actionBtns = `
-        <button class="btn btn-block btn-primary btn-lg" onclick="navigate('study',{day:${day},highlightWrong:true})">📖 틀린 단어 복습</button>
-        <button class="btn btn-block btn-blue mt-8" onclick="startTest(${day}, true)">📝 2차 시험 도전</button>
+        <button class="btn btn-block btn-primary btn-lg" onclick="navigate('study',{day:${day},highlightWrong:${isUrgent}})">${subLabel}</button>
+        <button class="btn btn-block btn-blue mt-8" onclick="startTest(${day}, true)">${label}</button>
         <button class="btn btn-block btn-ghost mt-8" onclick="navigate('home')">홈으로</button>`;
     } else {
       actionBtns = `<button class="btn btn-block btn-primary btn-lg" onclick="navigate('home')">🏠 홈으로</button>`;
