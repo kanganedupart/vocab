@@ -2719,7 +2719,7 @@ function renderHome() {
 
     todayCard = `
       <div class="today-block">
-        <div class="today-block-tag">📅 오늘 · DAY ${today} (${weekNum}주차)</div>
+        <div class="today-block-tag">📅 ${getDayWeekday(today)}요일 · DAY ${today} (${weekNum}주차)</div>
         <div class="today-block-title">${needSecondUrgent ? '한번 더 도전!' : (canSecond ? '만점 도전!' : '오늘의 도전!')}</div>
         <div class="today-block-subtitle">${subtitle}</div>
         <div class="today-actions">
@@ -2740,15 +2740,22 @@ function renderHome() {
     const lastDayProgress = s.progress[lastDay];
     if (lastDayProgress) {
       const satKey = `week_${weekNum}`;
-      const satDone = !!s.saturdayBonus[satKey];
-      if (!satDone) {
+      const satExisting = s.saturdayBonus[satKey];
+      const satFirstDone = !!satExisting;
+      const satSecondDone = satExisting && satExisting.secondScore != null;
+      const satBestScore = satExisting ? Math.max(satExisting.score || 0, satExisting.secondScore || 0) : 0;
+      const satIsPerfect = satBestScore === 10;
+      const satCanSecond = satFirstDone && !satSecondDone && !satIsPerfect;
+      
+      if (!satFirstDone) {
+        // 1차 시험 안 봄
         const wordCount = weekNum === 1 ? 60 : 100;
         satBanner = `
           <div class="sat-banner" onclick="startSaturdayTest(${weekNum})">
             <div class="sat-banner-icon">🎁</div>
             <div class="sat-banner-text">
               <div class="sat-banner-title">토요일 보너스!</div>
-              <div class="sat-banner-sub">${wordCount}단어 중 10문제 · 9개+ 통과시 보너스 아이템</div>
+              <div class="sat-banner-sub">${wordCount}단어 중 10문제 · 9개+ 통과시 보너스</div>
             </div>
             <div style="font-size:24px;">›</div>
           </div>
@@ -2756,18 +2763,39 @@ function renderHome() {
             <div style="font-size:24px;">📖</div>
             <div style="flex:1;">
               <div style="font-family:var(--font-display);font-size:14px;color:var(--purple);">이번주 단어 다시 보기</div>
-              <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">시험 전 복습용 (1주차 ~ ${weekNum}주차)</div>
+              <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">시험 전 복습용</div>
+            </div>
+            <div style="font-size:20px;color:var(--purple);">›</div>
+          </div>`;
+      } else if (satCanSecond) {
+        // 2차 시험 가능 (1차 만점 아니고 2차 안 봄)
+        const subLabel = satExisting.score < 9 ? `1차 ${satExisting.score}/10 · 만회하기!` : `1차 ${satExisting.score}/10 · 만점 도전!`;
+        const bannerColor = satExisting.score < 9 ? 'var(--tier-fire)' : 'var(--blue)';
+        satBanner = `
+          <div class="sat-banner" style="background:${bannerColor};color:white;" onclick="startSaturdayTest(${weekNum}, true)">
+            <div class="sat-banner-icon">🔥</div>
+            <div class="sat-banner-text">
+              <div class="sat-banner-title">토요일 2차 도전!</div>
+              <div class="sat-banner-sub">${subLabel}</div>
+            </div>
+            <div style="font-size:24px;">›</div>
+          </div>
+          <div onclick="navigate('saturday-words',{week:${weekNum}})" style="background:var(--purple-soft);border:2px solid var(--purple);border-radius:var(--radius-md);padding:12px;margin-bottom:14px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+            <div style="font-size:24px;">📖</div>
+            <div style="flex:1;">
+              <div style="font-family:var(--font-display);font-size:14px;color:var(--purple);">이번주 단어 다시 보기</div>
+              <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">2차 시험 전 복습용</div>
             </div>
             <div style="font-size:20px;color:var(--purple);">›</div>
           </div>`;
       } else {
-        const got = s.saturdayBonus[satKey];
+        // 완료 (만점이거나 2차까지 봄)
         satBanner = `
           <div class="sat-banner" style="background:var(--green);color:white;">
             <div class="sat-banner-icon">✅</div>
             <div class="sat-banner-text">
               <div class="sat-banner-title">토요일 보너스 완료!</div>
-              <div class="sat-banner-sub">${got.score}/10 점 · 보너스 받음</div>
+              <div class="sat-banner-sub">최고점 ${satBestScore}/10 · 보너스 받음</div>
             </div>
           </div>`;
       }
@@ -3016,11 +3044,12 @@ function startTest(day, isSecondAttempt) {
 }
 window.startTest = startTest;
 
-function startSaturdayTest(weekNum) {
+function startSaturdayTest(weekNum, isSecondAttempt = false) {
   const s = currentProfile;
   testState = {
     type: 'saturday',
     weekNum,
+    isSecondAttempt,
     questions: generateSaturdayTest(s.profileId, weekNum),
     answers: new Array(10).fill(null),
     currentIdx: 0,
@@ -3301,14 +3330,29 @@ function finishTest() {
     if (correct >= 9) spawnConfetti(40);
     navigate('result', { correct, wrongWords, tier, weekTier, coinReward, weekCoinReward, weekItem, legendaryItem, day });
   } else {
-    // 토요일 보너스 — 새 공식
+    // 토요일 보너스 — 1차/2차 지원
     const weekNum = t.weekNum;
     const satKey = `week_${weekNum}`;
-    s.saturdayBonus[satKey] = {
-      score: correct,
-      date: new Date().toISOString(),
-      wrongWords,
-    };
+    const existing = s.saturdayBonus[satKey];
+    const isSecondAttempt = t.isSecondAttempt;
+    
+    if (!existing) {
+      // 1차 시험
+      s.saturdayBonus[satKey] = {
+        score: correct,
+        date: new Date().toISOString(),
+        wrongWords,
+      };
+    } else if (isSecondAttempt) {
+      // 2차 시험
+      s.saturdayBonus[satKey].secondScore = correct;
+      s.saturdayBonus[satKey].secondDate = new Date().toISOString();
+      s.saturdayBonus[satKey].secondWrongWords = wrongWords;
+    }
+    
+    // 최고점 기준 보상
+    const satResult = s.saturdayBonus[satKey];
+    const bestSatScore = Math.max(satResult.score || 0, satResult.secondScore || 0);
     let coinReward = 5; // 참여상
     if (correct === 10) coinReward = 50;
     else if (correct >= 9) coinReward = 30;
@@ -3317,7 +3361,7 @@ function finishTest() {
 
     saveState(s);
     if (correct >= 9) spawnConfetti(50);
-    navigate('result', { correct, wrongWords, tier: null, weekTier: null, coinReward, isSaturday: true, weekNum });
+    navigate('result', { correct, wrongWords, tier: null, weekTier: null, coinReward, isSaturday: true, weekNum, isSecondAttempt });
   }
   testState = null;
 }
@@ -3466,6 +3510,14 @@ function renderResult(params) {
 // ============================================================
 // 이력 화면
 // ============================================================
+// DAY 번호 → 요일 (한 줄 도우미)
+function getDayWeekday(day) {
+  // 1주차: DAY 1=월, 2=화, 3=수, 4=목, 5=금
+  // 2주차: DAY 6=월, 7=화, 8=수, 9=목, 10=금 ...
+  const inWeek = ((day - 1) % 5);
+  return ['월', '화', '수', '목', '금'][inWeek];
+}
+
 function renderHistory() {
   const s = currentProfile;
   const todayDay = getTodayDay();
@@ -3487,6 +3539,7 @@ function renderHistory() {
       const isToday = d === todayDay;
       const isPast = d < todayDay;
       const isFuture = d > todayDay;
+      const weekday = getDayWeekday(d);
 
       let cellHtml = '';
       if (p && p.firstScore != null) {
@@ -3513,15 +3566,48 @@ function renderHistory() {
       }
       daysHtml += `
         <div class="day-row ${isToday ? 'today' : ''}">
-          <div class="day-row-label">DAY ${d}<div style="font-size:10px;color:var(--ink-mute);font-weight:400;">${dayData.theme}</div></div>
+          <div class="day-row-label">${weekday} (D${d})<div style="font-size:10px;color:var(--ink-mute);font-weight:400;">${dayData.theme}</div></div>
           ${cellHtml}
         </div>`;
     }
 
+    // 토요일 보너스 시험 행 추가
+    const satKey = `week_${w}`;
+    const satData = s.saturdayBonus[satKey];
+    const weekDone = s.progress[end] != null; // 그 주 마지막 평일 시험 끝났나
+    let satCellHtml = '';
+    if (satData) {
+      // 보너스 완료
+      const satScore = satData.secondScore != null 
+        ? Math.max(satData.score, satData.secondScore) 
+        : satData.score;
+      const satEmoji = satScore === 10 ? '🔥' : satScore >= 9 ? '💎' : satScore >= 7 ? '⭐' : '';
+      satCellHtml = `
+        <div class="day-cell muted" onclick="navigate('saturday-words',{week:${w}})" style="cursor:pointer;">📖 단어</div>
+        <div class="day-cell score" style="background:var(--gold-soft);border-color:var(--gold);">
+          <span>${satEmoji}🎁</span><span>${satScore}/10</span>
+        </div>`;
+    } else if (weekDone) {
+      // 보너스 가능
+      satCellHtml = `
+        <div class="day-cell muted" onclick="navigate('saturday-words',{week:${w}})" style="cursor:pointer;">📖 단어</div>
+        <div class="day-cell action" style="background:var(--gold);" onclick="startSaturdayTest(${w})">🎁 보너스</div>`;
+    } else {
+      // 아직 평일 시험 안 끝남
+      satCellHtml = `
+        <div class="day-cell muted">🔒</div>
+        <div class="day-cell muted">🔒 평일 먼저</div>`;
+    }
+    daysHtml += `
+      <div class="day-row" style="background:linear-gradient(90deg, var(--gold-soft) 0%, transparent 80%);">
+        <div class="day-row-label">토 🎁<div style="font-size:10px;color:var(--ink-mute);font-weight:400;">보너스 시험</div></div>
+        ${satCellHtml}
+      </div>`;
+
     weeksHtml += `
       <div class="week-block">
         <div class="week-header">
-          <div class="week-header-title">${w}주차 (DAY ${start}~${end})</div>
+          <div class="week-header-title">${w}주차</div>
           <div class="week-header-info">${tierBadge || '진행 중'}</div>
         </div>
         ${daysHtml}
@@ -3570,10 +3656,15 @@ function renderProgress() {
   // 누적 단어 수 (외운 단어)
   const totalWords = completed * 20;
 
-  // 토요일 보너스 통계
+  // 토요일 보너스 통계 (최고점 기준)
   const satCount = Object.keys(s.saturdayBonus).length;
-  let satTotal = 0;
-  Object.values(s.saturdayBonus).forEach(b => { satTotal += (b.score || 0); });
+  let satBestSum = 0, satFireCount = 0, satDiaCount = 0;
+  Object.values(s.saturdayBonus).forEach(b => {
+    const best = Math.max(b.score || 0, b.secondScore || 0);
+    satBestSum += best;
+    if (best === 10) satFireCount++;
+    else if (best >= 9) satDiaCount++;
+  });
 
   return `
     <div>
@@ -3645,12 +3736,17 @@ function renderProgress() {
         <div class="reward-row"><span>⭐ 골드 주차</span><span><b>${goldWeeks}</b>주</span></div>
       </div>
 
-      <!-- 토요일 보너스 -->
+      <!-- 토요일 보너스 (별도 카운팅) -->
       ${satCount > 0 ? `
-      <div class="card">
-        <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">🎁 토요일 보너스</div>
+      <div class="card" style="background:var(--gold-soft);border-color:var(--gold);">
+        <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">🎁 토요일 보너스 (별도)</div>
         <div class="reward-row"><span>참가 횟수</span><span><b>${satCount}</b>회</span></div>
-        <div class="reward-row"><span>총 점수</span><span><b>${satTotal}</b>점</span></div>
+        <div class="reward-row"><span>🔥 만점 (10점)</span><span><b>${satFireCount}</b>회</span></div>
+        <div class="reward-row"><span>💎 9점 이상</span><span><b>${satDiaCount}</b>회</span></div>
+        <div class="reward-row" style="border-top:1px dashed var(--gold);padding-top:6px;margin-top:6px;">
+          <span style="font-weight:600;">토요일 누적 점수</span>
+          <span><b>${satBestSum}</b>점</span>
+        </div>
       </div>` : ''}
     </div>`;
 }
