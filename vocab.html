@@ -2687,47 +2687,47 @@ function renderHome() {
         <div class="today-block-subtitle">정말 대단해요!</div>
       </div>`;
   } else {
-    // 통과 기준: 만점(10점)이면 더 볼 거 없음. 9점 이하면 2차 도전 가능.
+    // 통과 기준: 만점(10점)이면 더 볼 거 없음
     const isPerfect = todayProgress && (
       (todayProgress.firstScore || 0) === 10 ||
       (todayProgress.secondScore != null && todayProgress.secondScore === 10)
     );
     const hasFirst = todayProgress && todayProgress.firstScore != null;
     const hasSecond = todayProgress && todayProgress.secondScore != null;
-    // 2차 시험 가능: 1차 봤고, 2차 안 봤고, 만점 아님
     const canSecond = hasFirst && !hasSecond && !isPerfect;
-    // 1차 9점 미만이면 2차 강조 표시 (urgent)
     const needSecondUrgent = canSecond && todayProgress.firstScore < 9;
 
-    let testBtn, wordBtn, subtitle;
+    // 상태 표시
+    let statusBadge = '';
     if (isPerfect) {
-      testBtn = `<div class="today-action-btn disabled"><div class="today-action-icon">🔥</div><div class="today-action-label">만점! 완료</div></div>`;
-      wordBtn = `navigate('study',{day:${today}})`;
-      subtitle = `${dayData.theme} · 챌린저 달성!`;
-    } else if (canSecond) {
-      const btnClass = needSecondUrgent ? 'urgent' : '';
-      const btnLabel = needSecondUrgent ? '2차 시험 보기' : '만점 도전 (2차)';
-      testBtn = `<div class="today-action-btn ${btnClass}" onclick="startTest(${today}, true)"><div class="today-action-icon">📝</div><div class="today-action-label">${btnLabel}</div></div>`;
-      wordBtn = `navigate('study',{day:${today},highlightWrong:true})`;
-      const subjectMsg = needSecondUrgent ? `⚠ 1차 ${todayProgress.firstScore}/10 · 자정까지 도전!` : `${dayData.theme} · 1차 ${todayProgress.firstScore}/10 · 만점 도전 가능!`;
-      subtitle = subjectMsg;
-    } else {
-      testBtn = `<div class="today-action-btn" onclick="startTest(${today}, false)"><div class="today-action-icon">📝</div><div class="today-action-label">시험 보기</div></div>`;
-      wordBtn = `navigate('study',{day:${today}})`;
-      subtitle = `${dayData.theme} · 단어 20개 + 시험 10문제`;
+      statusBadge = '<span style="background:rgba(255,255,255,0.3);padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;">🔥 만점 완료</span>';
+    } else if (hasSecond) {
+      statusBadge = `<span style="background:rgba(255,255,255,0.3);padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;">2차 ${todayProgress.secondScore}/10 완료</span>`;
+    } else if (hasFirst) {
+      statusBadge = `<span style="background:rgba(255,255,255,0.3);padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;">1차 ${todayProgress.firstScore}/10 · 2차 가능</span>`;
     }
+
+    let subtitle = `${dayData.theme}`;
+    if (!hasFirst) subtitle += ` · 단어 20개 + 시험 10문제`;
+    else if (needSecondUrgent) subtitle = `⚠ 만회 도전 가능!`;
+    else if (canSecond) subtitle = `🎯 만점 도전 가능!`;
+    else if (isPerfect) subtitle = `챌린저 달성! 잘했어요`;
+
+    let mainBtnLabel = '📖 단어 + 시험';
+    if (hasFirst && !isPerfect) mainBtnLabel = '📝 시험 결과 보기';
+    else if (isPerfect) mainBtnLabel = '✅ 결과 보기';
 
     todayCard = `
       <div class="today-block">
         <div class="today-block-tag">📅 ${getDayWeekday(today)}요일 · DAY ${today} (${weekNum}주차)</div>
-        <div class="today-block-title">${needSecondUrgent ? '한번 더 도전!' : (canSecond ? '만점 도전!' : '오늘의 도전!')}</div>
+        <div class="today-block-title">오늘의 도전!</div>
         <div class="today-block-subtitle">${subtitle}</div>
-        <div class="today-actions">
-          <div class="today-action-btn" onclick="${wordBtn}">
-            <div class="today-action-icon">📖</div>
-            <div class="today-action-label">${needSecondUrgent ? '틀린 단어 복습' : (canSecond ? '단어 다시보기' : '단어 외우기')}</div>
+        ${statusBadge ? `<div style="margin-top:8px;">${statusBadge}</div>` : ''}
+        <div class="today-actions" style="grid-template-columns:1fr;margin-top:12px;">
+          <div class="today-action-btn" onclick="navigate('study',{day:${today}})" style="${needSecondUrgent ? 'background:var(--tier-fire);color:white;' : ''}">
+            <div class="today-action-icon">${needSecondUrgent ? '⚠️' : (hasFirst ? '📊' : '📖')}</div>
+            <div class="today-action-label">${mainBtnLabel}</div>
           </div>
-          ${testBtn}
         </div>
       </div>`;
   }
@@ -2917,19 +2917,78 @@ function renderStudy(params) {
   const isFuture = day > todayDay;
 
   let actionHtml = '';
-  if (isToday && !isPerfect) {
-    if (canSecond) {
-      const label = todayProgress.firstScore < 9 ? '📝 2차 시험 보기 →' : '🔥 만점 도전 (2차) →';
-      actionHtml = `
-        <button class="btn btn-block btn-primary btn-lg" onclick="startTest(${day}, true)">${label}</button>
-        <button class="btn btn-block btn-ghost mt-8" onclick="navigate('home')">뒤로</button>`;
-    } else {
-      actionHtml = `
-        <button class="btn btn-block btn-primary btn-lg" onclick="startTest(${day}, false)">📝 이제 시험 보기 →</button>
-        <button class="btn btn-block btn-ghost mt-8" onclick="navigate('home')">뒤로</button>`;
-    }
-  } else if (isPast) {
-    actionHtml = `<button class="btn btn-block btn-ghost" onclick="navigate('home')">뒤로</button>`;
+  
+  // 시험 응시 상태판 (오늘이거나 과거인 경우만)
+  let testStatusHtml = '';
+  if ((isToday || isPast) && (hasFirst || hasSecond)) {
+    // 1차 결과
+    const firstTier = hasFirst ? (todayProgress.firstScore === 10 ? 'fire' : todayProgress.firstScore >= 9 ? 'dia' : 'fail') : null;
+    const firstColor = firstTier === 'fire' ? 'var(--tier-fire)' : firstTier === 'dia' ? 'var(--tier-dia)' : firstTier === 'fail' ? 'var(--ink-soft)' : 'var(--line)';
+    const firstEmoji = firstTier === 'fire' ? '🔥' : firstTier === 'dia' ? '💎' : firstTier === 'fail' ? '😢' : '';
+    
+    // 2차 결과
+    const secondTier = hasSecond ? (todayProgress.secondScore === 10 ? 'fire' : todayProgress.secondScore >= 9 ? 'gold' : 'fail') : null;
+    const secondColor = secondTier === 'fire' ? 'var(--tier-fire)' : secondTier === 'gold' ? 'var(--tier-gold)' : secondTier === 'fail' ? 'var(--ink-soft)' : 'var(--line)';
+    const secondEmoji = secondTier === 'fire' ? '🔥' : secondTier === 'gold' ? '⭐' : secondTier === 'fail' ? '😢' : '';
+    
+    testStatusHtml = `
+      <div class="card" style="margin-bottom:12px;">
+        <div style="font-family:var(--font-display);font-size:14px;margin-bottom:10px;">📝 시험 응시 현황</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <!-- 1차 시험 -->
+          ${hasFirst ? `
+            <div style="border:2px solid ${firstColor};border-radius:var(--radius-md);padding:10px;text-align:center;background:white;">
+              <div style="font-size:24px;">${firstEmoji}</div>
+              <div style="font-family:var(--font-display);font-size:13px;margin-top:4px;">1차 완료</div>
+              <div style="font-size:18px;font-weight:700;color:${firstColor};margin-top:2px;">${todayProgress.firstScore}/10</div>
+              <button class="btn btn-sm btn-ghost mt-8" style="width:100%;font-size:11px;padding:6px;" onclick="showWrongWords(${day}, 'first')">틀린 단어 보기</button>
+            </div>
+          ` : `
+            <div style="border:2px dashed var(--line);border-radius:var(--radius-md);padding:10px;text-align:center;color:var(--ink-mute);">
+              <div style="font-size:24px;">⏳</div>
+              <div style="font-family:var(--font-display);font-size:13px;margin-top:4px;">1차 미응시</div>
+              ${isToday ? `<button class="btn btn-sm btn-primary mt-8" style="width:100%;font-size:11px;padding:6px;" onclick="startTest(${day}, false)">📝 1차 응시</button>` : '<div style="font-size:11px;margin-top:8px;">놓침</div>'}
+            </div>
+          `}
+          <!-- 2차 시험 -->
+          ${hasSecond ? `
+            <div style="border:2px solid ${secondColor};border-radius:var(--radius-md);padding:10px;text-align:center;background:white;">
+              <div style="font-size:24px;">${secondEmoji}</div>
+              <div style="font-family:var(--font-display);font-size:13px;margin-top:4px;">2차 완료</div>
+              <div style="font-size:18px;font-weight:700;color:${secondColor};margin-top:2px;">${todayProgress.secondScore}/10</div>
+              <button class="btn btn-sm btn-ghost mt-8" style="width:100%;font-size:11px;padding:6px;" onclick="showWrongWords(${day}, 'second')">틀린 단어 보기</button>
+            </div>
+          ` : canSecond ? `
+            <div style="border:2px solid var(--coral);border-radius:var(--radius-md);padding:10px;text-align:center;background:var(--coral-soft);">
+              <div style="font-size:24px;">${todayProgress.firstScore < 9 ? '⚠️' : '🎯'}</div>
+              <div style="font-family:var(--font-display);font-size:13px;margin-top:4px;">2차 가능</div>
+              <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">${todayProgress.firstScore < 9 ? '만회 도전' : '만점 도전'}</div>
+              <button class="btn btn-sm btn-primary mt-8" style="width:100%;font-size:11px;padding:6px;" onclick="startTest(${day}, true)">📝 2차 응시</button>
+            </div>
+          ` : isPerfect ? `
+            <div style="border:2px solid var(--green);border-radius:var(--radius-md);padding:10px;text-align:center;background:var(--green-soft);">
+              <div style="font-size:24px;">🏆</div>
+              <div style="font-family:var(--font-display);font-size:13px;margin-top:4px;">만점!</div>
+              <div style="font-size:11px;color:var(--green);margin-top:2px;">2차 불필요</div>
+            </div>
+          ` : `
+            <div style="border:2px dashed var(--line);border-radius:var(--radius-md);padding:10px;text-align:center;color:var(--ink-mute);">
+              <div style="font-size:24px;">—</div>
+              <div style="font-family:var(--font-display);font-size:13px;margin-top:4px;">2차 종료</div>
+            </div>
+          `}
+        </div>
+      </div>`;
+  }
+  
+  if (isToday && !hasFirst) {
+    // 오늘인데 1차 안 봄 → 1차 응시
+    actionHtml = `
+      <button class="btn btn-block btn-primary btn-lg" onclick="startTest(${day}, false)">📝 1차 시험 응시 →</button>
+      <button class="btn btn-block btn-ghost mt-8" onclick="navigate('home')">뒤로</button>`;
+  } else if (isPast || isToday) {
+    // 시험은 위의 상태판에서 응시. 여기서는 홈으로만
+    actionHtml = `<button class="btn btn-block btn-ghost" onclick="navigate('home')">홈으로</button>`;
   } else if (isFuture) {
     actionHtml = `
       <div style="background:var(--purple-soft);border:1.5px solid var(--purple);border-radius:var(--radius-md);padding:14px;text-align:center;margin-bottom:12px;">
@@ -2948,6 +3007,7 @@ function renderStudy(params) {
         <div class="app-title">DAY ${day} 단어</div>
         <button class="back-btn" onclick="speakAll(${day})" style="font-size:14px;">🔊</button>
       </div>
+      ${testStatusHtml}
       <div class="word-list-header">
         <div class="word-day-num">DAY ${day} · ${dayData.theme}</div>
         <div class="word-day-sub">${highlightWrong ? `⚠ 1차 틀린 단어 ${wrongWords.size}개 표시 · 다시 외워봐요!` : `단어 20개 · 🔊 발음 듣기 가능`}</div>
@@ -2956,6 +3016,42 @@ function renderStudy(params) {
       ${actionHtml}
     </div>`;
 }
+
+// 틀린 단어 보기 (1차 또는 2차)
+function showWrongWords(day, attempt) {
+  const s = currentProfile;
+  const p = s.progress[day];
+  const dayData = WORDS[s.profileId][day];
+  if (!p || !dayData) return;
+  const wrongList = attempt === 'first' ? p.wrongWords : p.secondWrongWords;
+  if (!wrongList || wrongList.length === 0) {
+    showModal(`
+      <div class="modal-icon">🎉</div>
+      <div class="modal-title">${attempt === 'first' ? '1차' : '2차'} 시험 만점!</div>
+      <div class="modal-text">틀린 단어가 없어요!</div>
+      <button class="btn btn-block btn-primary" onclick="closeModal()">확인</button>
+    `);
+    return;
+  }
+  const wrongData = wrongList.map(w => dayData.words.find(x => x.word === w)).filter(Boolean);
+  const score = attempt === 'first' ? p.firstScore : p.secondScore;
+  const wordsList = wrongData.map(w => `
+    <div style="display:grid;grid-template-columns:1fr 1.4fr 36px;gap:8px;padding:10px 4px;border-bottom:1px solid var(--line-soft);align-items:center;">
+      <span class="word-eng" style="font-size:15px;">${w.word}</span>
+      <span class="word-kor">${w.meaning}</span>
+      <button class="speak-btn" onclick="speak('${w.word}', this)">🔊</button>
+    </div>`).join('');
+  showModal(`
+    <div class="modal-icon">📝</div>
+    <div class="modal-title">${attempt === 'first' ? '1차' : '2차'} 틀린 단어</div>
+    <div class="modal-text">${score}/10 · 틀린 단어 ${wrongData.length}개</div>
+    <div style="max-height:300px;overflow-y:auto;text-align:left;border-top:1px solid var(--line);margin-top:8px;">
+      ${wordsList}
+    </div>
+    <button class="btn btn-block btn-primary mt-12" onclick="closeModal()">확인</button>
+  `);
+}
+window.showWrongWords = showWrongWords;
 
 // 전체 단어 한꺼번에 발음 (한 단어씩 0.6초 간격)
 function speakAll(day) {
@@ -3456,35 +3552,15 @@ function renderResult(params) {
       </div>`;
   }
 
-  // 다음 액션 버튼
+  // 다음 액션 버튼 - 단순화 (자동 강요 X, 사용자 선택)
   let actionBtns = '';
   if (isSaturday) {
     actionBtns = `<button class="btn btn-block btn-primary btn-lg" onclick="navigate('home')">🏠 홈으로</button>`;
   } else {
     const day = testState ? testState.day : null;
-    const dayProgress = s.progress[day];
-    const isPerfect = dayProgress && (
-      (dayProgress.firstScore || 0) === 10 ||
-      (dayProgress.secondScore != null && dayProgress.secondScore === 10)
-    );
-    const hasFirst = dayProgress && dayProgress.firstScore != null;
-    const hasSecond = dayProgress && dayProgress.secondScore != null;
-    const canSecond = hasFirst && !hasSecond && !isPerfect;
-    
-    if (isPerfect) {
-      actionBtns = `<button class="btn btn-block btn-primary btn-lg" onclick="navigate('home')">🏠 홈으로</button>`;
-    } else if (canSecond) {
-      // 1차 봤고 만점 아님 → 2차 도전 가능
-      const isUrgent = dayProgress.firstScore < 9;
-      const label = isUrgent ? '📝 2차 시험 도전' : '🔥 만점 도전 (2차)';
-      const subLabel = isUrgent ? '📖 틀린 단어 복습' : '📖 단어 다시 보기';
-      actionBtns = `
-        <button class="btn btn-block btn-primary btn-lg" onclick="navigate('study',{day:${day},highlightWrong:${isUrgent}})">${subLabel}</button>
-        <button class="btn btn-block btn-blue mt-8" onclick="startTest(${day}, true)">${label}</button>
-        <button class="btn btn-block btn-ghost mt-8" onclick="navigate('home')">홈으로</button>`;
-    } else {
-      actionBtns = `<button class="btn btn-block btn-primary btn-lg" onclick="navigate('home')">🏠 홈으로</button>`;
-    }
+    actionBtns = `
+      <button class="btn btn-block btn-primary btn-lg" onclick="navigate('study',{day:${day}})">📖 단어 다시 보기</button>
+      <button class="btn btn-block btn-ghost mt-8" onclick="navigate('home')">🏠 홈으로</button>`;
   }
 
   return `
@@ -4184,14 +4260,14 @@ const RARITY_COLORS = {
 // ============================================================
 // 옷장 화면 — 가지고 있는 거 + 미보유 (사기/잠금)
 // ============================================================
-function renderAvatar() {
+function renderAvatar(params) {
   const s = currentProfile;
   if (!s.avatar) s.avatar = getDefaultAvatar(s.profileId);
   if (!s.ownedItems) s.ownedItems = ['white_tee', 'jeans', 'white_sneakers', 'pink_tee', 'skirt'];
   
   const profile = PROFILES[s.profileId];
   
-  const tab = arguments[0]?.tab || 'closet';
+  const tab = (params && params.tab) || 'closet';
   
   // 미리보기
   const preview = `
@@ -4265,7 +4341,7 @@ function renderClosetTab(s) {
       itemsHtml = ownedItems.map(([id, item]) => {
         const isOn = (sec.current || []).includes(id);
         const sel = isOn ? 'border:3px solid var(--coral);background:var(--coral-soft);' : 'border:2px solid var(--line);background:white;';
-        const rarity = RARITY_COLORS[item.rarity];
+        const rarity = RARITY_COLORS[item.rarity] || RARITY_COLORS.common;
         return `
           <div onclick="toggleAccessory('${id}')" style="cursor:pointer;border-radius:var(--radius-sm);padding:8px;text-align:center;${sel}">
             <div style="font-size:24px;">${id === 'none' ? '🚫' : item.svg ? '👓' : '?'}</div>
@@ -4277,11 +4353,12 @@ function renderClosetTab(s) {
       itemsHtml = ownedItems.map(([id, item]) => {
         const isOn = sec.current === id;
         const sel = isOn ? 'border:3px solid var(--coral);background:var(--coral-soft);' : 'border:2px solid var(--line);background:white;';
-        const rarity = RARITY_COLORS[item.rarity];
+        const rarity = RARITY_COLORS[item.rarity] || RARITY_COLORS.common;
+        const itemName = item.name || id;
         return `
           <div onclick="updateAvatar('${sec.setter}','${id}')" style="cursor:pointer;border-radius:var(--radius-sm);padding:8px;text-align:center;${sel}">
             <div style="font-size:24px;">${getItemEmoji(sec.key, id)}</div>
-            <div style="font-size:11px;font-weight:600;margin-top:2px;">${item.name}</div>
+            <div style="font-size:11px;font-weight:600;margin-top:2px;">${itemName}</div>
             <div style="font-size:9px;color:${rarity.text};">${rarity.name}</div>
           </div>`;
       }).join('');
@@ -4327,7 +4404,7 @@ function renderShopTab(s) {
     if (items.length === 0) return;
     
     const itemsHtml = items.map(([id, item]) => {
-      const rarity = RARITY_COLORS[item.rarity];
+      const rarity = RARITY_COLORS[item.rarity] || RARITY_COLORS.common;
       const isLegendary = item.rarity === 'legendary';
       const cantBuy = isLegendary || s.coins < item.cost;
       
