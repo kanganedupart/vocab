@@ -2436,13 +2436,78 @@ function genSpellingDistractors(correct, count = 4) {
   return [...out].slice(0, count);
 }
 
+// 스펠 차이 강조 — 어떤 글자가 잘못됐는지 색깔로
+function highlightDiff(wrong, correct) {
+  const w = wrong.toLowerCase();
+  const c = correct.toLowerCase();
+  let wHtml = '', cHtml = '';
+  const maxLen = Math.max(w.length, c.length);
+  for (let i = 0; i < maxLen; i++) {
+    const wc = w[i] || '';
+    const cc = c[i] || '';
+    if (wc !== cc) {
+      if (wc) wHtml += `<span style="background:var(--tier-fire);color:white;padding:0 2px;border-radius:3px;">${wc}</span>`;
+      if (cc) cHtml += `<span style="background:var(--green);color:white;padding:0 2px;border-radius:3px;">${cc}</span>`;
+    } else {
+      wHtml += wc;
+      cHtml += cc;
+    }
+  }
+  return `<span style="font-family:var(--font-eng);">${wHtml}</span> → <span style="font-family:var(--font-eng);">${cHtml}</span>`;
+}
+
+// 영어 문장 한글 해석 (간단한 패턴 매칭)
+function translateSentence(sentence, answerWord, answerMeaning) {
+  // 빈칸이 채워진 단어의 한글 뜻을 원래 문장에 끼워 넣어서 해석 제공
+  const s = sentence.replace(/_+/g, `[${answerMeaning}]`);
+  
+  // 간단한 단어 사전 (자주 나오는 단어들)
+  const dict = {
+    'I': '나는', 'You': '너는', 'He': '그는', 'She': '그녀는', 'We': '우리는', 'They': '그들은',
+    'My': '내', 'Your': '너의', 'His': '그의', 'Her': '그녀의', 'Our': '우리', 'Their': '그들의',
+    'is': '이다', 'are': '이다', 'am': '이다', 'was': '였다', 'were': '였다',
+    'have': '가지다', 'has': '가지다', 'had': '가졌다',
+    'do': '하다', 'does': '하다', 'did': '했다',
+    'will': '~할 것이다', 'can': '~할 수 있다', 'may': '~할 수 있다', 'must': '~해야 한다',
+    'the': '', 'a': '', 'an': '', 'to': '~에', 'in': '~에', 'at': '~에', 'on': '~에', 'with': '~와', 'for': '~를 위해', 'from': '~로부터', 'of': '~의',
+    'and': '그리고', 'but': '그러나', 'or': '또는',
+    'this': '이것', 'that': '저것', 'these': '이것들', 'those': '저것들',
+    'today': '오늘', 'tomorrow': '내일', 'yesterday': '어제', 'now': '지금',
+    'very': '매우', 'so': '매우', 'too': '너무',
+    'good': '좋은', 'bad': '나쁜', 'big': '큰', 'small': '작은',
+    'please': '제발', 'thank you': '고마워', 'sorry': '미안해',
+    'me': '나', 'you': '너', 'him': '그를', 'her': '그녀를', 'us': '우리를', 'them': '그들을',
+    'Be': '되어라',
+  };
+  
+  // 그냥 문장을 한글 해석 시도: 단어별 → 뜻 매칭
+  // 너무 복잡한 자동 번역은 어색하니, 그냥 "주어 + [정답뜻]" 형식으로 보여줌
+  const words = sentence.replace(/[.!?]/g, '').split(/\s+/).filter(w => w.length > 0);
+  let parts = [];
+  for (const w of words) {
+    if (w.match(/^_+$/) || w === '___' || w === '_____') {
+      parts.push(`<b style="color:var(--green);">${answerMeaning}</b>`);
+    } else {
+      const key = w.toLowerCase().replace(/[.,!?]/g, '');
+      if (dict[key] !== undefined) {
+        if (dict[key]) parts.push(dict[key]);
+      } else {
+        // 사전에 없으면 그냥 원어 표시
+        parts.push(`<span style="color:var(--ink-mute);font-family:var(--font-eng);">${w}</span>`);
+      }
+    }
+  }
+  return parts.join(' ');
+}
+
 function genQuestion(word, type, allWords) {
   const pool = allWords.filter(x => x.word !== word.word);
   const distinct = pool.filter(x => !meaningsOverlap(x.meaning, word.meaning));
   const safe = distinct.length >= 4 ? distinct : pool;
 
   if (type === 'meaning') {
-    const distractors = sample(safe, 3).map(x => x.meaning);
+    const distractorsData = sample(safe, 3);
+    const distractors = distractorsData.map(x => x.meaning);
     return {
       type, word: word.word, meaning: word.meaning,
       prompt: '뜻을 고르세요',
@@ -2451,6 +2516,8 @@ function genQuestion(word, type, allWords) {
       answer: word.meaning,
       optionType: 'korean',
       typeLabel: '뜻 고르기',
+      // 해설용: 각 보기가 어떤 단어의 뜻인지
+      meta: { distractorWords: distractorsData },
     };
   }
   if (type === 'spelling') {
@@ -2463,18 +2530,24 @@ function genQuestion(word, type, allWords) {
       answer: word.word,
       optionType: 'english',
       typeLabel: '스펠 고르기',
+      meta: {},
     };
   }
   if (type === 'fill') {
     // 보기 4개 (정답 + 오답 3개) · 길이 다른 단어들로
     const wordLen = word.word.length;
     const candidates = safe.filter(x => Math.abs(x.word.length - wordLen) >= 2);
-    const pool = candidates.length >= 3 ? candidates : safe;
-    const distractors = sample(pool, 3).map(x => x.word);
+    const fillPool = candidates.length >= 3 ? candidates : safe;
+    const distractorsData = sample(fillPool, 3);
+    const distractors = distractorsData.map(x => x.word);
     
     // 전체 빈칸 (힌트 없음)
     const sentenceWithBlank = word.sentence.replace(/_+/g,
       '<u style="display:inline-block;min-width:80px;border-bottom:2px solid var(--coral);">&nbsp;</u>');
+    
+    // 정답 들어간 완성 문장
+    const fullSentence = word.sentence.replace(/_+/g,
+      `<b style="color:var(--green);">${word.word}</b>`);
     
     return {
       type, word: word.word, meaning: word.meaning,
@@ -2484,6 +2557,7 @@ function genQuestion(word, type, allWords) {
       answer: word.word,
       optionType: 'english',
       typeLabel: '빈칸 채우기',
+      meta: { distractorWords: distractorsData, fullSentence, originalSentence: word.sentence },
     };
   }
 }
@@ -3424,7 +3498,7 @@ function finishTest() {
     saveState(s);
 
     if (correct >= 9) spawnConfetti(40);
-    navigate('result', { correct, wrongWords, tier, weekTier, coinReward, weekCoinReward, weekItem, legendaryItem, day });
+    navigate('result', { correct, wrongWords, tier, weekTier, coinReward, weekCoinReward, weekItem, legendaryItem, day, questions: t.questions, userAnswers: t.answers });
   } else {
     // 토요일 보너스 — 1차/2차 지원
     const weekNum = t.weekNum;
@@ -3457,7 +3531,7 @@ function finishTest() {
 
     saveState(s);
     if (correct >= 9) spawnConfetti(50);
-    navigate('result', { correct, wrongWords, tier: null, weekTier: null, coinReward, isSaturday: true, weekNum, isSecondAttempt });
+    navigate('result', { correct, wrongWords, tier: null, weekTier: null, coinReward, isSaturday: true, weekNum, isSecondAttempt, questions: t.questions, userAnswers: t.answers });
   }
   testState = null;
 }
@@ -3522,9 +3596,103 @@ function renderResult(params) {
       </div>`;
   }
 
-  // 틀린 단어 리스트
+  // 틀린 문제 해설 (자동 풀이 시스템)
   let wrongHtml = '';
-  if (wrongWords.length > 0) {
+  if (params.questions && params.userAnswers) {
+    const questions = params.questions;
+    const userAnswers = params.userAnswers;
+    const wrongQs = [];
+    questions.forEach((q, i) => {
+      if (userAnswers[i] !== q.answer) {
+        wrongQs.push({ q, userAnswer: userAnswers[i], idx: i });
+      }
+    });
+    
+    if (wrongQs.length > 0) {
+      const explanationsHtml = wrongQs.map(({q, userAnswer, idx}) => {
+        // 문제별 풀이 생성
+        let questionDisplay = '';
+        let yourAnswerDisplay = '';
+        let correctAnswerDisplay = '';
+        let explanation = '';
+        
+        if (q.type === 'meaning') {
+          // 뜻 고르기
+          questionDisplay = `<div style="font-family:var(--font-eng);font-size:20px;font-weight:600;margin:8px 0;">
+            ${q.word} <button class="speak-btn" onclick="speak('${q.word}', this)" style="vertical-align:middle;">🔊</button>
+          </div>`;
+          yourAnswerDisplay = userAnswer || '<i style="color:var(--tier-fire);">미답</i>';
+          correctAnswerDisplay = q.answer;
+          // 오답이 다른 단어의 뜻인지 확인
+          if (userAnswer && q.meta && q.meta.distractorWords) {
+            const matchedDistractor = q.meta.distractorWords.find(d => d.meaning === userAnswer);
+            if (matchedDistractor) {
+              explanation = `💡 <b>${userAnswer}</b>은 <b>${matchedDistractor.word}</b>의 뜻이에요. 비슷해 보여도 달라요!`;
+            } else {
+              explanation = `💡 <b>${q.word}</b>의 뜻은 <b>${q.answer}</b>예요.`;
+            }
+          } else {
+            explanation = `💡 <b>${q.word}</b>의 뜻은 <b>${q.answer}</b>예요.`;
+          }
+        } else if (q.type === 'spelling') {
+          // 스펠 고르기
+          questionDisplay = `<div style="font-family:var(--font-display);font-size:20px;margin:8px 0;">${q.meaning}</div>`;
+          yourAnswerDisplay = userAnswer ? `<span style="font-family:var(--font-eng);">${userAnswer}</span>` : '<i style="color:var(--tier-fire);">미답</i>';
+          correctAnswerDisplay = `<span style="font-family:var(--font-eng);">${q.answer}</span>`;
+          // 차이점 강조
+          if (userAnswer) {
+            const diff = highlightDiff(userAnswer, q.answer);
+            explanation = `💡 ${diff} <button class="speak-btn" onclick="speak('${q.answer}', this)" style="vertical-align:middle;display:inline-flex;margin-left:4px;">🔊</button>`;
+          } else {
+            explanation = `💡 정답: <b style="font-family:var(--font-eng);">${q.answer}</b> <button class="speak-btn" onclick="speak('${q.answer}', this)" style="vertical-align:middle;display:inline-flex;margin-left:4px;">🔊</button>`;
+          }
+        } else if (q.type === 'fill') {
+          // 빈칸 채우기
+          const blanked = (q.meta && q.meta.originalSentence) || '';
+          const sentenceWithBlank = blanked.replace(/_+/g,
+            `<u style="color:var(--ink-mute);">_____</u>`);
+          questionDisplay = `<div style="font-family:var(--font-eng);font-size:16px;line-height:1.6;margin:8px 0;padding:8px;background:var(--bg-cream);border-radius:8px;">${sentenceWithBlank}</div>`;
+          yourAnswerDisplay = userAnswer ? `<span style="font-family:var(--font-eng);">${userAnswer}</span>` : '<i style="color:var(--tier-fire);">미답</i>';
+          correctAnswerDisplay = `<span style="font-family:var(--font-eng);">${q.answer}</span>`;
+          // 완성 문장 + 한글 뜻
+          const fullSentence = blanked.replace(/_+/g, `<b style="color:var(--green);">${q.answer}</b>`);
+          // 자연스러운 한글 해석 (보유 데이터로)
+          const meaningTrans = translateSentence(blanked, q.answer, q.meaning);
+          explanation = `💡 <b>완성 문장:</b><br>
+            <span style="font-family:var(--font-eng);">${fullSentence}</span><br>
+            <span style="color:var(--ink-soft);font-size:13px;">→ ${meaningTrans}</span><br>
+            <button class="speak-btn" onclick="speak('${blanked.replace(/_+/g, q.answer)}', this)" style="vertical-align:middle;display:inline-flex;margin-top:6px;">🔊 문장 듣기</button>`;
+        }
+        
+        return `
+          <div style="border:2px solid var(--line);border-radius:var(--radius-md);padding:14px;margin-bottom:10px;background:white;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="background:var(--tier-fire);color:white;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;">${idx + 1}</span>
+              <span style="font-size:12px;color:var(--ink-soft);font-weight:600;">${q.typeLabel}</span>
+            </div>
+            ${questionDisplay}
+            <div style="display:grid;grid-template-columns:1fr;gap:6px;margin:10px 0;font-size:13px;">
+              <div style="background:var(--tier-fire-soft);padding:8px 10px;border-radius:8px;">
+                <span style="color:var(--tier-fire);font-weight:600;">✗ 내 답:</span> ${yourAnswerDisplay}
+              </div>
+              <div style="background:var(--green-soft);padding:8px 10px;border-radius:8px;">
+                <span style="color:var(--green);font-weight:600;">✓ 정답:</span> ${correctAnswerDisplay}
+              </div>
+            </div>
+            <div style="background:var(--blue-soft);border-left:3px solid var(--blue);padding:10px 12px;border-radius:0 8px 8px 0;font-size:13px;line-height:1.6;">
+              ${explanation}
+            </div>
+          </div>`;
+      }).join('');
+      
+      wrongHtml = `
+        <div class="card">
+          <div style="font-family:var(--font-display);font-size:15px;margin-bottom:10px;">📝 틀린 문제 해설 (${wrongQs.length}개)</div>
+          ${explanationsHtml}
+        </div>`;
+    }
+  } else if (wrongWords.length > 0) {
+    // fallback (옛 데이터 호환)
     let allWords;
     if (isSaturday) {
       const [start, end] = getWeekRange(weekNum);
@@ -3538,7 +3706,6 @@ function renderResult(params) {
         ? WORDS[s.profileId][params.day || testState.day].words 
         : [];
     }
-    // wrongWords는 word 문자열들이므로 매칭
     const wrongData = wrongWords.map(w => allWords.find(x => x.word === w)).filter(Boolean);
     wrongHtml = `
       <div class="card">
@@ -4045,6 +4212,20 @@ const HAIRSTYLES = {
 // 옷 (상의) SVG
 // ============================================================
 const TOPS = {
+  // 추가 상의 — 일반
+  green_tee: { name: '초록 티셔츠', rarity: 'common', cost: 35, svg: () => `<path d="M 70 175 L 60 200 L 70 210 L 80 200 L 80 280 L 120 280 L 120 200 L 130 210 L 140 200 L 130 175 Q 115 185 100 185 Q 85 185 70 175 Z" fill="#4CAF50"/>` },
+  yellow_tee: { name: '노란 티셔츠', rarity: 'common', cost: 35, svg: () => `<path d="M 70 175 L 60 200 L 70 210 L 80 200 L 80 280 L 120 280 L 120 200 L 130 210 L 140 200 L 130 175 Q 115 185 100 185 Q 85 185 70 175 Z" fill="#FFD93D"/>` },
+  purple_tee: { name: '보라 티셔츠', rarity: 'common', cost: 35, svg: () => `<path d="M 70 175 L 60 200 L 70 210 L 80 200 L 80 280 L 120 280 L 120 200 L 130 210 L 140 200 L 130 175 Q 115 185 100 185 Q 85 185 70 175 Z" fill="#9C27B0"/>` },
+  stripe_tee: { name: '줄무늬 티', rarity: 'common', cost: 45, svg: () => `<g><path d="M 70 175 L 60 200 L 70 210 L 80 200 L 80 280 L 120 280 L 120 200 L 130 210 L 140 200 L 130 175 Q 115 185 100 185 Q 85 185 70 175 Z" fill="white"/><rect x="78" y="200" width="44" height="10" fill="#1A5AE8"/><rect x="78" y="225" width="44" height="10" fill="#1A5AE8"/><rect x="78" y="250" width="44" height="10" fill="#1A5AE8"/></g>` },
+  
+  // 추가 상의 — 레어
+  cardigan: { name: '카디건', rarity: 'rare', cost: 90, svg: () => `<g><path d="M 65 175 L 55 200 L 65 215 L 78 205 L 78 285 L 122 285 L 122 205 L 135 215 L 145 200 L 135 175 Q 100 195 65 175 Z" fill="#D2B48C"/><line x1="100" y1="190" x2="100" y2="285" stroke="#8B6F47" stroke-width="1"/><circle cx="100" cy="215" r="2" fill="#8B6F47"/><circle cx="100" cy="235" r="2" fill="#8B6F47"/><circle cx="100" cy="255" r="2" fill="#8B6F47"/></g>` },
+  baseball_jersey: { name: '야구 저지', rarity: 'rare', cost: 95, svg: () => `<g><path d="M 65 175 L 55 200 L 65 215 L 78 205 L 78 285 L 122 285 L 122 205 L 135 215 L 145 200 L 135 175 Q 100 195 65 175 Z" fill="#1A5AE8"/><text x="100" y="245" font-size="28" font-weight="700" fill="white" text-anchor="middle">7</text></g>` },
+  hawaiian: { name: '하와이안 셔츠', rarity: 'rare', cost: 95, svg: () => `<g><path d="M 65 175 L 55 200 L 65 215 L 78 205 L 78 285 L 122 285 L 122 205 L 135 215 L 145 200 L 135 175 Q 100 195 65 175 Z" fill="#FF6B6B"/><circle cx="90" cy="220" r="6" fill="#FFD93D"/><circle cx="110" cy="240" r="5" fill="#4ECDC4"/><circle cx="85" cy="260" r="5" fill="#FFD93D"/><circle cx="115" cy="270" r="6" fill="#4ECDC4"/></g>` },
+  
+  // 추가 상의 — 에픽  
+  led_jacket: { name: 'LED 자켓', rarity: 'epic', cost: 280, svg: () => `<g><path d="M 65 175 L 55 200 L 65 215 L 78 205 L 78 285 L 122 285 L 122 205 L 135 215 L 145 200 L 135 175 Q 100 195 65 175 Z" fill="#000033"/><circle cx="85" cy="220" r="3" fill="#00FFFF"/><circle cx="115" cy="220" r="3" fill="#FF00FF"/><circle cx="85" cy="245" r="3" fill="#FFFF00"/><circle cx="115" cy="245" r="3" fill="#00FF00"/><circle cx="100" cy="265" r="3" fill="#FF6B9D"/></g>` },
+  
   white_tee: { name: '흰 티셔츠', rarity: 'common', cost: 30, svg: () => `<path d="M 70 175 L 60 200 L 70 210 L 80 200 L 80 280 L 120 280 L 120 200 L 130 210 L 140 200 L 130 175 Q 115 185 100 185 Q 85 185 70 175 Z" fill="#F5F5F5" stroke="#D0D0D0" stroke-width="2"/>` },
   black_tee: { name: '검은 티셔츠', rarity: 'common', cost: 30, svg: () => `<path d="M 70 175 L 60 200 L 70 210 L 80 200 L 80 280 L 120 280 L 120 200 L 130 210 L 140 200 L 130 175 Q 115 185 100 185 Q 85 185 70 175 Z" fill="#1A1A1A"/>` },
   red_tee: { name: '빨간 티셔츠', rarity: 'common', cost: 35, svg: () => `<path d="M 70 175 L 60 200 L 70 210 L 80 200 L 80 280 L 120 280 L 120 200 L 130 210 L 140 200 L 130 175 Q 115 185 100 185 Q 85 185 70 175 Z" fill="#E63946"/>` },
@@ -4072,13 +4253,21 @@ const TOPS = {
 const BOTTOMS = {
   jeans: { name: '청바지', rarity: 'common', cost: 30, svg: () => `<g><rect x="80" y="280" width="18" height="60" fill="#3D5A80"/><rect x="102" y="280" width="18" height="60" fill="#3D5A80"/><line x1="100" y1="280" x2="100" y2="340" stroke="#1D3557" stroke-width="1"/></g>` },
   black_pants: { name: '검정 바지', rarity: 'common', cost: 30, svg: () => `<g><rect x="80" y="280" width="18" height="60" fill="#1A1A1A"/><rect x="102" y="280" width="18" height="60" fill="#1A1A1A"/></g>` },
+  white_pants: { name: '흰 바지', rarity: 'common', cost: 30, svg: () => `<g><rect x="80" y="280" width="18" height="60" fill="#F5F5F5" stroke="#D0D0D0" stroke-width="1"/><rect x="102" y="280" width="18" height="60" fill="#F5F5F5" stroke="#D0D0D0" stroke-width="1"/></g>` },
+  beige_pants: { name: '베이지 바지', rarity: 'common', cost: 30, svg: () => `<g><rect x="80" y="280" width="18" height="60" fill="#D2B48C"/><rect x="102" y="280" width="18" height="60" fill="#D2B48C"/></g>` },
   shorts: { name: '반바지', rarity: 'common', cost: 25, svg: () => `<g><rect x="80" y="280" width="18" height="35" fill="#5680A8"/><rect x="102" y="280" width="18" height="35" fill="#5680A8"/></g>` },
+  red_shorts: { name: '빨간 반바지', rarity: 'common', cost: 30, svg: () => `<g><rect x="80" y="280" width="18" height="35" fill="#E63946"/><rect x="102" y="280" width="18" height="35" fill="#E63946"/></g>` },
   skirt: { name: '치마', rarity: 'common', cost: 30, svg: () => `<path d="M 78 280 L 70 330 L 130 330 L 122 280 Z" fill="#FF6B9D"/>` },
+  black_skirt: { name: '검정 치마', rarity: 'common', cost: 35, svg: () => `<path d="M 78 280 L 70 330 L 130 330 L 122 280 Z" fill="#1A1A1A"/>` },
+  long_skirt: { name: '롱 치마', rarity: 'common', cost: 40, svg: () => `<path d="M 76 280 L 65 360 L 135 360 L 124 280 Z" fill="#9C27B0"/>` },
   uniform_skirt: { name: '교복 치마', rarity: 'rare', cost: 60, svg: () => `<g><path d="M 78 280 L 68 335 L 132 335 L 122 280 Z" fill="#1D3557"/><line x1="85" y1="280" x2="83" y2="335" stroke="#3D5A80" stroke-width="1"/><line x1="100" y1="280" x2="100" y2="335" stroke="#3D5A80" stroke-width="1"/><line x1="115" y1="280" x2="117" y2="335" stroke="#3D5A80" stroke-width="1"/></g>` },
   uniform_pants: { name: '교복 바지', rarity: 'rare', cost: 60, svg: () => `<g><rect x="80" y="280" width="18" height="60" fill="#2A3F5C"/><rect x="102" y="280" width="18" height="60" fill="#2A3F5C"/><line x1="89" y1="280" x2="89" y2="340" stroke="#1A2840" stroke-width="0.5"/><line x1="111" y1="280" x2="111" y2="340" stroke="#1A2840" stroke-width="0.5"/></g>` },
   cargo: { name: '카고 바지', rarity: 'rare', cost: 70, svg: () => `<g><rect x="80" y="280" width="18" height="60" fill="#6B7B5C"/><rect x="102" y="280" width="18" height="60" fill="#6B7B5C"/><rect x="82" y="295" width="14" height="10" fill="none" stroke="#4A5440" stroke-width="1"/><rect x="104" y="295" width="14" height="10" fill="none" stroke="#4A5440" stroke-width="1"/></g>` },
+  leather_pants: { name: '가죽 바지', rarity: 'rare', cost: 95, svg: () => `<g><rect x="80" y="280" width="18" height="60" fill="#3D2817"/><rect x="102" y="280" width="18" height="60" fill="#3D2817"/><rect x="80" y="280" width="18" height="60" fill="url(#leatherG)" opacity="0.3"/><defs><linearGradient id="leatherG"><stop offset="0%" stop-color="white" stop-opacity="0.5"/><stop offset="100%" stop-color="black" stop-opacity="0.3"/></linearGradient></defs></g>` },
+  pleated_skirt: { name: '주름 치마', rarity: 'rare', cost: 75, svg: () => `<g><path d="M 76 280 L 68 335 L 132 335 L 124 280 Z" fill="#FF8FAB"/><line x1="84" y1="280" x2="80" y2="335" stroke="#D04060" stroke-width="0.5"/><line x1="92" y1="280" x2="90" y2="335" stroke="#D04060" stroke-width="0.5"/><line x1="100" y1="280" x2="100" y2="335" stroke="#D04060" stroke-width="0.5"/><line x1="108" y1="280" x2="110" y2="335" stroke="#D04060" stroke-width="0.5"/><line x1="116" y1="280" x2="120" y2="335" stroke="#D04060" stroke-width="0.5"/></g>` },
   
   rainbow_pants: { name: '레인보우', rarity: 'epic', cost: 200, svg: () => `<g><defs><linearGradient id="rbG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF0000"/><stop offset="20%" stop-color="#FFA500"/><stop offset="40%" stop-color="#FFFF00"/><stop offset="60%" stop-color="#00FF00"/><stop offset="80%" stop-color="#0000FF"/><stop offset="100%" stop-color="#8B00FF"/></linearGradient></defs><rect x="80" y="280" width="18" height="60" fill="url(#rbG)"/><rect x="102" y="280" width="18" height="60" fill="url(#rbG)"/></g>` },
+  galaxy_pants: { name: '갤럭시 바지', rarity: 'epic', cost: 250, svg: () => `<g><defs><linearGradient id="gpG" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1A0033"/><stop offset="50%" stop-color="#6B2E8B"/><stop offset="100%" stop-color="#FF6B9D"/></linearGradient></defs><rect x="80" y="280" width="18" height="60" fill="url(#gpG)"/><rect x="102" y="280" width="18" height="60" fill="url(#gpG)"/><circle cx="86" cy="295" r="0.8" fill="white"/><circle cx="115" cy="310" r="0.8" fill="white"/><circle cx="91" cy="325" r="0.8" fill="white"/></g>` },
 };
 
 // ============================================================
@@ -4088,10 +4277,17 @@ const SHOES = {
   white_sneakers: { name: '흰 운동화', rarity: 'common', cost: 25, svg: () => `<g><ellipse cx="89" cy="345" rx="11" ry="6" fill="white" stroke="#A0A0A0" stroke-width="1.5"/><ellipse cx="111" cy="345" rx="11" ry="6" fill="white" stroke="#A0A0A0" stroke-width="1.5"/></g>` },
   black_sneakers: { name: '검정 운동화', rarity: 'common', cost: 25, svg: () => `<g><ellipse cx="89" cy="345" rx="11" ry="6" fill="#1A1A1A"/><ellipse cx="111" cy="345" rx="11" ry="6" fill="#1A1A1A"/></g>` },
   red_sneakers: { name: '빨간 운동화', rarity: 'common', cost: 30, svg: () => `<g><ellipse cx="89" cy="345" rx="11" ry="6" fill="#E63946"/><ellipse cx="111" cy="345" rx="11" ry="6" fill="#E63946"/></g>` },
+  blue_sneakers: { name: '파란 운동화', rarity: 'common', cost: 30, svg: () => `<g><ellipse cx="89" cy="345" rx="11" ry="6" fill="#1A5AE8"/><ellipse cx="111" cy="345" rx="11" ry="6" fill="#1A5AE8"/></g>` },
+  pink_sneakers: { name: '핑크 운동화', rarity: 'common', cost: 30, svg: () => `<g><ellipse cx="89" cy="345" rx="11" ry="6" fill="#FF6B9D"/><ellipse cx="111" cy="345" rx="11" ry="6" fill="#FF6B9D"/></g>` },
+  loafers: { name: '로퍼', rarity: 'common', cost: 40, svg: () => `<g><ellipse cx="89" cy="345" rx="11" ry="5" fill="#5C3D2E"/><ellipse cx="111" cy="345" rx="11" ry="5" fill="#5C3D2E"/><line x1="83" y1="343" x2="95" y2="343" stroke="#3D2817" stroke-width="0.8"/><line x1="105" y1="343" x2="117" y2="343" stroke="#3D2817" stroke-width="0.8"/></g>` },
+  sandals: { name: '샌들', rarity: 'common', cost: 30, svg: () => `<g><ellipse cx="89" cy="346" rx="11" ry="4" fill="#8B6F47"/><ellipse cx="111" cy="346" rx="11" ry="4" fill="#8B6F47"/><line x1="89" y1="338" x2="89" y2="344" stroke="#8B6F47" stroke-width="2"/><line x1="111" y1="338" x2="111" y2="344" stroke="#8B6F47" stroke-width="2"/></g>` },
   boots: { name: '부츠', rarity: 'rare', cost: 60, svg: () => `<g><path d="M 80 340 L 80 350 L 100 350 L 100 340 Z" fill="#3D2817"/><path d="M 102 340 L 102 350 L 122 350 L 122 340 Z" fill="#3D2817"/></g>` },
   high_top: { name: '하이탑', rarity: 'rare', cost: 70, svg: () => `<g><path d="M 78 330 L 78 350 L 102 350 L 102 340 L 100 330 Z" fill="#1A1A1A"/><path d="M 100 330 L 102 340 L 102 350 L 124 350 L 124 330 Z" fill="#1A1A1A"/><line x1="83" y1="335" x2="98" y2="335" stroke="white" stroke-width="0.5"/><line x1="105" y1="335" x2="120" y2="335" stroke="white" stroke-width="0.5"/></g>` },
+  retro_sneakers: { name: '레트로 스니커즈', rarity: 'rare', cost: 85, svg: () => `<g><ellipse cx="89" cy="345" rx="11" ry="6" fill="white" stroke="#1A1A1A" stroke-width="1"/><ellipse cx="111" cy="345" rx="11" ry="6" fill="white" stroke="#1A1A1A" stroke-width="1"/><path d="M 82 343 L 96 343" stroke="#FF6B47" stroke-width="2"/><path d="M 104 343 L 118 343" stroke="#FF6B47" stroke-width="2"/></g>` },
+  glitter_shoes: { name: '반짝이 신발', rarity: 'rare', cost: 90, svg: () => `<g><ellipse cx="89" cy="345" rx="11" ry="6" fill="#FF69B4"/><ellipse cx="111" cy="345" rx="11" ry="6" fill="#FF69B4"/><circle cx="85" cy="343" r="0.8" fill="#FFFFE0"/><circle cx="92" cy="346" r="0.8" fill="#FFFFE0"/><circle cx="107" cy="343" r="0.8" fill="#FFFFE0"/><circle cx="114" cy="346" r="0.8" fill="#FFFFE0"/></g>` },
   
   rocket_shoes: { name: '로켓 슈즈', rarity: 'epic', cost: 220, svg: () => `<g><ellipse cx="89" cy="345" rx="12" ry="7" fill="#1A1A1A"/><ellipse cx="111" cy="345" rx="12" ry="7" fill="#1A1A1A"/><circle cx="89" cy="350" r="3" fill="#FF6347"/><circle cx="111" cy="350" r="3" fill="#FF6347"/><path d="M 86 352 L 89 358 L 92 352 Z" fill="#FFD700"/><path d="M 108 352 L 111 358 L 114 352 Z" fill="#FFD700"/></g>` },
+  led_shoes: { name: 'LED 신발', rarity: 'epic', cost: 240, svg: () => `<g><ellipse cx="89" cy="345" rx="12" ry="6" fill="white" stroke="#1A1A1A" stroke-width="1"/><ellipse cx="111" cy="345" rx="12" ry="6" fill="white" stroke="#1A1A1A" stroke-width="1"/><ellipse cx="89" cy="349" rx="11" ry="2" fill="#00FFFF"/><ellipse cx="111" cy="349" rx="11" ry="2" fill="#00FFFF"/></g>` },
 };
 
 // ============================================================
@@ -4100,23 +4296,38 @@ const SHOES = {
 const ACCESSORIES = {
   none: { name: '없음', rarity: 'common', cost: 0, slot: 'glasses', svg: () => `` },
   glasses: { name: '안경', rarity: 'common', cost: 40, slot: 'glasses', svg: () => `<g fill="none" stroke="#2C2240" stroke-width="2"><circle cx="88" cy="120" r="9"/><circle cx="112" cy="120" r="9"/><line x1="97" y1="120" x2="103" y2="120"/></g>` },
+  round_glasses: { name: '동그란 안경', rarity: 'common', cost: 45, slot: 'glasses', svg: () => `<g fill="none" stroke="#D2691E" stroke-width="2"><circle cx="88" cy="120" r="10"/><circle cx="112" cy="120" r="10"/><line x1="98" y1="120" x2="102" y2="120"/></g>` },
   sunglasses: { name: '선글라스', rarity: 'rare', cost: 80, slot: 'glasses', svg: () => `<g><rect x="78" y="113" width="20" height="14" rx="3" fill="#1A1A1A"/><rect x="102" y="113" width="20" height="14" rx="3" fill="#1A1A1A"/><line x1="98" y1="120" x2="102" y2="120" stroke="#1A1A1A" stroke-width="2"/></g>` },
+  star_glasses: { name: '별 선글라스', rarity: 'rare', cost: 95, slot: 'glasses', svg: () => `<g><path d="M 78 113 L 86 110 L 88 117 L 96 117 L 90 122 L 92 130 L 86 125 L 80 130 L 82 122 L 76 117 L 84 117 Z" fill="#FFD700"/><path d="M 104 113 L 112 110 L 114 117 L 122 117 L 116 122 L 118 130 L 112 125 L 106 130 L 108 122 L 102 117 L 110 117 Z" fill="#FFD700"/></g>` },
   
   cap: { name: '야구 모자', rarity: 'common', cost: 45, slot: 'hat', svg: () => `<g><path d="M 60 65 Q 100 25 140 65 L 145 75 L 130 75 L 130 65 Q 100 40 70 65 L 70 75 L 55 75 Z" fill="#E63946"/><ellipse cx="100" cy="48" rx="8" ry="5" fill="#FFFFFF"/></g>` },
+  cap_blue: { name: '파란 야구 모자', rarity: 'common', cost: 45, slot: 'hat', svg: () => `<g><path d="M 60 65 Q 100 25 140 65 L 145 75 L 130 75 L 130 65 Q 100 40 70 65 L 70 75 L 55 75 Z" fill="#1A5AE8"/><ellipse cx="100" cy="48" rx="8" ry="5" fill="#FFFFFF"/></g>` },
   beanie: { name: '비니', rarity: 'common', cost: 50, slot: 'hat', svg: () => `<g><path d="M 60 75 Q 60 25 100 25 Q 140 25 140 75 Q 130 70 100 70 Q 70 70 60 75 Z" fill="#5A4FCF"/><rect x="58" y="68" width="84" height="10" fill="#3D348B"/></g>` },
+  beanie_red: { name: '빨간 비니', rarity: 'common', cost: 50, slot: 'hat', svg: () => `<g><path d="M 60 75 Q 60 25 100 25 Q 140 25 140 75 Q 130 70 100 70 Q 70 70 60 75 Z" fill="#E63946"/><rect x="58" y="68" width="84" height="10" fill="#9D2A37"/></g>` },
+  sun_hat: { name: '밀짚 모자', rarity: 'common', cost: 55, slot: 'hat', svg: () => `<g><ellipse cx="100" cy="65" rx="45" ry="10" fill="#D4A04C"/><path d="M 70 65 Q 70 35 100 35 Q 130 35 130 65 Z" fill="#E0B85C"/><rect x="70" y="60" width="60" height="6" fill="#FF6B9D"/></g>` },
+  headband: { name: '머리띠', rarity: 'common', cost: 35, slot: 'hat', svg: () => `<path d="M 65 60 Q 100 50 135 60 L 135 68 Q 100 58 65 68 Z" fill="#FF6B9D"/>` },
+  ribbon: { name: '리본', rarity: 'common', cost: 40, slot: 'hat', svg: () => `<g><path d="M 90 55 L 100 60 L 90 65 L 85 60 Z" fill="#FF6B9D"/><path d="M 110 55 L 100 60 L 110 65 L 115 60 Z" fill="#FF6B9D"/><circle cx="100" cy="60" r="3" fill="#D04060"/></g>` },
   crown: { name: '왕관', rarity: 'epic', cost: 300, slot: 'hat', svg: () => `<g><path d="M 65 50 L 70 25 L 85 40 L 100 15 L 115 40 L 130 25 L 135 50 Z" fill="#FFD700" stroke="#B8860B" stroke-width="2"/><circle cx="70" cy="35" r="3" fill="#FF0000"/><circle cx="100" cy="30" r="3" fill="#0000FF"/><circle cx="130" cy="35" r="3" fill="#00FF00"/></g>` },
+  unicorn_horn: { name: '유니콘 뿔', rarity: 'epic', cost: 280, slot: 'hat', svg: () => `<g><path d="M 96 50 L 100 15 L 104 50 Z" fill="#FFD700"/><path d="M 96 50 L 100 15 L 104 50 Z" fill="url(#unicornG)"/><defs><linearGradient id="unicornG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFB6C1"/><stop offset="100%" stop-color="#FFD700"/></linearGradient></defs></g>` },
   halo: { name: '천사 후광', rarity: 'legendary', cost: -1, slot: 'hat', svg: () => `<g><ellipse cx="100" cy="20" rx="35" ry="8" fill="none" stroke="#FFD700" stroke-width="3" opacity="0.9"/><ellipse cx="100" cy="20" rx="35" ry="8" fill="none" stroke="#FFFACD" stroke-width="6" opacity="0.4"/></g>` },
   
   earphones: { name: '이어폰', rarity: 'common', cost: 35, slot: 'ears', svg: () => `<g fill="white" stroke="#A0A0A0" stroke-width="1"><rect x="62" y="115" width="6" height="14" rx="2"/><rect x="132" y="115" width="6" height="14" rx="2"/></g>` },
+  airpods: { name: '에어팟', rarity: 'common', cost: 50, slot: 'ears', svg: () => `<g fill="white" stroke="#D0D0D0" stroke-width="1"><rect x="60" y="115" width="7" height="16" rx="3"/><rect x="133" y="115" width="7" height="16" rx="3"/></g>` },
   headphones: { name: '헤드폰', rarity: 'rare', cost: 100, slot: 'ears', svg: () => `<g><path d="M 60 80 Q 60 40 100 40 Q 140 40 140 80" fill="none" stroke="#1A1A1A" stroke-width="6"/><ellipse cx="60" cy="115" rx="10" ry="14" fill="#E63946"/><ellipse cx="140" cy="115" rx="10" ry="14" fill="#E63946"/></g>` },
+  headphones_pink: { name: '핑크 헤드폰', rarity: 'rare', cost: 110, slot: 'ears', svg: () => `<g><path d="M 60 80 Q 60 40 100 40 Q 140 40 140 80" fill="none" stroke="#FF6B9D" stroke-width="6"/><ellipse cx="60" cy="115" rx="10" ry="14" fill="#FF6B9D"/><ellipse cx="140" cy="115" rx="10" ry="14" fill="#FF6B9D"/></g>` },
   
   earring_stud: { name: '귀걸이', rarity: 'common', cost: 25, slot: 'earring', svg: () => `<g fill="#FFD700"><circle cx="65" cy="125" r="2.5"/><circle cx="135" cy="125" r="2.5"/></g>` },
   earring_hoop: { name: '링 귀걸이', rarity: 'rare', cost: 60, slot: 'earring', svg: () => `<g fill="none" stroke="#FFD700" stroke-width="1.5"><circle cx="65" cy="128" r="4"/><circle cx="135" cy="128" r="4"/></g>` },
+  earring_star: { name: '별 귀걸이', rarity: 'rare', cost: 70, slot: 'earring', svg: () => `<g fill="#FFD700"><path d="M 65 122 L 67 127 L 72 127 L 68 130 L 70 135 L 65 132 L 60 135 L 62 130 L 58 127 L 63 127 Z"/><path d="M 135 122 L 137 127 L 142 127 L 138 130 L 140 135 L 135 132 L 130 135 L 132 130 L 128 127 L 133 127 Z"/></g>` },
   
   mask: { name: '마스크', rarity: 'common', cost: 30, slot: 'face', svg: () => `<path d="M 75 130 Q 75 145 100 150 Q 125 145 125 130 L 122 125 L 78 125 Z" fill="white" stroke="#A0A0A0" stroke-width="1"/>` },
+  mask_black: { name: '검은 마스크', rarity: 'common', cost: 30, slot: 'face', svg: () => `<path d="M 75 130 Q 75 145 100 150 Q 125 145 125 130 L 122 125 L 78 125 Z" fill="#1A1A1A"/>` },
   scarf: { name: '목도리', rarity: 'rare', cost: 70, slot: 'neck', svg: () => `<path d="M 75 175 Q 75 165 100 168 Q 125 165 125 175 L 122 200 L 78 200 Z" fill="#E63946"/>` },
+  scarf_blue: { name: '파란 목도리', rarity: 'rare', cost: 75, slot: 'neck', svg: () => `<path d="M 75 175 Q 75 165 100 168 Q 125 165 125 175 L 122 200 L 78 200 Z" fill="#1A5AE8"/>` },
+  necklace: { name: '목걸이', rarity: 'rare', cost: 80, slot: 'neck', svg: () => `<g><path d="M 80 170 Q 100 180 120 170" fill="none" stroke="#FFD700" stroke-width="1.5"/><circle cx="100" cy="178" r="3" fill="#FF1493"/></g>` },
+  bow_tie: { name: '나비 넥타이', rarity: 'rare', cost: 65, slot: 'neck', svg: () => `<g><path d="M 88 170 L 100 175 L 88 180 Z" fill="#E63946"/><path d="M 112 170 L 100 175 L 112 180 Z" fill="#E63946"/><circle cx="100" cy="175" r="2" fill="#9D2A37"/></g>` },
   
-  // 전설급 — 등급으로만 받음
+  // 전설급
   wings: { name: '천사 날개', rarity: 'legendary', cost: -1, slot: 'wings', svg: () => `<g><path d="M 60 220 Q 30 200 25 250 Q 30 290 70 270 L 75 250 L 70 230 Z" fill="white" stroke="#FFE5B4" stroke-width="1"/><path d="M 140 220 Q 170 200 175 250 Q 170 290 130 270 L 125 250 L 130 230 Z" fill="white" stroke="#FFE5B4" stroke-width="1"/></g>` },
   fire_aura: { name: '불꽃 오라', rarity: 'legendary', cost: -1, slot: 'aura', svg: () => `<g opacity="0.6"><path d="M 50 200 Q 30 250 50 320 Q 100 340 150 320 Q 170 250 150 200 Z" fill="url(#fireG)"/><defs><radialGradient id="fireG"><stop offset="0%" stop-color="#FFD700" stop-opacity="0"/><stop offset="60%" stop-color="#FF6347" stop-opacity="0.4"/><stop offset="100%" stop-color="#8B0000" stop-opacity="0.7"/></radialGradient></defs></g>` },
 };
@@ -4126,11 +4337,19 @@ const ACCESSORIES = {
 // ============================================================
 const BACKGROUNDS = {
   none:  { name: '기본', rarity: 'common', cost: 0,    svg: () => `<rect width="200" height="400" fill="#FFF8E8"/>` },
+  pastel_pink: { name: '파스텔 핑크', rarity: 'common', cost: 40, svg: () => `<rect width="200" height="400" fill="#FFE0EC"/>` },
+  pastel_blue: { name: '파스텔 블루', rarity: 'common', cost: 40, svg: () => `<rect width="200" height="400" fill="#E0F0FF"/>` },
+  pastel_purple: { name: '파스텔 보라', rarity: 'common', cost: 40, svg: () => `<rect width="200" height="400" fill="#E8DAEF"/>` },
   sky:   { name: '하늘', rarity: 'common', cost: 50,   svg: () => `<g><rect width="200" height="400" fill="#87CEEB"/><circle cx="50" cy="60" r="20" fill="white" opacity="0.8"/><circle cx="60" cy="55" r="15" fill="white" opacity="0.8"/><circle cx="160" cy="100" r="18" fill="white" opacity="0.8"/></g>` },
   forest:{ name: '숲', rarity: 'common', cost: 60,    svg: () => `<g><rect width="200" height="400" fill="#90EE90"/><rect y="320" width="200" height="80" fill="#228B22"/><circle cx="30" cy="100" r="35" fill="#228B22"/><circle cx="170" cy="80" r="40" fill="#228B22"/></g>` },
   beach: { name: '바닷가', rarity: 'common', cost: 70, svg: () => `<g><rect width="200" height="200" fill="#87CEEB"/><rect y="200" width="200" height="100" fill="#1E90FF"/><rect y="300" width="200" height="100" fill="#F4E4BC"/><circle cx="40" cy="50" r="25" fill="#FFD700"/></g>` },
+  city: { name: '도시 야경', rarity: 'rare', cost: 100, svg: () => `<g><rect width="200" height="400" fill="#1A1A3E"/><circle cx="50" cy="50" r="20" fill="#FFFACD"/><rect x="20" y="180" width="40" height="220" fill="#2A2A5C"/><rect x="70" y="200" width="50" height="200" fill="#2A2A5C"/><rect x="130" y="170" width="40" height="230" fill="#2A2A5C"/><rect x="28" y="200" width="6" height="6" fill="#FFD700"/><rect x="40" y="220" width="6" height="6" fill="#FFD700"/><rect x="78" y="220" width="6" height="6" fill="#FFD700"/><rect x="100" y="250" width="6" height="6" fill="#FFD700"/><rect x="138" y="200" width="6" height="6" fill="#FFD700"/><rect x="155" y="240" width="6" height="6" fill="#FFD700"/></g>` },
+  school: { name: '학교', rarity: 'rare', cost: 80, svg: () => `<g><rect width="200" height="400" fill="#FFF8E8"/><rect y="300" width="200" height="100" fill="#90EE90"/><rect x="50" y="180" width="100" height="120" fill="#D2691E"/><polygon points="50,180 100,140 150,180" fill="#8B4513"/><rect x="90" y="220" width="20" height="40" fill="#1A5AE8"/><rect x="65" y="210" width="15" height="20" fill="#87CEEB"/><rect x="120" y="210" width="15" height="20" fill="#87CEEB"/></g>` },
+  cafe: { name: '카페', rarity: 'rare', cost: 100, svg: () => `<g><rect width="200" height="400" fill="#D2B48C"/><rect y="320" width="200" height="80" fill="#8B6F47"/><rect x="30" y="100" width="140" height="220" fill="#FFEFD5" stroke="#8B6F47" stroke-width="1"/><rect x="80" y="180" width="40" height="60" fill="#8B6F47"/><ellipse cx="100" cy="160" rx="20" ry="3" fill="#3D2817"/></g>` },
   galaxy:{ name: '우주', rarity: 'epic', cost: 200,   svg: () => `<g><rect width="200" height="400" fill="#0B0B2A"/><circle cx="30" cy="50" r="1" fill="white"/><circle cx="170" cy="80" r="1.5" fill="white"/><circle cx="50" cy="200" r="1" fill="white"/><circle cx="180" cy="250" r="1" fill="white"/><circle cx="100" cy="100" r="1" fill="white"/><circle cx="60" cy="350" r="1" fill="white"/><circle cx="160" cy="380" r="1" fill="white"/><circle cx="100" cy="50" r="20" fill="#9370DB" opacity="0.5"/></g>` },
   rainbow:{name: '무지개', rarity: 'epic', cost: 220, svg: () => `<g><rect width="200" height="400" fill="#E0F6FF"/><path d="M -20 400 Q 100 100 220 400" fill="none" stroke="#FF0000" stroke-width="20"/><path d="M -20 400 Q 100 130 220 400" fill="none" stroke="#FFA500" stroke-width="20"/><path d="M -20 400 Q 100 160 220 400" fill="none" stroke="#FFFF00" stroke-width="20"/><path d="M -20 400 Q 100 190 220 400" fill="none" stroke="#00FF00" stroke-width="20"/><path d="M -20 400 Q 100 220 220 400" fill="none" stroke="#00BFFF" stroke-width="20"/><path d="M -20 400 Q 100 250 220 400" fill="none" stroke="#8B00FF" stroke-width="20"/></g>` },
+  underwater: { name: '바다 속', rarity: 'epic', cost: 230, svg: () => `<g><rect width="200" height="400" fill="#1E90FF"/><circle cx="40" cy="80" r="3" fill="#87CEEB"/><circle cx="60" cy="120" r="2" fill="#87CEEB"/><circle cx="120" cy="180" r="4" fill="#87CEEB"/><circle cx="170" cy="100" r="3" fill="#87CEEB"/><circle cx="100" cy="250" r="2" fill="#87CEEB"/><path d="M 30 350 Q 50 320 70 350" fill="#FF6B47" opacity="0.8"/><path d="M 130 360 Q 150 330 170 360" fill="#FF6B47" opacity="0.8"/></g>` },
+  cherry_blossom: { name: '벚꽃', rarity: 'epic', cost: 240, svg: () => `<g><rect width="200" height="400" fill="#FFE5EC"/><rect y="350" width="200" height="50" fill="#7CBA3C"/><rect x="40" y="200" width="8" height="150" fill="#5C3D2E"/><circle cx="30" cy="180" r="20" fill="#FFB7CE"/><circle cx="50" cy="170" r="22" fill="#FFB7CE"/><circle cx="60" cy="190" r="18" fill="#FFB7CE"/><circle cx="80" cy="50" r="2" fill="#FFB7CE"/><circle cx="120" cy="80" r="2" fill="#FFB7CE"/><circle cx="160" cy="40" r="2" fill="#FFB7CE"/><circle cx="100" cy="120" r="2" fill="#FFB7CE"/><circle cx="180" cy="200" r="2" fill="#FFB7CE"/></g>` },
   legendary_castle: { name: '꿈의 성', rarity: 'legendary', cost: -1, svg: () => `<g><defs><linearGradient id="cBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF6B9D"/><stop offset="100%" stop-color="#4A7AE8"/></linearGradient></defs><rect width="200" height="400" fill="url(#cBg)"/><circle cx="160" cy="60" r="15" fill="#FFD700"/><polygon points="50,300 50,200 70,180 90,200 90,300" fill="white" opacity="0.9"/><polygon points="100,300 100,180 120,160 140,180 140,300" fill="white" opacity="0.9"/><polygon points="50,200 70,180 90,200" fill="#FFD700"/><polygon points="100,180 120,160 140,180" fill="#FFD700"/></g>` },
 };
 // ============================================================
